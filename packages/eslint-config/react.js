@@ -1,7 +1,9 @@
-/* eslint-env node */
-module.exports = {
-  extends: ['./index.js', 'plugin:react/recommended', 'plugin:react-hooks/recommended'],
-  plugins: ['react', 'react-hooks'],
+import base from './base';
+
+export default {
+  ...base,
+  plugins: [...base.plugins, 'react', 'react-hooks'],
+  extends: [...base.extends, 'plugin:react/recommended', 'plugin:react-hooks/recommended'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
@@ -9,6 +11,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
+    ...base.settings,
     react: {
       version: 'detect',
     },

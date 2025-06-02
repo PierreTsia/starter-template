@@ -6,29 +6,29 @@ This document outlines the steps and requirements for setting up the frontend ap
 
 ## Directory Structure
 
-- [ ] Create frontend directory structure
-  - [ ] `apps/web/` for the Vite + React application
-  - [ ] `apps/web/src/` for source code
-  - [ ] `apps/web/public/` for static assets
-  - [ ] `apps/web/src/components/` for shared components
-  - [ ] `apps/web/src/features/` for feature-specific code
-  - [ ] `apps/web/src/lib/` for utilities and shared code
-  - [ ] `apps/web/src/types/` for TypeScript types
-  - [ ] `apps/web/src/hooks/` for custom hooks
-  - [ ] `apps/web/src/store/` for Zustand stores
-  - [ ] `apps/web/src/api/` for API client and queries
+- [x] Create frontend directory structure
+  - [x] `apps/web/` for the Vite + React application
+  - [x] `apps/web/src/` for source code
+  - [x] `apps/web/public/` for static assets
+  - [x] `apps/web/src/components/` for shared components
+  - [x] `apps/web/src/features/` for feature-specific code
+  - [x] `apps/web/src/lib/` for utilities and shared code
+  - [x] `apps/web/src/types/` for TypeScript types
+  - [x] `apps/web/src/hooks/` for custom hooks
+  - [x] `apps/web/src/store/` for Zustand stores
+  - [x] `apps/web/src/api/` for API client and queries
 
 ## Configuration
 
-- [ ] Initialize Vite project
+- [x] Initialize Vite project
 
-  - [ ] Create `vite.config.ts`
-  - [ ] Configure TypeScript
-  - [ ] Set up path aliases
-  - [ ] Configure build settings
-  - [ ] Set up development proxy
-  - [ ] Configure source maps
-  - [ ] Set up environment-specific builds
+  - [x] Create `vite.config.ts`
+  - [x] Configure TypeScript
+  - [x] Set up path aliases
+  - [x] Configure build settings
+  - [x] Set up development proxy
+  - [x] Configure source maps
+  - [x] Set up environment-specific builds
 
 - [ ] Set up React
 
@@ -140,3 +140,7 @@ After completing the frontend setup, we will:
 - Ensure type safety throughout the application
 - Maintain consistent error handling
 - Follow React best practices
+
+[x] Configure ESLint and Prettier
+[x] `pnpm install` works without errors
+[x] ESLint and Prettier are properly configured
