@@ -1,7 +1,9 @@
 {
   "name": "@starter/tsconfig",
-  "version": "0.0.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.json",
   "files": [
     "base.json",
     "react-library.json",
@@ -9,8 +11,6 @@
     "vite.json"
   ],
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "prettier": "^3.0.0",
     "typescript": "^5.0.0"
   }
 }

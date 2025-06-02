@@ -1,21 +1,11 @@
-import { useState } from 'react';
-
-function App() {
-  const [count, setCount] = useState(0);
-
+const App = () => {
   return (
-    <>
-      <div></div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <div className="min-h-screen bg-red-500 flex items-center justify-center">
+      <h1 className="text-4xl font-bold text-white">
+        If you see this in red with white text, Tailwind is working!
+      </h1>
+    </div>
   );
-}
+};
 
 export default App;
