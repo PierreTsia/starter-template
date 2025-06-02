@@ -11,7 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.17.19",
+    "@tanstack/react-query": "^5.79.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^6.0.0",
@@ -20,6 +20,7 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.79.2",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@types/react": "^18.2.43",
