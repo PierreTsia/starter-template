@@ -1,1 +1,5 @@
-pnpm --filter @starter/web typecheck\npnpm lint-staged
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm --filter @starter/web typecheck
+pnpm lint-staged
