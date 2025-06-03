@@ -6,12 +6,12 @@ This document outlines the steps and requirements for setting up continuous inte
 
 ## CI Setup
 
-- [ ] Set up GitHub Actions workflow
+- [x] Set up GitHub Actions workflow
 
-  - [ ] Create base workflow file
-  - [ ] Configure Node.js setup
-  - [ ] Set up pnpm caching
-  - [ ] Configure workspace setup
+  - [x] Create base workflow file
+  - [x] Configure Node.js setup
+  - [x] Set up pnpm caching
+  - [x] Configure workspace setup
 
 - [ ] Configure quality checks
 
