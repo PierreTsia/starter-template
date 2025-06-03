@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { mockApi } from '@/api/mockApi';
-import type { LoginFormData, RegisterFormData } from '@/lib/validations/auth';
+import type { LoginFormData, RegisterFormData } from '@/types/auth';
 
 export const useAuth = () => {
   const navigate = useNavigate();

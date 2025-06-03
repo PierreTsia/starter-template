@@ -40,40 +40,40 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] setup tailwind css
   - [x] Configure toast notifications
 
-- [ ] State Management
+- [x] State Management
 
-  - [ ] Install and configure Zustand
-  - [ ] Set up store structure
-  - [ ] Create basic auth store
-  - [ ] Set up persistence middleware
+  - [x] Install and configure Zustand (explored, then removed for simplicity)
+  - [x] Set up store structure (handled via TanStack Query/localStorage)
+  - [x] Create basic auth store (handled via TanStack Query/localStorage)
+  - [x] Set up persistence middleware (localStorage for token)
 
-- [ ] API Integration
+- [x] API Integration
 
-  - [ ] Install and configure TanStack Query
-  - [ ] Set up API client
-  - [ ] Configure type-safe API calls
-  - [ ] Set up query invalidation
-  - [ ] Configure error handling
+  - [x] Install and configure TanStack Query
+  - [x] Set up API client
+  - [x] Configure type-safe API calls
+  - [x] Set up query invalidation
+  - [x] Configure error handling
   - [ ] Set up optimistic updates
 
-- [ ] Styling
+- [x] Styling
 
   - [x] Install and configure Tailwind CSS
   - [x] Set up shadcn/ui components (using CLI to copy components individually)
   - [x] Configure dark/light mode (support both system preference and manual toggle)
   - [x] Set up responsive design
 
-- [ ] Development Tools
+- [x] Development Tools
 
-  - [ ] Configure ESLint and Prettier
-  - [ ] add a typecheck command
+  - [x] Configure ESLint and Prettier
+  - [x] add a typecheck command
   - [ ] Set up testing with Vitest and React Testing Library
-  - [ ] Configure hot reload
-  - [ ] Set up debugging tools
+  - [x] Configure hot reload
+  - [x] Set up debugging tools (React Query Devtools)
 
-- [ ] Type Safety
-  - [ ] Set up Zod for form validation
-  - [ ] Configure type-safe API client
+- [x] Type Safety
+  - [x] Set up Zod for form validation
+  - [x] Configure type-safe API client
   - [ ] Set up type generation for API responses
 
 ## Environment Setup
@@ -86,14 +86,14 @@ This document outlines the steps and requirements for setting up the frontend ap
 
 ## Basic App Implementation
 
-- [ ] Create a basic page with routing in place
-  - [ ] Set up protected routes
-  - [ ] Configure route guards
+- [x] Create a basic page with routing in place
+  - [x] Set up protected routes
+  - [x] Configure route guards
   - [ ] Set up 404 page
-- [ ] Integrate a few shadcn/ui components
-  - [ ] Set up button component
-  - [ ] Set up form components
-  - [ ] Set up toast notifications
+- [x] Integrate a few shadcn/ui components
+  - [x] Set up button component
+  - [x] Set up form components
+  - [x] Set up toast notifications
 - [ ] Write a basic test using React Testing Library
   - [ ] Test component rendering
   - [ ] Test user interactions
@@ -114,17 +114,17 @@ This document outlines the steps and requirements for setting up the frontend ap
 The frontend setup is considered complete when:
 
 - [ ] All checkboxes above are checked
-- [ ] `pnpm install` works without errors
-- [ ] Basic scripts run successfully
-- [ ] ESLint and Prettier are properly configured
+- [x] `pnpm install` works without errors
+- [x] Basic scripts run successfully
+- [x] ESLint and Prettier are properly configured
 - [ ] Documentation is up to date
-- [ ] A basic page is running with routing in place
-- [ ] A few shadcn/ui components are integrated and functional
+- [x] A basic page is running with routing in place
+- [x] A few shadcn/ui components are integrated and functional
 - [ ] A basic test using React Testing Library is passing
-- [ ] State management is working with persistence
-- [ ] API integration is working with type safety
-- [ ] Error handling and loading states are in place
-- [ ] Build process works for all environments
+- [x] State management is working with persistence
+- [x] API integration is working with type safety
+- [x] Error handling and loading states are in place
+- [x] Build process works for all environments
 
 ## Next Steps
 

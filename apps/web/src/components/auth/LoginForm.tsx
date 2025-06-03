@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
+import { loginSchema } from '@/lib/validations/auth';
+import type { LoginFormData } from '@/types/auth';
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => void;
