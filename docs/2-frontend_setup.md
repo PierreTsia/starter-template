@@ -61,11 +61,12 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] Install and configure Tailwind CSS
   - [x] Set up shadcn/ui components (using CLI to copy components individually)
   - [x] Configure dark/light mode (support both system preference and manual toggle)
-  - [ ] Set up responsive design
+  - [x] Set up responsive design
 
 - [ ] Development Tools
 
   - [ ] Configure ESLint and Prettier
+  - [ ] add a typecheck command
   - [ ] Set up testing with Vitest and React Testing Library
   - [ ] Configure hot reload
   - [ ] Set up debugging tools

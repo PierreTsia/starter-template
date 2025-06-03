@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ThemeProvider>
           <BrowserRouter>
             <Navbar />
-            <div className="min-h-[calc(100vh-var(--navbar-height))]">
+            <div className="container min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4">
               <Routes>
                 <Route path="/" element={<App />} />
                 <Route path="/about" element={<About />} />
