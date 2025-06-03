@@ -5,7 +5,7 @@ import { RegisterForm } from './RegisterForm';
 
 import { useMe } from '@/api/hooks';
 import { useAuth } from '@/hooks/useAuth';
-import type { LoginFormData, RegisterFormData } from '@/lib/validations/auth';
+import type { LoginFormData, RegisterFormData } from '@/types/auth';
 
 export const AuthPage = () => {
   const location = useLocation();

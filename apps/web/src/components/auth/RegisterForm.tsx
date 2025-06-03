@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
+import { registerSchema } from '@/lib/validations/auth';
+import type { RegisterFormData } from '@/types/auth';
 
 interface RegisterFormProps {
   onSubmit: (data: RegisterFormData) => void;

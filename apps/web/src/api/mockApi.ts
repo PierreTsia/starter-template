@@ -1,14 +1,13 @@
 import { z } from 'zod';
 
-// Types
+import type { User, LoginInput, RegisterInput } from '@/types/auth';
+
 export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
   createdAt: z.string(),
 });
-
-export type User = z.infer<typeof UserSchema>;
 
 export const LoginSchema = z.object({
   email: z.string().email(),
@@ -18,9 +17,6 @@ export const LoginSchema = z.object({
 export const RegisterSchema = LoginSchema.extend({
   name: z.string().min(2),
 });
-
-export type LoginInput = z.infer<typeof LoginSchema>;
-export type RegisterInput = z.infer<typeof RegisterSchema>;
 
 // Mock data
 const MOCK_USERS: User[] = [
