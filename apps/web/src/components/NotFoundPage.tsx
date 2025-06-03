@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const NotFoundPage = () => (
+export const NotFoundPage = () => (
   <div className="flex min-h-screen items-center justify-center">
     <Card className="w-full max-w-lg h-auto p-4 text-center flex flex-col items-center justify-center sm:w-[550px] sm:h-[550px]">
       <CardHeader>
@@ -25,5 +25,3 @@ const NotFoundPage = () => (
     </Card>
   </div>
 );
-
-export default NotFoundPage;
