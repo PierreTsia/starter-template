@@ -35,7 +35,7 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
         <CardTitle>Register</CardTitle>
         <CardDescription>Create a new account</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} data-testid="register-form">
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
@@ -45,12 +45,20 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="text" {...register('email')} placeholder="john@example.com" />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-500" data-testid="email-error">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" {...register('password')} placeholder="••••••••" />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-500" data-testid="password-error">
+                {errors.password.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -61,7 +69,9 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
               placeholder="••••••••"
             />
             {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+              <p className="text-sm text-red-500" data-testid="confirm-password-error">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
         </CardContent>

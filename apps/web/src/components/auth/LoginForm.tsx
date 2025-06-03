@@ -35,7 +35,7 @@ export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
         <CardTitle>Login</CardTitle>
         <CardDescription>Enter your credentials to login</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} data-testid="login-form">
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

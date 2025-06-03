@@ -1,11 +1,13 @@
 # Full Stack Starter Template PRD
 
 ## Overview
+
 A minimal but production-ready monorepo template for full-stack TypeScript applications. Designed to be cloned and extended for new projects, with a focus on developer experience and best practices.
 
 ## Core Features
 
 ### 1. Authentication System
+
 - JWT-based auth with refresh tokens (kept for security best practices)
 - Protected routes (both FE and BE)
 - Basic user management (register, login, logout)
@@ -13,12 +15,14 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 - Password reset flow (optional)
 
 ### 2. Todo List Feature (Minimal Implementation)
+
 - CRUD operations for todos
 - Basic filtering (all, active, completed)
 - Optimistic updates
 - Real-time sync between tabs (optional)
 
 ### 3. UI Components (shadcn/ui)
+
 - Dark/light mode
 - Responsive layout
 - Loading states
@@ -29,6 +33,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ## Technical Stack
 
 ### Frontend
+
 ```typescript
 // Core
 - React 18+ with TypeScript
@@ -49,6 +54,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ```
 
 ### Backend
+
 ```typescript
 // Core
 - NestJS (TypeScript) - kept for structure and best practices
@@ -65,6 +71,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ## Must-Have Features
 
 ### 1. Development Experience
+
 - Hot reload for both FE and BE
 - TypeScript strict mode
 - ESLint + Prettier
@@ -73,11 +80,13 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 - Environment variables validation
 
 ### 2. Testing Setup
+
 - Unit tests for core business logic
 - Basic API endpoint tests
 - Test coverage reporting (optional)
 
 ### 3. Security
+
 - CORS configuration
 - Input validation
 - XSS protection
@@ -85,6 +94,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 - Environment variables (.env)
 
 ### 4. Error Handling
+
 - Global error boundary
 - API error handling
 - Basic logging
@@ -92,6 +102,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ## Deployment Strategy
 
 ### Frontend (Vercel)
+
 ```bash
 # Why Vercel?
 - Zero config deployments
@@ -101,6 +112,7 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ```
 
 ### Backend & Database (Render)
+
 ```bash
 # Why Render?
 - Simple deployment process
@@ -115,18 +127,19 @@ A minimal but production-ready monorepo template for full-stack TypeScript appli
 ```yaml
 # Core Workflows
 1. PR Checks
-   - Lint
-   - Type check
-   - Unit tests
-   - Build verification
+- Lint
+- Type check
+- Unit tests
+- Build verification
 
 2. Deployment
-   - Production on main branch
-   - Database migrations
-   - Environment sync
+- Production on main branch
+- Database migrations
+- Environment sync
 ```
 
 ## Project Structure
+
 ```
 starter-template/
 ├── apps/
@@ -156,6 +169,7 @@ starter-template/
 ## Getting Started Guide
 
 1. **Local Development**
+
 ```bash
 # Clone and setup
 git clone <repo>
@@ -167,6 +181,7 @@ pnpm dev
 ```
 
 2. **Deployment**
+
 ```bash
 # Frontend
 - Connect Vercel to GitHub
@@ -181,15 +196,17 @@ pnpm dev
 ```
 
 ## Success Metrics
+
 - Build time < 2 minutes
 - Development setup time < 5 minutes
 - Zero critical security issues
 - Maintainable codebase
 
 ## Future Considerations
+
 - Docker support for local development
 - API documentation with Swagger
 - Analytics setup (if needed)
 - i18n support (if needed)
 
-This template is designed to be practical for side projects while maintaining good development practices. It includes essential features and tools while avoiding unnecessary complexity. The todo list feature serves as a practical example of how to implement common patterns that you'll need in most applications. 
+This template is designed to be practical for side projects while maintaining good development practices. It includes essential features and tools while avoiding unnecessary complexity. The todo list feature serves as a practical example of how to implement common patterns that you'll need in most applications.

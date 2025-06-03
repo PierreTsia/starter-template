@@ -93,10 +93,10 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] Set up button component
   - [x] Set up form components
   - [x] Set up toast notifications
-- [ ] Write a basic test using React Testing Library
-  - [ ] Test component rendering
-  - [ ] Test user interactions
-  - [ ] Test API integration
+- [x] Write a basic test using React Testing Library
+  - [x] Test component rendering
+  - [x] Test user interactions
+  - [x] Test API integration
 
 ## Documentation
 
@@ -119,7 +119,7 @@ The frontend setup is considered complete when:
 - [ ] Documentation is up to date
 - [x] A basic page is running with routing in place
 - [x] A few shadcn/ui components are integrated and functional
-- [ ] A basic test using React Testing Library is passing
+- [x] A basic test using React Testing Library is passing
 - [x] State management is working with persistence
 - [x] API integration is working with type safety
 - [x] Error handling and loading states are in place
