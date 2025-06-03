@@ -13,12 +13,12 @@ This document outlines the steps and requirements for setting up continuous inte
   - [x] Set up pnpm caching
   - [x] Configure workspace setup
 
-- [ ] Configure quality checks
+- [x] Configure quality checks
 
-  - [ ] Run ESLint
-  - [ ] Run TypeScript type checking
-  - [ ] Run Vitest tests
-  - [ ] Configure test coverage reporting
+  - [x] Run ESLint
+  - [x] Run TypeScript type checking
+  - [x] Run Vitest tests
+  - [x] Configure test coverage reporting
 
 - [ ] Set up PR checks
   - [ ] Run checks on pull requests
