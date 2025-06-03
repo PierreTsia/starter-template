@@ -36,7 +36,8 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] Configure JSX support
   - [x] Set up React Router
   - [x] Configure error boundaries
-  - [ ] Set up loading states
+  - [x] Set up loading states / tanstack query
+  - [x] setup tailwind css
   - [ ] Configure toast notifications
 
 - [ ] State Management
@@ -57,9 +58,9 @@ This document outlines the steps and requirements for setting up the frontend ap
 
 - [ ] Styling
 
-  - [ ] Install and configure Tailwind CSS
-  - [ ] Set up shadcn/ui components
-  - [ ] Configure dark/light mode
+  - [x] Install and configure Tailwind CSS
+  - [x] Set up shadcn/ui components (using CLI to copy components individually)
+  - [x] Configure dark/light mode (support both system preference and manual toggle)
   - [ ] Set up responsive design
 
 - [ ] Development Tools

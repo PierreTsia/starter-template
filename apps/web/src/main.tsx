@@ -8,7 +8,9 @@ import { BuggyCounter } from './components/BuggyCounter';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
+import { SettingsPage } from './components/SettingsPage';
 import { TanstackDemo } from './components/TanstackDemo';
+import { ThemeProvider } from './components/ThemeProvider';
 import './index.css';
 
 const queryClient = new QueryClient();
@@ -17,36 +19,31 @@ const About = () => {
   return <h2>About Page</h2>;
 };
 
-const SettingsPage = () => (
-  <div className="max-w-2xl mx-auto py-12 px-4">
-    <h1 className="text-2xl font-bold mb-4">Settings</h1>
-    <p className="text-muted-foreground mb-4">Dark mode toggle coming soon.</p>
-  </div>
-);
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Navbar />
-          <div className="min-h-[calc(100vh-var(--navbar-height))]">
-            <Routes>
-              <Route path="/" element={<App />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/buggy" element={<BuggyCounter />} />
-              <Route
-                path="/tanstack-demo"
-                element={
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <TanstackDemo />
-                  </Suspense>
-                }
-              />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <ThemeProvider>
+          <BrowserRouter>
+            <Navbar />
+            <div className="min-h-[calc(100vh-var(--navbar-height))]">
+              <Routes>
+                <Route path="/" element={<App />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/buggy" element={<BuggyCounter />} />
+                <Route
+                  path="/tanstack-demo"
+                  element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <TanstackDemo />
+                    </Suspense>
+                  }
+                />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   </React.StrictMode>
