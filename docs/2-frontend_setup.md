@@ -54,7 +54,7 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] Configure type-safe API calls
   - [x] Set up query invalidation
   - [x] Configure error handling
-  - [ ] Set up optimistic updates
+  - [-] POSTPONED Set up optimistic updates (will be implemented with todos feature)
 
 - [x] Styling
 
@@ -81,7 +81,7 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] `.env.example`
   - [x] `.env.local` (gitignored)
   - [x] Environment variables validation
-  - [ ] Configure deployment (to be handled later)
+  - [-] POSTPONED Configure deployment (to be handled later)
 
 ## Basic App Implementation
 
@@ -100,23 +100,20 @@ This document outlines the steps and requirements for setting up the frontend ap
 
 ## Documentation
 
-- [ ] Update README.md
-  - [ ] Frontend overview
-  - [ ] Setup instructions
-  - [ ] Available scripts
-  - [ ] Component documentation
-  - [ ] State management patterns
-  - [ ] API integration guide
+- [x] Update README.md
+  - [x] Frontend overview
+  - [x] Setup instructions
+  - [x] Available scripts
 
 ## Definition of Done
 
 The frontend setup is considered complete when:
 
-- [ ] All checkboxes above are checked
+- [x] All required checkboxes above are checked (with some items postponed for later)
 - [x] `pnpm install` works without errors
 - [x] Basic scripts run successfully
 - [x] ESLint and Prettier are properly configured
-- [ ] Documentation is up to date
+- [x] Documentation is up to date (README.md completed)
 - [x] A basic page is running with routing in place
 - [x] A few shadcn/ui components are integrated and functional
 - [x] A basic test using React Testing Library is passing

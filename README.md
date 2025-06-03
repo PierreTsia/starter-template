@@ -56,6 +56,40 @@ Required environment variables are validated at runtime. See `.env.example` for 
 - **Backend**: NestJS, Prisma, PostgreSQL
 - **Tools**: TypeScript, ESLint, Prettier, Husky
 
+## Frontend
+
+The frontend is built with React and Vite, featuring:
+
+- **Authentication**: JWT-based auth with protected routes
+- **State Management**: TanStack Query for server state
+- **UI Components**: shadcn/ui with Tailwind CSS
+- **Type Safety**: Zod for runtime validation
+- **Testing**: Vitest + React Testing Library
+
+### Key Features
+
+- Dark/Light mode support
+- Responsive design
+- Form validation
+- Toast notifications
+- Error boundaries
+
+### Setup Instructions
+
+1. Install dependencies: `pnpm install`
+2. Copy `.env.example` to `.env.local` and adjust values
+3. Start dev server: `pnpm dev`
+
+### Available Scripts
+
+- `pnpm dev` - Start frontend dev server
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build
+- `pnpm test` - Run tests
+- `pnpm test:cov` - Run tests with coverage
+- `pnpm lint` - Run ESLint
+- `pnpm typecheck` - Run TypeScript type checking
+
 ## Contributing
 
 1. Fork the repository
