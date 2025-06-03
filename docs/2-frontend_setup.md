@@ -74,7 +74,6 @@ This document outlines the steps and requirements for setting up the frontend ap
 - [x] Type Safety
   - [x] Set up Zod for form validation
   - [x] Configure type-safe API client
-  - [ ] Set up type generation for API responses
 
 ## Environment Setup
 

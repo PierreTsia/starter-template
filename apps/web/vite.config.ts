@@ -12,4 +12,9 @@ export default defineConfig({
       '@lib': path.resolve(__dirname, './src/lib'),
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.ts',
+  },
 });

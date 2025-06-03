@@ -37,7 +37,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AppToaster />
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
             <Navbar />
             <div className="container min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4">
               <Routes>
