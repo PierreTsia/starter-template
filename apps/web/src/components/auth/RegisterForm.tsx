@@ -16,9 +16,10 @@ import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
 
 interface RegisterFormProps {
   onSubmit: (data: RegisterFormData) => void;
+  isLoading?: boolean;
 }
 
-export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
+export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps) => {
   const {
     register,
     handleSubmit,
@@ -64,8 +65,8 @@ export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Loading...' : 'Register'}
+          <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+            {isSubmitting || isLoading ? 'Loading...' : 'Register'}
           </Button>
         </CardFooter>
       </form>

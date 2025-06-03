@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { mockApi } from '@/api/mockApi';
@@ -7,6 +7,7 @@ import type { LoginFormData, RegisterFormData } from '@/lib/validations/auth';
 export const useAuth = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const loginMutation = useMutation({
@@ -27,6 +28,12 @@ export const useAuth = () => {
     },
   });
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    queryClient.removeQueries({ queryKey: ['me'] });
+    navigate('/login', { replace: true });
+  };
+
   const resetError = () => {
     loginMutation.reset();
     registerMutation.reset();
@@ -35,6 +42,7 @@ export const useAuth = () => {
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
+    logout,
     isLoading: loginMutation.isPending || registerMutation.isPending,
     error: loginMutation.error || registerMutation.error,
     resetError,

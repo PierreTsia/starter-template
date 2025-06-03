@@ -1,21 +1,19 @@
+import { useAuth } from './hooks/useAuth';
+
 import { useMe } from '@/api/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-function App() {
+const App = () => {
   const { data: user, isLoading } = useMe();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    logout();
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
+    return;
   }
 
   return (
@@ -42,6 +40,6 @@ function App() {
       </Card>
     </div>
   );
-}
+};
 
 export default App;

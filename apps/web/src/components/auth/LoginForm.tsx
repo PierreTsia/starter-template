@@ -16,9 +16,10 @@ import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => void;
+  isLoading?: boolean;
 }
 
-export const LoginForm = ({ onSubmit }: LoginFormProps) => {
+export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
   const {
     register,
     handleSubmit,
@@ -47,8 +48,8 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Loading...' : 'Login'}
+          <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+            {isSubmitting || isLoading ? 'Loading...' : 'Login'}
           </Button>
         </CardFooter>
       </form>

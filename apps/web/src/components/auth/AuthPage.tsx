@@ -3,13 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 
+import { useMe } from '@/api/hooks';
 import { useAuth } from '@/hooks/useAuth';
 import type { LoginFormData, RegisterFormData } from '@/lib/validations/auth';
 
-export function AuthPage() {
+export const AuthPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, register, error, resetError } = useAuth();
+  const { login, register, error, resetError, isLoading: isAuthLoading } = useAuth();
+  const { isLoading: isUserLoading } = useMe();
   const isLogin = location.pathname === '/login';
 
   const handleLogin = async (data: LoginFormData) => {
@@ -25,6 +27,8 @@ export function AuthPage() {
     navigate(isLogin ? '/register' : '/login');
   };
 
+  const isLoading = isAuthLoading || isUserLoading;
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="space-y-4">
@@ -34,9 +38,9 @@ export function AuthPage() {
           </div>
         )}
         {isLogin ? (
-          <LoginForm onSubmit={handleLogin} />
+          <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
         ) : (
-          <RegisterForm onSubmit={handleRegister} />
+          <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
         )}
         <p className="text-center text-sm text-gray-500">
           {isLogin ? "Don't have an account? " : 'Already have an account? '}
@@ -51,4 +55,4 @@ export function AuthPage() {
       </div>
     </div>
   );
-}
+};
