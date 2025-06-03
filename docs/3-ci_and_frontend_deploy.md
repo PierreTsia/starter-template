@@ -23,37 +23,37 @@ This document outlines the steps and requirements for setting up continuous inte
 - [x] Set up PR checks
   - [x] Run checks on pull requests
   - [x] Block merges if checks fail
-  - [ ] Add status badges to README
+  - [x] Add status badges to README
 
 ## Vercel Deployment
 
-- [ ] Set up Vercel project
+- [x] Set up Vercel project
 
-  - [ ] Connect GitHub repository
-  - [ ] Configure build settings
-  - [ ] Set up environment variables
+  - [x] Connect GitHub repository
+  - [x] Configure build settings
+  - [x] Set up environment variables
 
-- [ ] Configure deployment settings
+- [x] Configure deployment settings
 
-  - [ ] Set up preview deployments
-  - [ ] Configure production branch
-  - [ ] Set up automatic deployments
+  - [x] Set up preview deployments
+  - [x] Configure production branch
+  - [x] Set up automatic deployments
 
-- [ ] Environment configuration
-  - [ ] Set up production environment variables
-  - [ ] Configure preview environment variables
-  - [ ] Set up secrets management
+- [x] Environment configuration
+  - [x] Set up production environment variables
+  - [x] Configure preview environment variables
+  - [x] Set up secrets management
 
 ## Definition of Done
 
 The CI and deployment setup is considered complete when:
 
-- [ ] All checkboxes above are checked
-- [ ] GitHub Actions run successfully on PRs
-- [ ] Vercel deployments work for both preview and production
-- [ ] Environment variables are properly configured
-- [ ] Status badges are visible in README
-- [ ] PR checks block merges when tests fail
+- [x] All checkboxes above are checked
+- [x] GitHub Actions run successfully on PRs
+- [x] Vercel deployments work for both preview and production
+- [x] Environment variables are properly configured
+- [x] Status badges are visible in README
+- [x] PR checks block merges when tests fail
 
 ## Next Steps
 
