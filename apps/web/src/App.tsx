@@ -1,17 +1,47 @@
+import { useMe } from '@/api/hooks';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const App = () => {
+function App() {
+  const { data: user, isLoading } = useMe();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="max-w-2xl mx-auto py-12 px-4">
-        <h1 className="text-3xl font-bold mb-4">Welcome to MyApp</h1>
-        <p className="mb-6 text-muted-foreground">
-          This is your shiny new home page. Start building something awesome.
-        </p>
-        <Button>Click me</Button>
-      </main>
+    <div className="container py-8">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Welcome, {user?.name}!</CardTitle>
+          <Button variant="outline" onClick={handleLogout}>
+            Logout
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
+              <p>{user?.email}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground">Member Since</h3>
+              <p>{new Date(user?.createdAt || '').toLocaleDateString()}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}
 
 export default App;

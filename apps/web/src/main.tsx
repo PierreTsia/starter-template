@@ -13,9 +13,18 @@ import App from '@/App';
 import { AppToaster } from '@/components/AppToaster';
 import { Navbar } from '@/components/Navbar';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { AuthPage } from '@/components/auth/AuthPage';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import './index.css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AboutPage = () => {
   return <h2>About Page</h2>;
@@ -31,16 +40,48 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Navbar />
             <div className="container min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4">
               <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/buggy" element={<BuggyCounter />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <App />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/login" element={<AuthPage />} />
+                <Route path="/register" element={<AuthPage />} />
+                <Route
+                  path="/about"
+                  element={
+                    <ProtectedRoute>
+                      <AboutPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <SettingsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/buggy"
+                  element={
+                    <ProtectedRoute>
+                      <BuggyCounter />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/tanstack-demo"
                   element={
-                    <Suspense fallback={<LoadingSpinner />}>
-                      <TanstackDemo />
-                    </Suspense>
+                    <ProtectedRoute>
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <TanstackDemo />
+                      </Suspense>
+                    </ProtectedRoute>
                   }
                 />
               </Routes>

@@ -38,7 +38,7 @@ This document outlines the steps and requirements for setting up the frontend ap
   - [x] Configure error boundaries
   - [x] Set up loading states / tanstack query
   - [x] setup tailwind css
-  - [ ] Configure toast notifications
+  - [x] Configure toast notifications
 
 - [ ] State Management
 
