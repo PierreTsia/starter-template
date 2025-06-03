@@ -41,7 +41,7 @@ jobs:
         run: pnpm install
 
       - name: Type check
-        run: pnpm typecheck
+        run: pnpm --filter @starter/web typecheck
 
       - name: Lint
         run: pnpm lint
