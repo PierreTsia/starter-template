@@ -12,6 +12,7 @@ import { TanstackDemo } from './components/TanstackDemo';
 import App from '@/App';
 import { AppToaster } from '@/components/AppToaster';
 import { Navbar } from '@/components/Navbar';
+import NotFoundPage from '@/components/NotFoundPage';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthPage } from '@/components/auth/AuthPage';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -84,6 +85,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     </ProtectedRoute>
                   }
                 />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </div>
           </BrowserRouter>

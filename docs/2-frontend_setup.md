@@ -89,7 +89,7 @@ This document outlines the steps and requirements for setting up the frontend ap
 - [x] Create a basic page with routing in place
   - [x] Set up protected routes
   - [x] Configure route guards
-  - [ ] Set up 404 page
+  - [x] Set up 404 page
 - [x] Integrate a few shadcn/ui components
   - [x] Set up button component
   - [x] Set up form components
