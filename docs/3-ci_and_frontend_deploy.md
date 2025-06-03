@@ -20,9 +20,9 @@ This document outlines the steps and requirements for setting up continuous inte
   - [x] Run Vitest tests
   - [x] Configure test coverage reporting
 
-- [ ] Set up PR checks
-  - [ ] Run checks on pull requests
-  - [ ] Block merges if checks fail
+- [x] Set up PR checks
+  - [x] Run checks on pull requests
+  - [x] Block merges if checks fail
   - [ ] Add status badges to README
 
 ## Vercel Deployment

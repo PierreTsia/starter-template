@@ -1,5 +1,7 @@
 # Full Stack Starter Template
 
+![codecov](https://codecov.io/gh/PierreTsia/starter-template/branch/main/graph/badge.svg)](https://codecov.io/gh/PierreTsia/starter-template)
+
 A production-ready monorepo template for full-stack TypeScript applications. Built with React, NestJS, and PostgreSQL.
 
 ## Quick Start
