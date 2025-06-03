@@ -9,6 +9,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { AppToaster } from '@/components/AppToaster';
 import { Navbar } from '@/components/Navbar';
 import { ThemeProvider } from '@/components/ThemeProvider';
+
 import './index.css';
 
 const queryClient = new QueryClient({

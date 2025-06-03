@@ -67,7 +67,7 @@ This document outlines the steps and requirements for setting up the frontend ap
 
   - [x] Configure ESLint and Prettier
   - [x] add a typecheck command
-  - [ ] Set up testing with Vitest and React Testing Library
+  - [x] Set up testing with Vitest and React Testing Library
   - [x] Configure hot reload
   - [x] Set up debugging tools (React Query Devtools)
 
@@ -77,11 +77,11 @@ This document outlines the steps and requirements for setting up the frontend ap
 
 ## Environment Setup
 
-- [ ] Create environment files
-  - [ ] `.env.example`
-  - [ ] `.env.local` (gitignored)
-  - [ ] Environment variables validation
-  - [ ] Configure Vercel deployment
+- [x] Create environment files
+  - [x] `.env.example`
+  - [x] `.env.local` (gitignored)
+  - [x] Environment variables validation
+  - [ ] Configure deployment (to be handled later)
 
 ## Basic App Implementation
 
