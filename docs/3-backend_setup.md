@@ -17,14 +17,14 @@ This document outlines the steps and requirements for setting up the backend app
 
 ## Configuration
 
-- [ ] Initialize NestJS project
+- [x] Initialize NestJS project
 
-  - [ ] Create `nest-cli.json`
-  - [ ] Configure TypeScript
-  - [ ] Set up path aliases
-  - [ ] Configure build settings
-  - [ ] Set up development settings
-  - [ ] Configure source maps
+  - [x] Create `nest-cli.json`
+  - [x] Configure TypeScript
+  - [x] Set up path aliases
+  - [x] Configure build settings
+  - [x] Set up development settings
+  - [x] Configure source maps
 
 - [ ] Set up Database
 
@@ -50,11 +50,11 @@ This document outlines the steps and requirements for setting up the backend app
   - [ ] Set up validation pipes
   - [ ] Configure CORS
 
-- [ ] Development Tools
-  - [ ] Configure ESLint and Prettier
-  - [ ] Set up testing with Jest
-  - [ ] Configure hot reload
-  - [ ] Set up debugging tools
+- [x] Development Tools
+  - [z] Configure ESLint and Prettier
+  - [z] Set up testing with Jest
+  - [z] Configure hot reload
+  - [z] Set up debugging tools
 
 ## Environment Setup
 
@@ -66,7 +66,7 @@ This document outlines the steps and requirements for setting up the backend app
 
 ## Basic API Implementation
 
-- [ ] Create basic endpoints
+- [x] Create basic endpoints
   - [ ] Public GET endpoint
   - [ ] Login endpoint
   - [ ] Register endpoint
