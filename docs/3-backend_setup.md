@@ -6,14 +6,14 @@ This document outlines the steps and requirements for setting up the backend app
 
 ## Directory Structure
 
-- [ ] Create backend directory structure
-  - [ ] `apps/api/` for the NestJS application
-  - [ ] `apps/api/src/` for source code
-  - [ ] `apps/api/src/auth/` for authentication module
-  - [ ] `apps/api/src/users/` for user management
-  - [ ] `apps/api/src/common/` for shared code
-  - [ ] `apps/api/prisma/` for database schema and migrations
-  - [ ] `apps/api/test/` for test files
+- [x] Create backend directory structure
+  - [x] `apps/api/` for the NestJS application
+  - [x] `apps/api/src/` for source code
+  - [x] `apps/api/src/auth/` for authentication module
+  - [x] `apps/api/src/users/` for user management
+  - [x] `apps/api/src/common/` for shared code
+  - [x] `apps/api/prisma/` for database schema and migrations
+  - [x] `apps/api/test/` for test files
 
 ## Configuration
 
@@ -26,12 +26,12 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] Set up development settings
   - [x] Configure source maps
 
-- [ ] Set up Database
+- [x] Set up Database
 
-  - [ ] Install and configure Prisma
-  - [ ] Set up PostgreSQL connection
-  - [ ] Create initial schema
-  - [ ] Set up migrations
+  - [x] Install and configure Prisma
+  - [x] Set up PostgreSQL connection
+  - [x] Create initial schema
+  - [x] Set up migrations
   - [ ] Configure database seeding
 
 - [ ] Authentication Setup
@@ -42,39 +42,45 @@ This document outlines the steps and requirements for setting up the backend app
   - [ ] Create auth guards
   - [ ] Implement login/register endpoints
 
-- [ ] API Structure
+- [x] API Structure
 
-  - [ ] Set up controllers
-  - [ ] Create DTOs
-  - [ ] Implement services
-  - [ ] Set up validation pipes
-  - [ ] Configure CORS
+  - [x] Set up controllers
+  - [x] Create DTOs
+  - [x] Implement services
+  - [x] Set up validation pipes
+  - [x] Configure CORS
 
 - [x] Development Tools
-  - [z] Configure ESLint and Prettier
-  - [z] Set up testing with Jest
-  - [z] Configure hot reload
-  - [z] Set up debugging tools
+  - [x] Configure ESLint and Prettier
+  - [x] Set up testing with Jest
+  - [x] Configure hot reload
+  - [x] Set up debugging tools
 
 ## Environment Setup
 
-- [ ] Create environment files
-  - [ ] `.env.example`
-  - [ ] `.env.local` (gitignored)
-  - [ ] Environment variables validation
+- [x] Create environment files
+  - [x] `.env.example`
+  - [x] `.env.local` (gitignored)
+  - [x] Environment variables validation
   - [ ] Configure deployment settings
 
 ## Basic API Implementation
 
 - [x] Create basic endpoints
-  - [ ] Public GET endpoint
+  - [x] Public GET endpoint
+  - [x] User CRUD endpoints
+    - [x] GET /api/v1/users (list users)
+    - [x] GET /api/v1/users/:id (get user by id)
+    - [x] POST /api/v1/users (create user)
+    - [x] PATCH /api/v1/users/:id (update user)
+    - [x] DELETE /api/v1/users/:id (delete user)
   - [ ] Login endpoint
   - [ ] Register endpoint
   - [ ] WhoAmI endpoint (protected)
-- [ ] Set up error handling
-  - [ ] Global exception filter
-  - [ ] Validation pipe
-  - [ ] Custom exceptions
+- [x] Set up error handling
+  - [x] Global exception filter
+  - [x] Validation pipe
+  - [x] Custom exceptions
 - [ ] Write basic tests
   - [ ] Test endpoint responses
   - [ ] Test authentication
@@ -93,13 +99,13 @@ This document outlines the steps and requirements for setting up the backend app
 The backend setup is considered complete when:
 
 - [ ] All required checkboxes above are checked
-- [ ] `pnpm install` works without errors
-- [ ] Basic scripts run successfully
-- [ ] ESLint and Prettier are properly configured
+- [x] `pnpm install` works without errors
+- [x] Basic scripts run successfully
+- [x] ESLint and Prettier are properly configured
 - [ ] Documentation is up to date
-- [ ] Basic endpoints are working
+- [x] Basic endpoints are working
 - [ ] Authentication flow is functional
-- [ ] Database migrations work
+- [x] Database migrations work
 - [ ] Tests are passing
 - [ ] Build process works for all environments
 
