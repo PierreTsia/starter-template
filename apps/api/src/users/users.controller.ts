@@ -12,6 +12,7 @@ import {
 
 import { User } from '../../generated/prisma';
 
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -30,8 +31,8 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() data: { email: string; password: string; name?: string }): Promise<User> {
-    return this.usersService.create(data);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createUserDto);
   }
 
   @Put(':id')

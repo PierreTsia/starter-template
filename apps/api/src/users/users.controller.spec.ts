@@ -1,11 +1,17 @@
+import { ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Express } from 'express';
+import * as request from 'supertest';
 
 import { User } from '../../generated/prisma';
 
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 describe('UsersController', () => {
+  let app: INestApplication<Express>;
   let controller: UsersController;
 
   const mockUsersService = {
@@ -27,10 +33,24 @@ describe('UsersController', () => {
       ],
     }).compile();
 
+    app = module.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      })
+    );
+    await app.init();
+
     controller = module.get<UsersController>(UsersController);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await app.close();
     jest.clearAllMocks();
   });
 
@@ -45,7 +65,7 @@ describe('UsersController', () => {
           id: '1',
           email: 'test@test.com',
           name: 'Test User',
-          password: 'hashed',
+          password: 'Test123!@#',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -64,7 +84,7 @@ describe('UsersController', () => {
         id: '1',
         email: 'test@test.com',
         name: 'Test User',
-        password: 'hashed',
+        password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -78,14 +98,16 @@ describe('UsersController', () => {
 
   describe('create', () => {
     it('should create a new user', async () => {
-      const createUserDto = {
+      const createUserDto: CreateUserDto = {
         email: 'new@test.com',
-        password: 'password123',
+        password: 'Test123!@#',
         name: 'New User',
       };
       const mockUser: User = {
         id: '1',
-        ...createUserDto,
+        email: createUserDto.email,
+        name: createUserDto.name || null,
+        password: createUserDto.password,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -94,6 +116,19 @@ describe('UsersController', () => {
       const result = await controller.create(createUserDto);
       expect(result).toEqual(mockUser);
       expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
+    });
+
+    it('should throw BadRequestException for invalid password', async () => {
+      const invalidUserDto = {
+        email: 'new@test.com',
+        password: 'weak',
+        name: 'New User',
+      };
+
+      await request(app.getHttpServer()).post('/users').send(invalidUserDto).expect(400);
+
+      // Verify the service is not called
+      expect(mockUsersService.create).not.toHaveBeenCalled();
     });
   });
 
@@ -104,7 +139,7 @@ describe('UsersController', () => {
         id: '1',
         email: 'test@test.com',
         name: 'Updated Name',
-        password: 'hashed',
+        password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -122,7 +157,7 @@ describe('UsersController', () => {
         id: '1',
         email: 'test@test.com',
         name: 'Test User',
-        password: 'hashed',
+        password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
       };

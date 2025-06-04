@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -89,14 +90,16 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create a new user', async () => {
-      const createUserDto = {
+      const createUserDto: CreateUserDto = {
         email: 'new@test.com',
-        password: 'password123',
+        password: 'Test123!@#', // Valid password meeting all requirements
         name: 'New User',
       };
       const mockUser: User = {
         id: '1',
-        ...createUserDto,
+        email: createUserDto.email,
+        name: createUserDto.name || null,
+        password: createUserDto.password,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
