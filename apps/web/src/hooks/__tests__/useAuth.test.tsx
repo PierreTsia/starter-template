@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useAuth } from '../useAuth';
 
-import { mockApi } from '@/api/mockApi';
+import { authApi } from '@/api/authApi';
 
 // Mock react-router-dom hooks
 vi.mock('react-router-dom', async () => {
@@ -19,12 +19,11 @@ vi.mock('react-router-dom', async () => {
 });
 
 // Mock the mockApi
-vi.mock('@/api/mockApi', () => ({
-  mockApi: {
-    auth: {
-      login: vi.fn(),
-      register: vi.fn(),
-    },
+vi.mock('@/api/authApi', () => ({
+  authApi: {
+    login: vi.fn(),
+    register: vi.fn(),
+    me: vi.fn(),
   },
 }));
 
@@ -77,7 +76,7 @@ describe('useAuth', () => {
       };
       const mockToken = 'mock-jwt-token';
 
-      vi.mocked(mockApi.auth.login).mockResolvedValueOnce({
+      vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
         token: mockToken,
       });
@@ -95,7 +94,7 @@ describe('useAuth', () => {
         )
       );
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'Password123!',
       });
@@ -105,7 +104,7 @@ describe('useAuth', () => {
 
     it('handles login error', async () => {
       const error = new Error('Invalid credentials');
-      vi.mocked(mockApi.auth.login).mockRejectedValueOnce(error);
+      vi.mocked(authApi.login).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useAuth(), {
         wrapper: createWrapper(),
@@ -124,7 +123,7 @@ describe('useAuth', () => {
         expect(result.current.error).toBe(error);
       });
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'wrong-password',
       });
@@ -143,7 +142,7 @@ describe('useAuth', () => {
       };
       const mockToken = 'mock-jwt-token';
 
-      vi.mocked(mockApi.auth.register).mockResolvedValueOnce({
+      vi.mocked(authApi.register).mockResolvedValueOnce({
         user: mockUser,
         token: mockToken,
       });
@@ -158,16 +157,14 @@ describe('useAuth', () => {
             name: 'New User',
             email: 'new@example.com',
             password: 'Password123!',
-            confirmPassword: 'Password123!',
           })
         )
       );
 
-      expect(mockApi.auth.register).toHaveBeenCalledWith({
+      expect(authApi.register).toHaveBeenCalledWith({
         name: 'New User',
         email: 'new@example.com',
         password: 'Password123!',
-        confirmPassword: 'Password123!',
       });
       expect(localStorageMock.setItem).toHaveBeenCalledWith('token', mockToken);
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard', { replace: true });
@@ -175,7 +172,7 @@ describe('useAuth', () => {
 
     it('handles registration error', async () => {
       const error = new Error('Email already exists');
-      vi.mocked(mockApi.auth.register).mockRejectedValueOnce(error);
+      vi.mocked(authApi.register).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useAuth(), {
         wrapper: createWrapper(),
@@ -187,7 +184,6 @@ describe('useAuth', () => {
             name: 'Test User',
             email: 'test@example.com',
             password: 'Password123!',
-            confirmPassword: 'Password123!',
           })
         )
       );
@@ -196,11 +192,10 @@ describe('useAuth', () => {
         expect(result.current.error).toBe(error);
       });
 
-      expect(mockApi.auth.register).toHaveBeenCalledWith({
+      expect(authApi.register).toHaveBeenCalledWith({
         name: 'Test User',
         email: 'test@example.com',
         password: 'Password123!',
-        confirmPassword: 'Password123!',
       });
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();

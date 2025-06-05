@@ -19,7 +19,8 @@ export const AuthPage = () => {
   };
 
   const handleRegister = async (data: RegisterFormData) => {
-    register(data);
+    const { confirmPassword: _, ...rest } = data;
+    register(rest);
   };
 
   const switchForm = () => {

@@ -2,17 +2,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { authApi } from '../authApi';
 import { useLogin, useMe } from '../hooks';
-import { mockApi } from '../mockApi';
 
 // Mock the mockApi
-vi.mock('../mockApi', () => ({
-  mockApi: {
-    auth: {
-      login: vi.fn(),
-      register: vi.fn(),
-      me: vi.fn(),
-    },
+vi.mock('../authApi', () => ({
+  authApi: {
+    login: vi.fn(),
+    register: vi.fn(),
+    me: vi.fn(),
   },
 }));
 
@@ -65,7 +63,7 @@ describe('API Hooks', () => {
       };
       const mockToken = 'mock-jwt-token';
 
-      vi.mocked(mockApi.auth.login).mockResolvedValueOnce({
+      vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
         token: mockToken,
       });
@@ -81,7 +79,7 @@ describe('API Hooks', () => {
         });
       });
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123',
       });
@@ -90,7 +88,7 @@ describe('API Hooks', () => {
 
     it('handles login error', async () => {
       const error = new Error('Invalid credentials');
-      vi.mocked(mockApi.auth.login).mockRejectedValueOnce(error);
+      vi.mocked(authApi.login).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useLogin(), {
         wrapper: createWrapper(),
@@ -104,10 +102,11 @@ describe('API Hooks', () => {
           });
         } catch (e) {
           // Expected error
+          expect(e).toBe(error);
         }
       });
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'wrong-password',
       });
@@ -125,7 +124,7 @@ describe('API Hooks', () => {
       };
 
       localStorageMock.getItem.mockReturnValueOnce('mock-jwt-token');
-      vi.mocked(mockApi.auth.me).mockResolvedValueOnce(mockUser);
+      vi.mocked(authApi.me).mockResolvedValueOnce(mockUser);
 
       const { result } = renderHook(() => useMe(), {
         wrapper: createWrapper(),
@@ -136,7 +135,7 @@ describe('API Hooks', () => {
         expect(result.current.data).toEqual(mockUser);
       });
 
-      expect(mockApi.auth.me).toHaveBeenCalledWith('mock-jwt-token');
+      expect(authApi.me).toHaveBeenCalled();
     });
 
     it('does not fetch when no token exists', async () => {
@@ -151,7 +150,7 @@ describe('API Hooks', () => {
         expect(result.current.data).toBeUndefined();
       });
 
-      expect(mockApi.auth.me).not.toHaveBeenCalled();
+      expect(authApi.me).not.toHaveBeenCalled();
     });
   });
 });

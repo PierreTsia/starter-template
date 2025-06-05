@@ -98,7 +98,6 @@ describe('AuthPage', () => {
         name: 'Test User',
         email: 'test@example.com',
         password: 'Test123!',
-        confirmPassword: 'Test123!',
       });
     });
   });

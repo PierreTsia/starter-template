@@ -7,7 +7,7 @@ import { UsersService } from '../users/users.service';
 interface User {
   id: string;
   email: string;
-  name?: string;
+  name?: string | null;
 }
 
 interface ILoginDto {
@@ -31,7 +31,6 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password: _, ...result } = user;
       return result as User;
     }
@@ -57,8 +56,16 @@ export class AuthService {
       name,
       password: hashedPassword,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { password: _, ...result } = user;
-    return result;
+    const token = await this.generateJwt(result);
+    return {
+      user: result,
+      token,
+    };
+  }
+
+  async generateJwt(user: User) {
+    return this.jwtService.signAsync({ sub: user.id, email: user.email });
   }
 }

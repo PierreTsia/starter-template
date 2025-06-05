@@ -9,7 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'http://localhost:5173', // local dev
+      'https://starter-template-api.onrender.com', // production FE
+    ],
+    credentials: true, // allow cookies/auth headers
+  });
 
   // Set global prefix for all routes
   app.setGlobalPrefix('api/v1');

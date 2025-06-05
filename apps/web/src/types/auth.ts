@@ -8,3 +8,5 @@ export type LoginInput = z.infer<typeof LoginSchema>;
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export type RegisterDto = Omit<RegisterFormData, 'confirmPassword'>;

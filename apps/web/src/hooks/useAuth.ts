@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { mockApi } from '@/api/mockApi';
-import type { LoginFormData, RegisterFormData } from '@/types/auth';
+import { authApi } from '@/api/authApi';
+import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export const useAuth = () => {
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const loginMutation = useMutation({
-    mutationFn: (data: LoginFormData) => mockApi.auth.login(data),
+    mutationFn: (data: LoginFormData) => authApi.login(data),
     onSuccess: (data) => {
       // TODO: Store token in secure storage
       localStorage.setItem('token', data.token);
@@ -20,7 +20,7 @@ export const useAuth = () => {
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: RegisterFormData) => mockApi.auth.register(data),
+    mutationFn: (data: RegisterDto) => authApi.register(data),
     onSuccess: (data) => {
       // TODO: Store token in secure storage
       localStorage.setItem('token', data.token);
