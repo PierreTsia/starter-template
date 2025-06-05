@@ -15,17 +15,27 @@ interface UpdateUserData {
   name?: string;
 }
 
+const userSelect = {
+  id: true,
+  email: true,
+  name: true,
+  createdAt: true,
+  updatedAt: true,
+};
+type SafeUser = Omit<User, 'password'>;
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async findAll(): Promise<SafeUser[]> {
+    return this.prisma.user.findMany({ select: userSelect });
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<SafeUser> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      select: userSelect,
     });
 
     if (!user) {
@@ -35,33 +45,37 @@ export class UsersService {
     return user;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<SafeUser | null> {
+    // For login, you may need the password, so do not use select here
     return this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  async create(data: CreateUserData): Promise<User> {
+  async create(data: CreateUserData): Promise<SafeUser> {
     return this.prisma.user.create({
       data,
+      select: userSelect,
     });
   }
 
-  async update(id: string, data: UpdateUserData): Promise<User> {
+  async update(id: string, data: UpdateUserData): Promise<SafeUser> {
     try {
       return await this.prisma.user.update({
         where: { id },
         data,
+        select: userSelect,
       });
     } catch {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
 
-  async delete(id: string): Promise<User> {
+  async delete(id: string): Promise<SafeUser> {
     try {
       return await this.prisma.user.delete({
         where: { id },
+        select: userSelect,
       });
     } catch {
       throw new NotFoundException(`User with ID ${id} not found`);
