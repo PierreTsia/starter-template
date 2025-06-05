@@ -11,6 +11,7 @@ vi.mock('../authApi', () => ({
     login: vi.fn(),
     register: vi.fn(),
     me: vi.fn(),
+    logout: vi.fn(),
   },
 }));
 
@@ -61,11 +62,9 @@ describe('API Hooks', () => {
         name: 'Test User',
         createdAt: new Date().toISOString(),
       };
-      const mockToken = 'mock-jwt-token';
 
       vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
-        token: mockToken,
       });
 
       const { result } = renderHook(() => useLogin(), {
@@ -83,7 +82,6 @@ describe('API Hooks', () => {
         email: 'test@example.com',
         password: 'password123',
       });
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('token', mockToken);
     });
 
     it('handles login error', async () => {
@@ -110,7 +108,6 @@ describe('API Hooks', () => {
         email: 'test@example.com',
         password: 'wrong-password',
       });
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
   });
 

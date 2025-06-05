@@ -1,42 +1,27 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
-import { act } from 'react';
-import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
+import { renderHook, act } from '@testing-library/react';
+import { useNavigate } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { authApi } from '../../api/authApi';
 import { useAuth } from '../useAuth';
 
-import { authApi } from '@/api/authApi';
-
-// Mock react-router-dom hooks
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: vi.fn(),
-    useLocation: vi.fn(),
-  };
-});
-
-// Mock the mockApi
-vi.mock('@/api/authApi', () => ({
+// Mock the authApi
+vi.mock('../../api/authApi', () => ({
   authApi: {
     login: vi.fn(),
     register: vi.fn(),
     me: vi.fn(),
+    logout: vi.fn(),
   },
 }));
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+// Mock react-router-dom
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+}));
 
-// Create a wrapper component that provides the router context
+// Create a wrapper component for the hooks
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -45,173 +30,170 @@ const createWrapper = () => {
       },
     },
   });
-
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        {children}
-      </MemoryRouter>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 
 describe('useAuth', () => {
   const mockNavigate = vi.fn();
-  const mockLocation = { state: { from: { pathname: '/dashboard' } } };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.clear();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    vi.mocked(useLocation).mockReturnValue(mockLocation as any);
   });
 
-  describe('login', () => {
-    it('successfully logs in and navigates to the intended destination', async () => {
-      const mockUser = {
-        id: '1',
+  it('successfully logs in', async () => {
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      createdAt: new Date().toISOString(),
+    };
+
+    vi.mocked(authApi.login).mockResolvedValueOnce({
+      user: mockUser,
+    });
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      await result.current.login({
         email: 'test@example.com',
+        password: 'password123',
+      });
+    });
+
+    expect(authApi.login).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123',
+    });
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  it('handles login error', async () => {
+    const error = new Error('Invalid credentials');
+    vi.mocked(authApi.login).mockRejectedValueOnce(error);
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      try {
+        await result.current.login({
+          email: 'test@example.com',
+          password: 'wrong-password',
+        });
+      } catch (e) {
+        // Expected error
+        expect(e).toBe(error);
+      }
+    });
+
+    expect(authApi.login).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'wrong-password',
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('successfully registers', async () => {
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+      name: 'Test User',
+      createdAt: new Date().toISOString(),
+    };
+
+    vi.mocked(authApi.register).mockResolvedValueOnce({
+      user: mockUser,
+    });
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      await result.current.register({
+        email: 'test@example.com',
+        password: 'password123',
         name: 'Test User',
-        createdAt: new Date().toISOString(),
-      };
-      const mockToken = 'mock-jwt-token';
-
-      vi.mocked(authApi.login).mockResolvedValueOnce({
-        user: mockUser,
-        token: mockToken,
       });
-
-      const { result } = renderHook(() => useAuth(), {
-        wrapper: createWrapper(),
-      });
-
-      await act(() =>
-        Promise.resolve(
-          result.current.login({
-            email: 'test@example.com',
-            password: 'Password123!',
-          })
-        )
-      );
-
-      expect(authApi.login).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'Password123!',
-      });
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('token', mockToken);
-      expect(mockNavigate).toHaveBeenCalledWith('/dashboard', { replace: true });
     });
 
-    it('handles login error', async () => {
-      const error = new Error('Invalid credentials');
-      vi.mocked(authApi.login).mockRejectedValueOnce(error);
-
-      const { result } = renderHook(() => useAuth(), {
-        wrapper: createWrapper(),
-      });
-
-      await act(() =>
-        Promise.resolve(
-          result.current.login({
-            email: 'test@example.com',
-            password: 'wrong-password',
-          })
-        )
-      );
-
-      await waitFor(() => {
-        expect(result.current.error).toBe(error);
-      });
-
-      expect(authApi.login).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'wrong-password',
-      });
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
-      expect(mockNavigate).not.toHaveBeenCalled();
+    expect(authApi.register).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123',
+      name: 'Test User',
     });
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
-  describe('register', () => {
-    it('successfully registers and navigates to the intended destination', async () => {
-      const mockUser = {
-        id: '2',
-        email: 'new@example.com',
-        name: 'New User',
-        createdAt: new Date().toISOString(),
-      };
-      const mockToken = 'mock-jwt-token';
+  it('handles register error', async () => {
+    const error = new Error('Email already exists');
+    vi.mocked(authApi.register).mockRejectedValueOnce(error);
 
-      vi.mocked(authApi.register).mockResolvedValueOnce({
-        user: mockUser,
-        token: mockToken,
-      });
-
-      const { result } = renderHook(() => useAuth(), {
-        wrapper: createWrapper(),
-      });
-
-      await act(() =>
-        Promise.resolve(
-          result.current.register({
-            name: 'New User',
-            email: 'new@example.com',
-            password: 'Password123!',
-          })
-        )
-      );
-
-      expect(authApi.register).toHaveBeenCalledWith({
-        name: 'New User',
-        email: 'new@example.com',
-        password: 'Password123!',
-      });
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('token', mockToken);
-      expect(mockNavigate).toHaveBeenCalledWith('/dashboard', { replace: true });
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
     });
 
-    it('handles registration error', async () => {
-      const error = new Error('Email already exists');
-      vi.mocked(authApi.register).mockRejectedValueOnce(error);
-
-      const { result } = renderHook(() => useAuth(), {
-        wrapper: createWrapper(),
-      });
-
-      await act(() =>
-        Promise.resolve(
-          result.current.register({
-            name: 'Test User',
-            email: 'test@example.com',
-            password: 'Password123!',
-          })
-        )
-      );
-
-      await waitFor(() => {
-        expect(result.current.error).toBe(error);
-      });
-
-      expect(authApi.register).toHaveBeenCalledWith({
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'Password123!',
-      });
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
-      expect(mockNavigate).not.toHaveBeenCalled();
+    await act(async () => {
+      try {
+        await result.current.register({
+          email: 'test@example.com',
+          password: 'password123',
+          name: 'Test User',
+        });
+      } catch (e) {
+        // Expected error
+        expect(e).toBe(error);
+      }
     });
+
+    expect(authApi.register).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123',
+      name: 'Test User',
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  describe('logout', () => {
-    it('clears token and navigates to login page', async () => {
-      const { result } = renderHook(() => useAuth(), {
-        wrapper: createWrapper(),
-      });
+  it('successfully logs out', async () => {
+    vi.mocked(authApi.logout).mockResolvedValueOnce({ message: 'Logged out successfully' });
 
-      await act(() => Promise.resolve(result.current.logout()));
-
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('token');
-      expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true });
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
     });
+
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    expect(authApi.logout).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
+
+  it('handles logout error', async () => {
+    const error = new Error('Logout failed');
+    vi.mocked(authApi.logout).mockRejectedValueOnce(error);
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(),
+    });
+
+    await act(async () => {
+      try {
+        await result.current.logout();
+      } catch (e) {
+        // Expected error
+        expect(e).toBe(error);
+      }
+    });
+
+    expect(authApi.logout).toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

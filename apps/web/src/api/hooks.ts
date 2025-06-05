@@ -9,8 +9,7 @@ const FIVE_MINUTES = 1000 * 60 * 5;
 export const useLogin = () => {
   return useMutation({
     mutationFn: authApi.login,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    onSuccess: () => {
       toast.success('Successfully logged in!');
     },
     onError: (error) => {
@@ -22,8 +21,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: authApi.register,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    onSuccess: () => {
       toast.success('Successfully registered!');
     },
     onError: (error) => {
@@ -33,11 +31,9 @@ export const useRegister = () => {
 };
 
 export const useMe = () => {
-  const token = localStorage.getItem('token');
   return useQuery({
     queryKey: ['me'],
     queryFn: () => authApi.me(),
-    enabled: !!token,
     staleTime: FIVE_MINUTES,
     gcTime: ONE_HOUR,
   });

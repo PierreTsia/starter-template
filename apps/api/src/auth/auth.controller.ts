@@ -20,8 +20,9 @@ export class AuthController {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: 'lax',
       maxAge: COOKIE_MAX_AGE,
+      path: '/',
     });
 
     return { user };
@@ -36,10 +37,25 @@ export class AuthController {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: 'lax',
       maxAge: COOKIE_MAX_AGE,
+      path: '/',
     });
 
     return { user };
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  logout(@Res({ passthrough: true }) res: Response) {
+    // Clear the auth cookie
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return { message: 'Logged out successfully' };
   }
 }

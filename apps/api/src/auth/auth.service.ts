@@ -44,7 +44,7 @@ export class AuthService {
     const token = await this.generateJwt(user);
     return {
       user,
-      token, // We'll still return this for now, but it will be removed when we implement cookies
+      token, // This will be used by the controller to set the cookie
     };
   }
 
@@ -59,7 +59,7 @@ export class AuthService {
     const token = await this.generateJwt(user);
     return {
       user,
-      token, // We'll still return this for now, but it will be removed when we implement cookies
+      token, // This will be used by the controller to set the cookie
     };
   }
 
