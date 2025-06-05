@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { authApi } from './authApi';
+import { authApi } from '@/api/resources/auth/api';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const FIVE_MINUTES = 1000 * 60 * 5;

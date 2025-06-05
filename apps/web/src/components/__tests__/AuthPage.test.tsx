@@ -1,16 +1,27 @@
+import './__mocks__/auth';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { useAuth } from '@/hooks/useAuth';
+import { mockUseMe, mockUseAuth } from './__mocks__/auth';
+
 import { TestApp } from '@/test-utils';
 
-vi.mock('@/hooks/useAuth', () => ({
-  useAuth: vi.fn(),
-}));
-
 describe('AuthPage', () => {
+  beforeEach(() => {
+    mockUseMe.mockReset();
+    mockUseMe.mockReturnValue({
+      promise: Promise.resolve({
+        id: '1',
+        email: 'test@example.com',
+        name: 'Test User',
+        createdAt: new Date().toISOString(),
+      }),
+    });
+    mockUseAuth.mockReset();
+  });
+
   it('allows user to switch between login and register forms', async () => {
-    vi.mocked(useAuth).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       login: vi.fn(),
       register: vi.fn(),
       logout: vi.fn(),
@@ -34,7 +45,7 @@ describe('AuthPage', () => {
 
   it('handles login form submission', async () => {
     const mockLogin = vi.fn();
-    vi.mocked(useAuth).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       login: mockLogin,
       register: vi.fn(),
       logout: vi.fn(),
@@ -67,7 +78,7 @@ describe('AuthPage', () => {
 
   it('handles register form submission', async () => {
     const mockRegister = vi.fn();
-    vi.mocked(useAuth).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       login: vi.fn(),
       register: mockRegister,
       logout: vi.fn(),
@@ -102,7 +113,7 @@ describe('AuthPage', () => {
 
   it('displays error message when login fails', async () => {
     const error = new Error('Invalid credentials');
-    vi.mocked(useAuth).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       login: vi.fn(),
       register: vi.fn(),
       logout: vi.fn(),
@@ -118,7 +129,7 @@ describe('AuthPage', () => {
 
   describe('password validation', () => {
     beforeEach(() => {
-      vi.mocked(useAuth).mockReturnValue({
+      mockUseAuth.mockReturnValue({
         login: vi.fn(),
         register: vi.fn(),
         logout: vi.fn(),
@@ -190,7 +201,7 @@ describe('AuthPage', () => {
   });
 
   it('displays error when passwords do not match', async () => {
-    vi.mocked(useAuth).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       login: vi.fn(),
       register: vi.fn(),
       logout: vi.fn(),

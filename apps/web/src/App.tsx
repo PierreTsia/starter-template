@@ -1,12 +1,10 @@
-import { useAuth } from './hooks/useAuth';
-
-import { useMe } from '@/api/hooks';
+import { useAuth, useMe } from '@/api/resources/auth/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const App = () => {
-  const { data: user, isLoading } = useMe();
-  const { logout } = useAuth();
+  const { logout, isLoading } = useAuth();
+  const { data: me } = useMe();
 
   const handleLogout = () => {
     logout();
@@ -20,7 +18,7 @@ const App = () => {
     <div className="container py-8">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Welcome, {user?.name}!</CardTitle>
+          <CardTitle>Welcome, {me?.name}!</CardTitle>
           <Button variant="outline" onClick={handleLogout}>
             Logout
           </Button>
@@ -29,11 +27,11 @@ const App = () => {
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-              <p>{user?.email}</p>
+              <p>{me?.email}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Member Since</h3>
-              <p>{new Date(user?.createdAt || '').toLocaleDateString()}</p>
+              <p>{new Date(me?.createdAt || '').toLocaleDateString()}</p>
             </div>
           </div>
         </CardContent>

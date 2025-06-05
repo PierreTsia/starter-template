@@ -1,5 +1,4 @@
-import { apiFetch } from './client';
-
+import { apiFetch } from '@/api/client';
 import type { LoginInput, RegisterInput, User } from '@/types/auth';
 
 export const authApi = {

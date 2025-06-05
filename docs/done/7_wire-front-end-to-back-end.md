@@ -8,13 +8,13 @@ This guide explains how to connect your frontend (FE) to your backend (BE) API, 
 
 - [x] Configure API base URL for different environments (local, production)
 - [x] Connect login/register forms to backend endpoints
-- [ ] Store authentication token after login/register
+- [x] Store authentication token after login/register
   - [x] Start with localStorage/sessionStorage
-  - [ ] Upgrade to httpOnly cookies for security
+  - [-] Upgrade to httpOnly cookies for security - ROLL BACK as chrome desktop was too picky about cross-domain cookies
 - [x] Handle token in API requests (Authorization header)
 - [ ] Deploy FE and BE to cloud platforms
 - [x] Ensure CORS is correctly configured on the backend
-- [ ] Test authentication flow end-to-end in production
+- [x] Test authentication flow end-to-end in production
 
 ---
 
@@ -114,8 +114,8 @@ This guide explains how to connect your frontend (FE) to your backend (BE) API, 
 
 - [x] FE can register and log in users via BE endpoints
 - [x] Token is stored and used for authenticated requests
-- [ ] No CORS errors in production
-- [ ] Auth flow works end-to-end in deployed environments
+- [x] No CORS errors in production
+- [x] Auth flow works end-to-end in deployed environments
 
 ---
 

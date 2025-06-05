@@ -1,7 +1,22 @@
 import { z } from 'zod';
 
-import { UserSchema, LoginSchema, RegisterSchema } from '@/api/mockApi';
 import { loginSchema, registerSchema } from '@/lib/validations/auth';
+
+export const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  name: z.string(),
+  createdAt: z.string(),
+});
+
+export const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const RegisterSchema = LoginSchema.extend({
+  name: z.string().min(2),
+});
 
 export type User = z.infer<typeof UserSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;

@@ -1,8 +1,19 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { authApi } from '@/api/authApi';
+import { authApi } from '@/api/resources/auth/api';
 import type { LoginFormData, RegisterDto } from '@/types/auth';
+
+const ONE_HOUR = 1000 * 60 * 60;
+const FIVE_MINUTES = 1000 * 60 * 5;
+
+export const useMe = () =>
+  useQuery({
+    queryKey: ['me'],
+    queryFn: () => authApi.me(),
+    staleTime: FIVE_MINUTES,
+    gcTime: ONE_HOUR,
+  });
 
 export const useAuth = () => {
   const navigate = useNavigate();
