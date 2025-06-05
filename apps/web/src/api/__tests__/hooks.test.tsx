@@ -15,25 +15,6 @@ vi.mock('../authApi', () => ({
   },
 }));
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    removeItem: vi.fn((key: string) => {
-      delete store[key];
-    }),
-    clear: vi.fn(() => {
-      store = {};
-    }),
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-
 // Create a wrapper component for the hooks
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -51,11 +32,10 @@ const createWrapper = () => {
 describe('API Hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.clear();
   });
 
   describe('useLogin', () => {
-    it('successfully logs in and stores token', async () => {
+    it('successfully logs in', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -112,7 +92,7 @@ describe('API Hooks', () => {
   });
 
   describe('useMe', () => {
-    it('fetches user data when token exists', async () => {
+    it('fetches user data', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -120,7 +100,6 @@ describe('API Hooks', () => {
         createdAt: new Date().toISOString(),
       };
 
-      localStorageMock.getItem.mockReturnValueOnce('mock-jwt-token');
       vi.mocked(authApi.me).mockResolvedValueOnce(mockUser);
 
       const { result } = renderHook(() => useMe(), {
@@ -135,8 +114,9 @@ describe('API Hooks', () => {
       expect(authApi.me).toHaveBeenCalled();
     });
 
-    it('does not fetch when no token exists', async () => {
-      localStorageMock.getItem.mockReturnValueOnce(null);
+    it('handles fetch error', async () => {
+      const error = new Error('Not authenticated');
+      vi.mocked(authApi.me).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useMe(), {
         wrapper: createWrapper(),
@@ -144,10 +124,10 @@ describe('API Hooks', () => {
 
       // Wait for the query to complete
       await waitFor(() => {
-        expect(result.current.data).toBeUndefined();
+        expect(result.current.error).toBe(error);
       });
 
-      expect(authApi.me).not.toHaveBeenCalled();
+      expect(authApi.me).toHaveBeenCalled();
     });
   });
 });

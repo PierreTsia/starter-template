@@ -3,15 +3,15 @@ import { renderHook, act } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { authApi } from '../../api/authApi';
 import { useAuth } from '../useAuth';
 
+import { authApi } from '@/api/authApi';
+
 // Mock the authApi
-vi.mock('../../api/authApi', () => ({
+vi.mock('@/api/authApi', () => ({
   authApi: {
     login: vi.fn(),
     register: vi.fn(),
-    me: vi.fn(),
     logout: vi.fn(),
   },
 }));
@@ -19,6 +19,9 @@ vi.mock('../../api/authApi', () => ({
 // Mock react-router-dom
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
+  useLocation: vi.fn().mockReturnValue({
+    state: { from: { pathname: '/' } },
+  }),
 }));
 
 // Create a wrapper component for the hooks
@@ -70,7 +73,7 @@ describe('useAuth', () => {
       email: 'test@example.com',
       password: 'password123',
     });
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
   });
 
   it('handles login error', async () => {
@@ -129,7 +132,7 @@ describe('useAuth', () => {
       password: 'password123',
       name: 'Test User',
     });
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
   });
 
   it('handles register error', async () => {
@@ -173,7 +176,7 @@ describe('useAuth', () => {
     });
 
     expect(authApi.logout).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith('/login');
+    expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true });
   });
 
   it('handles logout error', async () => {
