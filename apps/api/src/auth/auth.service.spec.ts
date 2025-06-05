@@ -63,9 +63,13 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return access_token if credentials are valid', async () => {
-      jest
-        .spyOn(service, 'validateUser')
-        .mockResolvedValue({ id: mockUser.id, email: mockUser.email, name: mockUser.name });
+      jest.spyOn(service, 'validateUser').mockResolvedValue({
+        id: mockUser.id,
+        email: mockUser.email,
+        name: mockUser.name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
       const result = await service.login({ email: mockUser.email, password: 'password' });
       expect(result).toEqual({ access_token: 'mocked-jwt-token' });
       expect(jwtServiceMock.sign).toHaveBeenCalledWith({ email: mockUser.email, sub: mockUser.id });
