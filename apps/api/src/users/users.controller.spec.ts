@@ -5,6 +5,7 @@ import { Express } from 'express';
 import * as request from 'supertest';
 
 import { User } from '../../generated/prisma';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
@@ -31,7 +32,12 @@ describe('UsersController', () => {
           useValue: mockUsersService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: () => true,
+      })
+      .compile();
 
     app = module.createNestApplication();
     app.useGlobalPipes(

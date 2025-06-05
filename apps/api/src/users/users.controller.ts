@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { User } from '../../generated/prisma';
@@ -22,6 +23,11 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('whoami')
+  whoAmI(@Req() req: Request & { user?: User }): User | undefined {
+    return req.user;
+  }
 
   @Get()
   async findAll(): Promise<User[]> {
