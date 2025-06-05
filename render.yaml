@@ -2,7 +2,9 @@ services:
   - type: web
     name: nestjs-api
     env: node
-    buildCommand: cd apps/api && pnpm deploy:build
+    buildCommand: |
+      pnpm install --no-frozen-lockfile
+      cd apps/api && pnpm deploy:build
     startCommand: cd apps/api && pnpm deploy:start
     envVars:
       - key: NODE_ENV
