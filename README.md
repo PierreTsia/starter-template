@@ -17,17 +17,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-## Development Workflow
-
-### Available Scripts
-
-- `pnpm dev` - Start all applications in development mode
-- `pnpm build` - Build all applications
-- `pnpm test` - Run tests
-- `pnpm lint` - Run ESLint
-- `pnpm format` - Format code with Prettier
-
-### Project Structure
+## Project Structure
 
 ```
 starter-template/
@@ -41,56 +31,53 @@ starter-template/
 └── docs/            # Documentation
 ```
 
-### Git Workflow
+## Backend (NestJS)
 
-1. Create a new branch for your feature/fix
-2. Make your changes
-3. Run tests and linting
-4. Create a pull request
+- **Tech:** NestJS, Prisma, PostgreSQL, Passport/JWT
+- **Features:**
+  - User CRUD (protected by JWT)
+  - Auth (register, login, whoami, guards)
+  - DTO validation, global error handling
+  - Test coverage with Jest
+  - Ready for deployment (see docs/6_back-end-deployment-setup.md)
+- **Setup:**
+  1. `cd apps/api`
+  2. `pnpm install`
+  3. Copy `.env.example` to `.env.local` and set DB/JWT secrets
+  4. `pnpm prisma migrate deploy` (or `prisma migrate dev` for local)
+  5. `pnpm dev` (or `pnpm start:prod` for production)
+- **Scripts:**
+  - `pnpm dev` - Start backend in dev mode
+  - `pnpm build` - Build backend
+  - `pnpm start:prod` - Start backend in production
+  - `pnpm test` - Run backend tests
+  - `pnpm lint` - Lint backend code
+- **Docs:**
+  - [Backend setup](docs/3-backend_setup.md)
+  - [Refresh token guide](docs/4_refresh-token.md)
+  - [API docs & logging](docs/5_api-doc-and-logs.md)
+  - [Deployment guide](docs/6_back-end-deployment-setup.md)
 
-### Environment Variables
+## Frontend (React + Vite)
 
-Required environment variables are validated at runtime. See `.env.example` for all required variables.
-
-## Tech Stack
-
-- **Frontend**: React 18, Vite, shadcn/ui, Tailwind CSS
-- **Backend**: NestJS, Prisma, PostgreSQL
-- **Tools**: TypeScript, ESLint, Prettier, Husky
-
-## Frontend
-
-The frontend is built with React and Vite, featuring:
-
-- **Authentication**: JWT-based auth with protected routes
-- **State Management**: TanStack Query for server state
-- **UI Components**: shadcn/ui with Tailwind CSS
-- **Type Safety**: Zod for runtime validation
-- **Testing**: Vitest + React Testing Library
-
-### Key Features
-
-- Dark/Light mode support
-- Responsive design
-- Form validation
-- Toast notifications
-- Error boundaries
-
-### Setup Instructions
-
-1. Install dependencies: `pnpm install`
-2. Copy `.env.example` to `.env.local` and adjust values
-3. Start dev server: `pnpm dev`
-
-### Available Scripts
-
-- `pnpm dev` - Start frontend dev server
-- `pnpm build` - Build for production
-- `pnpm preview` - Preview production build
-- `pnpm test` - Run tests
-- `pnpm test:cov` - Run tests with coverage
-- `pnpm lint` - Run ESLint
-- `pnpm typecheck` - Run TypeScript type checking
+- **Tech:** React 18, Vite, shadcn/ui, Tailwind CSS, TanStack Query
+- **Features:**
+  - JWT auth, protected routes
+  - Type-safe API client, Zod validation
+  - Responsive UI, dark/light mode
+  - Toast notifications, error boundaries
+- **Setup:**
+  1. `cd apps/web`
+  2. `pnpm install`
+  3. Copy `.env.example` to `.env.local`
+  4. `pnpm dev`
+- **Scripts:**
+  - `pnpm dev` - Start frontend dev server
+  - `pnpm build` - Build for production
+  - `pnpm preview` - Preview production build
+  - `pnpm test` - Run tests
+  - `pnpm lint` - Lint code
+  - `pnpm typecheck` - TypeScript check
 
 ## Contributing
 

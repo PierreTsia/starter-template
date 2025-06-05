@@ -34,12 +34,12 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] Set up migrations
   - [ ] Configure database seeding
 
-- [ ] Authentication Setup
+- [x] Authentication Setup
 
   - [x] Install required packages (passport, jwt)
   - [x] Configure JWT strategy
-  - [ ] Set up refresh token mechanism
-  - [ ] Create auth guards
+  - [-] Set up refresh token mechanism - POSTPONED see spec 4
+  - [x] Create auth guards
   - [x] Implement login/register endpoints
 
 - [x] API Structure
@@ -62,7 +62,7 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] `.env.example`
   - [x] `.env.local` (gitignored)
   - [x] Environment variables validation
-  - [ ] Configure deployment settings
+  - [-] Configure deployment settings - POSTPONED see spec 6
 
 ## Basic API Implementation
 
@@ -76,7 +76,7 @@ This document outlines the steps and requirements for setting up the backend app
     - [x] DELETE /api/v1/users/:id (delete user)
   - [x] Login endpoint
   - [x] Register endpoint
-  - [ ] WhoAmI endpoint (protected)
+  - [x] WhoAmI endpoint (protected)
 - [x] Set up error handling
   - [x] Global exception filter
   - [x] Validation pipe
@@ -88,11 +88,11 @@ This document outlines the steps and requirements for setting up the backend app
 
 ## Documentation
 
-- [ ] Update README.md
-  - [ ] Backend overview
-  - [ ] Setup instructions
-  - [ ] Available scripts
-  - [ ] API documentation
+- [x] Update README.md
+  - [x] Backend overview
+  - [x] Setup instructions
+  - [x] Available scripts
+  - [-] API documentation POSTPONED see sepec 6
 
 ## Definition of Done
 
@@ -102,12 +102,12 @@ The backend setup is considered complete when:
 - [x] `pnpm install` works without errors
 - [x] Basic scripts run successfully
 - [x] ESLint and Prettier are properly configured
-- [ ] Documentation is up to date
+- [x] Documentation is up to date
 - [x] Basic endpoints are working
-- [ ] Authentication flow is functional
+- [x] Authentication flow is functional
 - [x] Database migrations work
-- [ ] Tests are passing
-- [ ] Build process works for all environments
+- [x] Tests are passing
+- [x] Build process works for all environments
 
 ## Next Steps
 
@@ -126,3 +126,10 @@ After completing the backend setup, we will:
 - Ensure type safety throughout the application
 - Maintain consistent error handling
 - Follow NestJS best practices
+
+---
+
+**Note:**
+
+- All user routes are now protected by JWT authentication.
+- The WhoAmI endpoint is implemented and returns the full user object for authenticated requests.
