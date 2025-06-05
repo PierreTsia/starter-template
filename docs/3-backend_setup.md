@@ -74,8 +74,8 @@ This document outlines the steps and requirements for setting up the backend app
     - [x] POST /api/v1/users (create user)
     - [x] PATCH /api/v1/users/:id (update user)
     - [x] DELETE /api/v1/users/:id (delete user)
-  - [ ] Login endpoint
-  - [ ] Register endpoint
+  - [x] Login endpoint
+  - [x] Register endpoint
   - [ ] WhoAmI endpoint (protected)
 - [x] Set up error handling
   - [x] Global exception filter
@@ -83,8 +83,8 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] Custom exceptions
 - [x] Write basic tests
   - [x] Test endpoint responses
-  - [ ] Test authentication
-  - [ ] Test validation
+  - [x] Test authentication
+  - [x] Test validation
 
 ## Documentation
 
