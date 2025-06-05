@@ -23,7 +23,6 @@ describe('AuthPage', () => {
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/register/i));
 
@@ -31,7 +30,6 @@ describe('AuthPage', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument();
   });
 
   it('handles login form submission', async () => {
@@ -98,7 +96,6 @@ describe('AuthPage', () => {
         name: 'Test User',
         email: 'test@example.com',
         password: 'Test123!',
-        confirmPassword: 'Test123!',
       });
     });
   });

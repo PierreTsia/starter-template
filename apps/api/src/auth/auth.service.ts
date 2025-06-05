@@ -1,14 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User as PrismaUser } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
 
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
+type SafeUser = Omit<PrismaUser, 'password'>;
 
 interface ILoginDto {
   email: string;
@@ -24,16 +21,16 @@ interface IRegisterDto {
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
+  async validateUser(email: string, password: string): Promise<SafeUser | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...result } = user;
-      return result as User;
+      const { password, ...result } = user;
+      void password; // explicitly ignore password
+      return result;
     }
     return null;
   }
@@ -44,9 +41,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { email: user.email, sub: user.id };
+    const token = await this.generateJwt(user);
     return {
-      access_token: this.jwtService.sign(payload),
+      user,
+      token, // This will be used by the controller to set the cookie
     };
   }
 
@@ -57,8 +55,15 @@ export class AuthService {
       name,
       password: hashedPassword,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...result } = user;
-    return result;
+
+    const token = await this.generateJwt(user);
+    return {
+      user,
+      token, // This will be used by the controller to set the cookie
+    };
+  }
+
+  async generateJwt(user: SafeUser) {
+    return this.jwtService.signAsync({ sub: user.id, email: user.email });
   }
 }

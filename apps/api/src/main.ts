@@ -1,15 +1,27 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ValidationExceptionFilter } from './common/filters/validation-exception.filter';
 
+const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: corsOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Set-Cookie'],
+  });
+
+  // Enable cookie parsing
+  app.use(cookieParser());
 
   // Set global prefix for all routes
   app.setGlobalPrefix('api/v1');

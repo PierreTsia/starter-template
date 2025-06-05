@@ -2,38 +2,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { authApi } from '../authApi';
 import { useLogin, useMe } from '../hooks';
-import { mockApi } from '../mockApi';
 
 // Mock the mockApi
-vi.mock('../mockApi', () => ({
-  mockApi: {
-    auth: {
-      login: vi.fn(),
-      register: vi.fn(),
-      me: vi.fn(),
-    },
+vi.mock('../authApi', () => ({
+  authApi: {
+    login: vi.fn(),
+    register: vi.fn(),
+    me: vi.fn(),
+    logout: vi.fn(),
   },
 }));
-
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    removeItem: vi.fn((key: string) => {
-      delete store[key];
-    }),
-    clear: vi.fn(() => {
-      store = {};
-    }),
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 // Create a wrapper component for the hooks
 const createWrapper = () => {
@@ -52,22 +32,19 @@ const createWrapper = () => {
 describe('API Hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.clear();
   });
 
   describe('useLogin', () => {
-    it('successfully logs in and stores token', async () => {
+    it('successfully logs in', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
         createdAt: new Date().toISOString(),
       };
-      const mockToken = 'mock-jwt-token';
 
-      vi.mocked(mockApi.auth.login).mockResolvedValueOnce({
+      vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
-        token: mockToken,
       });
 
       const { result } = renderHook(() => useLogin(), {
@@ -81,16 +58,15 @@ describe('API Hooks', () => {
         });
       });
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123',
       });
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('token', mockToken);
     });
 
     it('handles login error', async () => {
       const error = new Error('Invalid credentials');
-      vi.mocked(mockApi.auth.login).mockRejectedValueOnce(error);
+      vi.mocked(authApi.login).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useLogin(), {
         wrapper: createWrapper(),
@@ -104,19 +80,19 @@ describe('API Hooks', () => {
           });
         } catch (e) {
           // Expected error
+          expect(e).toBe(error);
         }
       });
 
-      expect(mockApi.auth.login).toHaveBeenCalledWith({
+      expect(authApi.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'wrong-password',
       });
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
   });
 
   describe('useMe', () => {
-    it('fetches user data when token exists', async () => {
+    it('fetches user data', async () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -124,8 +100,7 @@ describe('API Hooks', () => {
         createdAt: new Date().toISOString(),
       };
 
-      localStorageMock.getItem.mockReturnValueOnce('mock-jwt-token');
-      vi.mocked(mockApi.auth.me).mockResolvedValueOnce(mockUser);
+      vi.mocked(authApi.me).mockResolvedValueOnce(mockUser);
 
       const { result } = renderHook(() => useMe(), {
         wrapper: createWrapper(),
@@ -136,11 +111,12 @@ describe('API Hooks', () => {
         expect(result.current.data).toEqual(mockUser);
       });
 
-      expect(mockApi.auth.me).toHaveBeenCalledWith('mock-jwt-token');
+      expect(authApi.me).toHaveBeenCalled();
     });
 
-    it('does not fetch when no token exists', async () => {
-      localStorageMock.getItem.mockReturnValueOnce(null);
+    it('handles fetch error', async () => {
+      const error = new Error('Not authenticated');
+      vi.mocked(authApi.me).mockRejectedValueOnce(error);
 
       const { result } = renderHook(() => useMe(), {
         wrapper: createWrapper(),
@@ -148,10 +124,10 @@ describe('API Hooks', () => {
 
       // Wait for the query to complete
       await waitFor(() => {
-        expect(result.current.data).toBeUndefined();
+        expect(result.current.error).toBe(error);
       });
 
-      expect(mockApi.auth.me).not.toHaveBeenCalled();
+      expect(authApi.me).toHaveBeenCalled();
     });
   });
 });

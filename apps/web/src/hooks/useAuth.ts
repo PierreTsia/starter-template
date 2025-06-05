@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { mockApi } from '@/api/mockApi';
-import type { LoginFormData, RegisterFormData } from '@/types/auth';
+import { authApi } from '@/api/authApi';
+import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -11,28 +11,26 @@ export const useAuth = () => {
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const loginMutation = useMutation({
-    mutationFn: (data: LoginFormData) => mockApi.auth.login(data),
-    onSuccess: (data) => {
-      // TODO: Store token in secure storage
-      localStorage.setItem('token', data.token);
+    mutationFn: (data: LoginFormData) => authApi.login(data),
+    onSuccess: () => {
       navigate(from, { replace: true });
     },
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: RegisterFormData) => mockApi.auth.register(data),
-    onSuccess: (data) => {
-      // TODO: Store token in secure storage
-      localStorage.setItem('token', data.token);
+    mutationFn: (data: RegisterDto) => authApi.register(data),
+    onSuccess: () => {
       navigate(from, { replace: true });
     },
   });
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    queryClient.removeQueries({ queryKey: ['me'] });
-    navigate('/login', { replace: true });
-  };
+  const logoutMutation = useMutation({
+    mutationFn: () => authApi.logout(),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['me'] });
+      navigate('/login', { replace: true });
+    },
+  });
 
   const resetError = () => {
     loginMutation.reset();
@@ -42,9 +40,9 @@ export const useAuth = () => {
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
-    logout,
-    isLoading: loginMutation.isPending || registerMutation.isPending,
-    error: loginMutation.error || registerMutation.error,
+    logout: logoutMutation.mutate,
+    isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending,
+    error: loginMutation.error || registerMutation.error || logoutMutation.error,
     resetError,
   };
 };

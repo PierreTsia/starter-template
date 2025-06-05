@@ -66,7 +66,15 @@ describe('UsersService', () => {
 
       const result = await service.findAll();
       expect(result).toEqual(mockUsers);
-      expect(mockPrismaService.user.findMany).toHaveBeenCalled();
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
     });
   });
 
@@ -86,6 +94,13 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
     });
 
@@ -116,6 +131,13 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: createUserDto,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
     });
   });
@@ -138,6 +160,13 @@ describe('UsersService', () => {
       expect(mockPrismaService.user.update).toHaveBeenCalledWith({
         where: { id: '1' },
         data: updateData,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
     });
   });
@@ -158,6 +187,13 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.delete).toHaveBeenCalledWith({
         where: { id: '1' },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
     });
   });

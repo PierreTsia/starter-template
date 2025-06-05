@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { TestApp } from '@/test-utils';
 
 // Mock the useMe hook to simulate different auth states
+const mockUseMe = vi.fn();
 vi.mock('@/api/hooks', () => ({
-  useMe: () => ({ data: null, isLoading: false }),
+  useMe: () => mockUseMe(),
 }));
 
 // Mock the useAuth hook to simulate login/logout
@@ -20,15 +21,30 @@ vi.mock('@/hooks/useAuth', () => ({
 }));
 
 describe('App Integration', () => {
+  beforeEach(() => {
+    mockUseMe.mockReset();
+  });
+
   it('renders the App page when user is authenticated', () => {
-    localStorage.setItem('token', 'mock-jwt-token');
+    mockUseMe.mockReturnValue({
+      data: {
+        id: '1',
+        email: 'test@example.com',
+        name: 'Test User',
+        createdAt: new Date().toISOString(),
+      },
+      isLoading: false,
+    });
+
     render(<TestApp initialEntries={['/']} />);
-    expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+    expect(screen.getByText(/test user/i)).toBeInTheDocument();
   });
 
   it('redirects to login page when user is not authenticated', () => {
-    // Clear localStorage to simulate no token
-    localStorage.clear();
+    mockUseMe.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    });
 
     render(<TestApp initialEntries={['/']} />);
     // Assert that the login form is rendered

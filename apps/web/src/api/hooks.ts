@@ -1,16 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { mockApi } from './mockApi';
+import { authApi } from './authApi';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const FIVE_MINUTES = 1000 * 60 * 5;
 
 export const useLogin = () => {
   return useMutation({
-    mutationFn: mockApi.auth.login,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    mutationFn: authApi.login,
+    onSuccess: () => {
       toast.success('Successfully logged in!');
     },
     onError: (error) => {
@@ -21,9 +20,8 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   return useMutation({
-    mutationFn: mockApi.auth.register,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+    mutationFn: authApi.register,
+    onSuccess: () => {
       toast.success('Successfully registered!');
     },
     onError: (error) => {
@@ -33,11 +31,9 @@ export const useRegister = () => {
 };
 
 export const useMe = () => {
-  const token = localStorage.getItem('token');
   return useQuery({
     queryKey: ['me'],
-    queryFn: () => mockApi.auth.me(token!),
-    enabled: !!token,
+    queryFn: () => authApi.me(),
     staleTime: FIVE_MINUTES,
     gcTime: ONE_HOUR,
   });
