@@ -12,14 +12,20 @@ export const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormData) => authApi.login(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
       navigate(from, { replace: true });
     },
   });
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
       navigate(from, { replace: true });
     },
   });
@@ -27,6 +33,7 @@ export const useAuth = () => {
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
+      localStorage.removeItem('token');
       queryClient.removeQueries({ queryKey: ['me'] });
       navigate('/login', { replace: true });
     },

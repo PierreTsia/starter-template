@@ -56,6 +56,7 @@ describe('useAuth', () => {
 
     vi.mocked(authApi.login).mockResolvedValueOnce({
       user: mockUser,
+      token: 'mocked-jwt-token',
     });
 
     const { result } = renderHook(() => useAuth(), {
@@ -113,6 +114,7 @@ describe('useAuth', () => {
 
     vi.mocked(authApi.register).mockResolvedValueOnce({
       user: mockUser,
+      token: 'mocked-jwt-token',
     });
 
     const { result } = renderHook(() => useAuth(), {

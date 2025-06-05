@@ -84,9 +84,7 @@ describe('AuthController', () => {
         updatedAt: mockUser.updatedAt,
       };
 
-      expect(response.body).toEqual({ user: expectedUser });
-      expect(response.headers['set-cookie']).toBeDefined();
-      expect(response.headers['set-cookie'][0]).toContain('token=mocked-jwt-token');
+      expect(response.body).toEqual({ user: expectedUser, token: 'mocked-jwt-token' });
       expect(mockAuthService.login).toHaveBeenCalledWith(loginDto);
     });
 
@@ -139,9 +137,7 @@ describe('AuthController', () => {
         updatedAt: mockUser.updatedAt,
       };
 
-      expect(response.body).toEqual({ user: expectedUser });
-      expect(response.headers['set-cookie']).toBeDefined();
-      expect(response.headers['set-cookie'][0]).toContain('token=mocked-jwt-token');
+      expect(response.body).toEqual({ user: expectedUser, token: 'mocked-jwt-token' });
       expect(mockAuthService.register).toHaveBeenCalledWith(registerDto);
     });
 

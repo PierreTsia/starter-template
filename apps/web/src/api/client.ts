@@ -1,13 +1,21 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('token');
+  const baseHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const customHeaders = options?.headers
+    ? Object.fromEntries(Object.entries(options.headers).map(([k, v]) => [k, String(v)]))
+    : {};
+  const headers: Record<string, string> = { ...baseHeaders, ...customHeaders };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options?.headers || {}),
-    },
-    credentials: 'include', // Enable sending cookies
+    headers,
+    // credentials: 'include', // No longer needed
   });
   if (!res.ok) {
     let errorMsg = 'Unknown error';
