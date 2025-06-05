@@ -6,36 +6,10 @@ import { mockUseMe, mockUseAuth } from './__mocks__/auth';
 
 import { TestApp } from '@/test-utils';
 
-/* import { useAuth } from '@/api/resources/auth/hooks'; */
-
 describe('AuthPage', () => {
   beforeEach(() => {
     mockUseMe.mockReset();
     mockUseMe.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: false,
-      error: null,
-      isPending: true,
-      isLoadingError: false,
-      isRefetchError: false,
-      isSuccess: false,
-      status: 'pending',
-      fetchStatus: 'idle',
-      isFetching: false,
-      isRefetching: false,
-      isInitialLoading: false,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      errorUpdateCount: 0,
-      isFetched: false,
-      isFetchedAfterMount: false,
-      isPaused: false,
-      isPlaceholderData: false,
-      isStale: false,
-      refetch: vi.fn(),
-      failureReason: null,
       promise: Promise.resolve({
         id: '1',
         email: 'test@example.com',
