@@ -62,6 +62,17 @@ describe('AuthController', () => {
       await request(app.getHttpServer()).post('/auth/login').send(invalidLoginDto).expect(400);
       expect(mockAuthService.login).not.toHaveBeenCalled();
     });
+
+    it('should return 400 if required fields are missing in login', async () => {
+      await request(app.getHttpServer()).post('/auth/login').send({}).expect(400);
+    });
+
+    it('should return 400 if extra fields are sent in login', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: 'test@example.com', password: 'Test123!@#', extra: 'nope' })
+        .expect(400);
+    });
   });
 
   describe('/auth/register (POST)', () => {
@@ -98,6 +109,17 @@ describe('AuthController', () => {
         .send(invalidRegisterDto)
         .expect(400);
       expect(mockAuthService.register).not.toHaveBeenCalled();
+    });
+
+    it('should return 400 if required fields are missing in register', async () => {
+      await request(app.getHttpServer()).post('/auth/register').send({}).expect(400);
+    });
+
+    it('should return 400 if extra fields are sent in register', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email: 'new@example.com', password: 'Test123!@#', name: 'New User', extra: 'nope' })
+        .expect(400);
     });
   });
 });
