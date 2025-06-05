@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 
-import { useMe } from '@/api/hooks';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth, useMe } from '@/api/resources/auth/hooks';
 import type { LoginFormData, RegisterFormData } from '@/types/auth';
 
 export const AuthPage = () => {

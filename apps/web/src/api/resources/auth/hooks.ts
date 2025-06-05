@@ -1,40 +1,66 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { authApi } from '@/api/resources/auth/api';
+import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const FIVE_MINUTES = 1000 * 60 * 5;
 
-export const useLogin = () => {
-  return useMutation({
-    mutationFn: authApi.login,
-    onSuccess: () => {
-      toast.success('Successfully logged in!');
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to login');
-    },
-  });
-};
-
-export const useRegister = () => {
-  return useMutation({
-    mutationFn: authApi.register,
-    onSuccess: () => {
-      toast.success('Successfully registered!');
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to register');
-    },
-  });
-};
-
-export const useMe = () => {
-  return useQuery({
+export const useMe = () =>
+  useQuery({
     queryKey: ['me'],
     queryFn: () => authApi.me(),
     staleTime: FIVE_MINUTES,
     gcTime: ONE_HOUR,
   });
+
+export const useAuth = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginFormData) => authApi.login(data),
+    onSuccess: (data) => {
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
+      navigate(from, { replace: true });
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterDto) => authApi.register(data),
+    onSuccess: (data) => {
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
+      navigate(from, { replace: true });
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: () => authApi.logout(),
+    onSuccess: () => {
+      localStorage.removeItem('token');
+      queryClient.removeQueries({ queryKey: ['me'] });
+      navigate('/login', { replace: true });
+    },
+  });
+
+  const resetError = () => {
+    loginMutation.reset();
+    registerMutation.reset();
+  };
+
+  return {
+    login: loginMutation.mutate,
+    register: registerMutation.mutate,
+    logout: logoutMutation.mutate,
+    isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending,
+    error: loginMutation.error || registerMutation.error || logoutMutation.error,
+    resetError,
+  };
 };

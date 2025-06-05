@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { useMe } from '@/api/hooks';
+import { useMe } from '@/api/resources/auth/hooks';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
