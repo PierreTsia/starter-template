@@ -36,11 +36,11 @@ This document outlines the steps and requirements for setting up the backend app
 
 - [ ] Authentication Setup
 
-  - [ ] Install required packages (passport, jwt)
-  - [ ] Configure JWT strategy
+  - [x] Install required packages (passport, jwt)
+  - [x] Configure JWT strategy
   - [ ] Set up refresh token mechanism
   - [ ] Create auth guards
-  - [ ] Implement login/register endpoints
+  - [x] Implement login/register endpoints
 
 - [x] API Structure
 
