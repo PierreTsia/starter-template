@@ -93,7 +93,16 @@ describe('AuthService', () => {
         email: 'test@test.com',
         password: 'password123',
       });
-      expect(result).toEqual({ access_token: 'mocked-jwt-token' });
+      expect(result).toEqual({
+        user: {
+          id: mockUser.id,
+          email: mockUser.email,
+          name: mockUser.name,
+          createdAt: mockUser.createdAt,
+          updatedAt: mockUser.updatedAt,
+        },
+        token: 'mocked-jwt-token',
+      });
     });
 
     it('should throw UnauthorizedException for invalid credentials', async () => {

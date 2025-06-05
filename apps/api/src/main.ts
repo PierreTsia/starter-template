@@ -5,15 +5,14 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ValidationExceptionFilter } from './common/filters/validation-exception.filter';
 
+const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
   app.enableCors({
-    origin: [
-      'http://localhost:5173', // local dev
-      'https://starter-template-api.onrender.com', // production FE
-    ],
+    origin: corsOrigin,
     credentials: true, // allow cookies/auth headers
   });
 
