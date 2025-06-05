@@ -6,56 +6,58 @@ This document outlines the steps and options for deploying your NestJS backend a
 
 ## Checklist
 
-- [ ] Choose a deployment platform
-  - [ ] Render (recommended for free tier)
+- [x] Choose a deployment platform
+  - [x] Render (recommended for free tier)
   - [ ] Railway
   - [ ] Fly.io
   - [ ] Heroku (limited free tier)
   - [ ] Other (TBD)
-- [ ] Prepare the app for deployment
-  - [ ] Set up environment variables for production
-  - [ ] Configure database connection for production (e.g., managed PostgreSQL)
-  - [ ] Set up build scripts and production start command
-  - [ ] Ensure CORS and security settings are production-ready
-- [ ] Set up deployment pipeline
-  - [ ] Connect repository to deployment platform
-  - [ ] Configure automatic deploys on push to main branch
-  - [ ] Set up build and start commands in platform dashboard
-- [ ] Configure environment variables in the deployment platform
-  - [ ] DATABASE_URL
-  - [ ] JWT_SECRET
-  - [ ] Any other required secrets
-- [ ] Set up database (managed or platform-provided)
-  - [ ] Provision a PostgreSQL instance
-  - [ ] Run migrations on deploy
-- [ ] Test the deployed API
-  - [ ] Verify endpoints are accessible
-  - [ ] Check logs for errors
-  - [ ] Ensure authentication and protected routes work
-- [ ] Set up custom domain (optional)
-- [ ] Monitor and review logs in the deployment platform
-- [ ] Set up alerts/notifications for errors (optional)
+- [x] Prepare the app for deployment
+  - [x] Set up environment variables for production
+  - [x] Configure database connection for production (e.g., managed PostgreSQL)
+  - [x] Set up build scripts and production start command
+  - [x] Ensure CORS and security settings are production-ready
+- [x] Set up deployment pipeline
+  - [x] Connect repository to deployment platform
+  - [x] Configure automatic deploys on push to main branch
+  - [x] Set up build and start commands in platform dashboard
+- [x] Configure environment variables in the deployment platform
+  - [x] DATABASE_URL
+  - [x] JWT_SECRET
+  - [x] Any other required secrets
+- [x] Set up database (managed or platform-provided)
+  - [x] Provision a PostgreSQL instance
+  - [x] Run migrations on deploy
+- [x] Test the deployed API
+  - [x] Verify endpoints are accessible
+  - [x] Check logs for errors
+  - [x] Ensure authentication and protected routes work
+- [x] Set up custom domain (optional)
+- [x] Monitor and review logs in the deployment platform
+- [x] Set up alerts/notifications for errors (optional)
 
 ---
 
 ## Example Implementation Steps
 
 1. **Choose a platform:**
-   - [ ] Sign up for Render, Railway, or another platform
+   - [x] Sign up for Render, Railway, or another platform
 2. **Prepare your app:**
-   - [ ] Add production environment variables to `.env`
-   - [ ] Update `package.json` scripts for build/start
+   - [x] Add production environment variables to `.env`
+   - [x] Update `package.json` scripts for build/start
 3. **Connect repo and configure deploy:**
-   - [ ] Link your GitHub repo to the platform
-   - [ ] Set build/start commands (e.g., `pnpm build`, `pnpm start:prod`)
+   - [x] Link your GitHub repo to the platform
+   - [x] Set build/start commands (e.g., `pnpm build`, `pnpm start:prod`)
 4. **Configure environment variables:**
-   - [ ] Add secrets in the platform dashboard
+   - [x] Add secrets in the platform dashboard
 5. **Provision database:**
-   - [ ] Use platform-provided PostgreSQL or connect to an external DB
-   - [ ] Run migrations automatically on deploy
+   - [x] Use platform-provided PostgreSQL or connect to an external DB
+   - [x] Run migrations automatically on deploy
 6. **Test and monitor:**
-   - [ ] Hit endpoints, check logs, verify auth
+   - [x] Hit endpoints, check logs, verify auth
 7. **(Optional) Set up custom domain and HTTPS**
+   - [x] Configure custom domain
+   - [x] Enable HTTPS
 
 ---
 
@@ -63,12 +65,12 @@ This document outlines the steps and options for deploying your NestJS backend a
 
 The backend deployment setup is considered complete when:
 
-- [ ] All required checkboxes above are checked
-- [ ] The API is deployed and accessible on the chosen platform
-- [ ] Environment variables and secrets are configured securely
-- [ ] Database is provisioned and migrations run successfully
-- [ ] Logs are accessible for monitoring
-- [ ] (Optional) Custom domain and HTTPS are set up
+- [x] All required checkboxes above are checked
+- [x] The API is deployed and accessible on the chosen platform
+- [x] Environment variables and secrets are configured securely
+- [x] Database is provisioned and migrations run successfully
+- [x] Logs are accessible for monitoring
+- [x] (Optional) Custom domain and HTTPS are set up
 
 ---
 
