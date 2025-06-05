@@ -11,8 +11,8 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 
-import { User } from '../../generated/prisma';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -35,7 +35,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<User | null> {
+  async findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 
