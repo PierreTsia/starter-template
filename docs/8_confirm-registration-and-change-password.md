@@ -101,9 +101,11 @@ This guide explains how to implement email confirmation for new registrations an
 ## 4. Update Registration Flow
 
 - Modify registration endpoint to:
+
   1. Generate confirmation token
   2. Save unconfirmed user
   3. Send confirmation email
+
   ```typescript
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -131,6 +133,7 @@ This guide explains how to implement email confirmation for new registrations an
 ## 5. Email Confirmation Endpoint
 
 - Add endpoint to confirm email:
+
   ```typescript
   @Get('confirm-email')
   async confirmEmail(@Query('token') token: string) {
@@ -260,6 +263,7 @@ This guide explains how to implement email confirmation for new registrations an
   ```
 
 - Create password reset components:
+
   ```tsx
   // src/pages/ForgotPassword.tsx
   const ForgotPassword = () => {

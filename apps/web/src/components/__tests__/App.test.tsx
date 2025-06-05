@@ -5,12 +5,8 @@ import { TestApp } from '@/test-utils';
 
 // Mock the useMe hook to simulate different auth states
 const mockUseMe = vi.fn();
-vi.mock('@/api/hooks', () => ({
+vi.mock('@/api/resources/auth/hooks', () => ({
   useMe: () => mockUseMe(),
-}));
-
-// Mock the useAuth hook to simulate login/logout
-vi.mock('@/hooks/useAuth', () => ({
   useAuth: () => ({
     login: vi.fn(),
     logout: vi.fn(),
