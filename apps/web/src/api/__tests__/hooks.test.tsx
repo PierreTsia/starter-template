@@ -45,6 +45,7 @@ describe('API Hooks', () => {
 
       vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
+        token: 'mocked-jwt-token',
       });
 
       const { result } = renderHook(() => useLogin(), {
