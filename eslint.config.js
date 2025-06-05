@@ -1,6 +1,7 @@
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
+import prettierPlugin from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
@@ -27,6 +28,7 @@ export default [
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       import: importPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       // TypeScript
@@ -50,6 +52,9 @@ export default [
           alphabetize: { order: 'asc' },
         },
       ],
+
+      // Prettier
+      'prettier/prettier': 'error',
     },
     settings: {
       react: {

@@ -8,10 +8,11 @@
     "pnpm": ">=8.0.0"
   },
   "scripts": {
-    "dev": "pnpm -r dev",
+    "dev": "pnpm dlx concurrently \"pnpm --filter web dev\" \"pnpm --filter api start:dev\"",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
     "clean": "pnpm -r clean",
     "prepare": "husky",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
@@ -23,8 +24,10 @@
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.1",
     "eslint-import-resolver-typescript": "^4.4.2",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.2.2",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "globals": "^14.0.0",

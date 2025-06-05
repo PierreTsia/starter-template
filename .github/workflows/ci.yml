@@ -40,8 +40,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Generate Prisma Client
+        working-directory: apps/api
+        run: pnpm prisma generate
+
       - name: Type check
-        run: pnpm --filter @starter/web typecheck
+        run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
@@ -50,11 +54,11 @@ jobs:
         run: pnpm test
 
       - name: Test Coverage
-        run: pnpm --filter @starter/web test:coverage
+        run: pnpm test:coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
-          directory: ./apps/web/coverage/
-          fail_ci_if_error: true 
+          directory: ./apps
+          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
