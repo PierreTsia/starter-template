@@ -26,7 +26,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<SafeUser | null> {
-    const user = (await this.usersService.findByEmail(email)) as PrismaUser | null;
+    const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       void password; // explicitly ignore password

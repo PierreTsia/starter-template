@@ -45,7 +45,7 @@ export class UsersService {
     return user;
   }
 
-  async findByEmail(email: string): Promise<SafeUser | null> {
+  async findByEmail(email: string): Promise<User | null> {
     // For login, you may need the password, so do not use select here
     return this.prisma.user.findUnique({
       where: { email },
