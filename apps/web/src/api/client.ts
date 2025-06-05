@@ -15,7 +15,6 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers,
-    // credentials: 'include', // No longer needed
   });
   if (!res.ok) {
     let errorMsg = 'Unknown error';
