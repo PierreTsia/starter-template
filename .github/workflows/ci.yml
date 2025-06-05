@@ -41,7 +41,8 @@ jobs:
         run: pnpm install
 
       - name: Generate Prisma Client
-        run: cd apps/api && pnpm prisma generate
+        working-directory: apps/api
+        run: pnpm prisma generate
 
       - name: Type check
         run: pnpm typecheck
