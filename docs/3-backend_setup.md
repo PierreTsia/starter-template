@@ -81,8 +81,8 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] Global exception filter
   - [x] Validation pipe
   - [x] Custom exceptions
-- [ ] Write basic tests
-  - [ ] Test endpoint responses
+- [x] Write basic tests
+  - [x] Test endpoint responses
   - [ ] Test authentication
   - [ ] Test validation
 
