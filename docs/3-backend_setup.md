@@ -32,7 +32,7 @@ This document outlines the steps and requirements for setting up the backend app
   - [x] Set up PostgreSQL connection
   - [x] Create initial schema
   - [x] Set up migrations
-  - [ ] Configure database seeding
+  - [x] Configure database seeding
 
 - [x] Authentication Setup
 
@@ -98,7 +98,7 @@ This document outlines the steps and requirements for setting up the backend app
 
 The backend setup is considered complete when:
 
-- [ ] All required checkboxes above are checked
+- [x] All required checkboxes above are checked
 - [x] `pnpm install` works without errors
 - [x] Basic scripts run successfully
 - [x] ESLint and Prettier are properly configured

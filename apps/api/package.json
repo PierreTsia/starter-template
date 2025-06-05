@@ -19,7 +19,17 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typecheck": "tsc --noEmit",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:reset": "prisma migrate reset",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed",
+    "prisma:format": "prisma format",
+    "prisma:validate": "prisma validate",
+    "db:reset": "prisma migrate reset --force && prisma generate && prisma db seed",
+    "db:push": "prisma db push --accept-data-loss"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
