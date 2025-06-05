@@ -1,11 +1,19 @@
-import { NotFoundException } from '@nestjs/common/exceptions';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { User } from '../../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
+
+interface User {
+  id: string;
+  email: string;
+  password: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 describe('UsersService', () => {
   let service: UsersService;

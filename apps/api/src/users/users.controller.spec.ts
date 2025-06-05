@@ -4,12 +4,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Express } from 'express';
 import * as request from 'supertest';
 
-import { User } from '../../generated/prisma';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+
+interface User {
+  id: string;
+  email: string;
+  password: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 describe('UsersController', () => {
   let app: INestApplication<Express>;
