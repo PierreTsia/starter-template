@@ -2,9 +2,7 @@ services:
   - type: web
     name: nestjs-api
     env: node
-    buildCommand: |
-      pnpm install --no-frozen-lockfile
-      cd apps/api && pnpm deploy:build
+    buildCommand: pnpm install --no-frozen-lockfile && cd apps/api && pnpm prisma generate && pnpm prisma migrate deploy && pnpm nest build --webpack && ls -la dist
     startCommand: cd apps/api && pnpm deploy:start
     envVars:
       - key: NODE_ENV
