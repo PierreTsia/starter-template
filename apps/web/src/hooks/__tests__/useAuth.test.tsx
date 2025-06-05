@@ -5,10 +5,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useAuth } from '../useAuth';
 
-import { authApi } from '@/api/authApi';
+import { authApi } from '@/api/resources/auth/api';
 
 // Mock the authApi
-vi.mock('@/api/authApi', () => ({
+vi.mock('@/api/resources/auth/api', () => ({
   authApi: {
     login: vi.fn(),
     register: vi.fn(),

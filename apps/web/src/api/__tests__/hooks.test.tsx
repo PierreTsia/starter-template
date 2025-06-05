@@ -2,8 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { authApi } from '../authApi';
 import { useLogin, useMe } from '../hooks';
+
+import { authApi } from '@/api/resources/auth/api';
 
 // Mock the mockApi
 vi.mock('../authApi', () => ({

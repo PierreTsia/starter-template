@@ -4,6 +4,25 @@ This document outlines the steps required to implement a secure refresh token me
 
 ---
 
+### Front target architecture
+
+src/api/
+├── client.ts # Base fetch client
+├── resources/ # Group by resource
+│ ├── auth/
+│ │ ├── api.ts # Raw API calls
+│ │ └── hooks.ts # React Query hooks
+│ ├── users/
+│ │ ├── api.ts
+│ │ └── hooks.ts
+│ └── todos/
+│ ├── api.ts
+│ └── hooks.ts
+└── types/ # Shared types
+├── auth.ts
+├── user.ts
+└── post.ts
+
 ## Checklist
 
 - [ ] Update the database schema

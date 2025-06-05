@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { authApi } from '@/api/authApi';
+import { authApi } from '@/api/resources/auth/api';
 import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 export const useAuth = () => {
