@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 import { Express } from 'express';
 import * as request from 'supertest';
 
@@ -10,14 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
-interface User {
-  id: string;
-  email: string;
-  password: string;
-  name: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+type User = PrismaClient['user']['findUnique']['result'];
 
 describe('UsersController', () => {
   let app: INestApplication<Express>;

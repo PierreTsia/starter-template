@@ -1,19 +1,13 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
-interface User {
-  id: string;
-  email: string;
-  password: string;
-  name: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+type User = PrismaClient['user']['findUnique']['result'];
 
 describe('UsersService', () => {
   let service: UsersService;
