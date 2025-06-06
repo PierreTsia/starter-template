@@ -23,11 +23,11 @@ This document outlines the steps required to implement a secure refresh token me
 - [x] Logout and revocation
   - [x] On logout, delete the refresh token from the DB (or mark as revoked)
   - [x] On password change or suspicious activity, revoke all refresh tokens for the user
-- [ ] Frontend responsibilities
-  - [ ] Store the access token in localStorage
-  - [ ] Store the refresh token in localStorage
-  - [ ] When the access token expires, call `/auth/refresh` with the refresh token in Authorization header
-  - [ ] On logout, clear both tokens from localStorage
+- [x] Frontend responsibilities
+  - [x] Store the access token in localStorage
+  - [x] Store the refresh token in localStorage
+  - [x] When the access token expires, call `/auth/refresh` with the refresh token in Authorization header
+  - [x] On logout, clear both tokens from localStorage
 - [x] Security best practices
   - [x] Use Bearer token authentication for both access and refresh tokens
   - [x] Set a reasonable expiry (e.g., 7 days) for refresh tokens
