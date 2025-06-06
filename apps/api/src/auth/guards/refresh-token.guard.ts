@@ -1,14 +1,11 @@
 import { Injectable, UnauthorizedException, ExecutionContext } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 import { RefreshTokenService } from '../refresh-token.service';
 
 @Injectable()
-export class RefreshTokenGuard extends AuthGuard('jwt') {
-  constructor(private refreshTokenService: RefreshTokenService) {
-    super();
-  }
+export class RefreshTokenGuard {
+  constructor(private refreshTokenService: RefreshTokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
