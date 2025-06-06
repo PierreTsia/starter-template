@@ -50,8 +50,8 @@ This document outlines the steps required to implement a secure refresh token me
 4. **Guards/Middleware:**
    - [x] Protect refresh endpoint and validate tokens
 5. **Testing:**
-   - [ ] Test login, refresh, and logout flows
-   - [ ] Test token expiry and revocation
+   - [x] Test login, refresh, and logout flows
+   - [x] Test token expiry and revocation
 
 ---
 
@@ -66,7 +66,7 @@ The refresh token mechanism is considered complete when:
 - [x] Refresh tokens are rotated and revoked as needed
 - [x] Logout and password change revoke refresh tokens
 - [x] Security best practices are followed
-- [ ] Tests cover all critical flows (login, refresh, logout, expiry, revocation)
+- [x] Tests cover all critical flows (login, refresh, logout, expiry, revocation)
 
 ---
 
