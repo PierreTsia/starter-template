@@ -1,7 +1,5 @@
-import { env } from '@/lib/env';
-
-const API_URL = env.VITE_API_URL;
-const AUTH_TOKEN_KEY = env.VITE_AUTH_TOKEN_KEY;
+const API_URL = import.meta.env.VITE_API_URL;
+const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY;
 const REFRESH_TOKEN_KEY = 'refreshToken';
 
 let isRefreshing = false;
