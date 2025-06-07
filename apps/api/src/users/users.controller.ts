@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,6 +21,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@ApiTags('Users')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
@@ -28,6 +31,15 @@ export class UsersController {
     private readonly logger: LoggerService
   ) {}
 
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns the current user profile',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Get('whoami')
   async whoami(@Request() req: { user: User }) {
     return this.logger.logOperation(
@@ -43,6 +55,15 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns a list of all users',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Get()
   async findAll(): Promise<Partial<User>[]> {
     return this.logger.logOperation(
@@ -55,6 +76,24 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns the user with the specified ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Partial<User>> {
     return this.logger.logOperation(
@@ -67,6 +106,19 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'User has been successfully created',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto): Promise<Partial<User>> {
@@ -83,6 +135,28 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Update user' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User has been successfully updated',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -101,6 +175,24 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Delete user' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'User has been successfully deleted',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not authenticated',
+  })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
