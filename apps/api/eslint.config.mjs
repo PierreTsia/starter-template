@@ -34,4 +34,10 @@ export default tseslint.config(
       'prefer-arrow-callback': 'off'
     },
   },
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off'
+    }
+  }
 );

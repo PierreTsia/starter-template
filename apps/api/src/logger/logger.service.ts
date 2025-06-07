@@ -1,14 +1,16 @@
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
 
 export interface LogMetadata {
   [key: string]: any;
 }
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class LoggerService extends Logger {
-  constructor(context?: string) {
-    super(context || 'App');
-  }
+export class LoggerService {
+  constructor(
+    private readonly logger: Logger,
+    private readonly context: string
+  ) {}
 
   private formatMetadata(metadata?: LogMetadata): string {
     if (!metadata) return '';
@@ -16,20 +18,20 @@ export class LoggerService extends Logger {
   }
 
   logWithMetadata(message: string, metadata?: LogMetadata) {
-    super.log(message + this.formatMetadata(metadata));
+    this.logger.log(message + this.formatMetadata(metadata), this.context);
   }
 
   errorWithMetadata(message: string, error?: Error, metadata?: LogMetadata) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    super.error(`${message} - ${errorMessage}${this.formatMetadata(metadata)}`);
+    this.logger.error(`${message} - ${errorMessage}${this.formatMetadata(metadata)}`, this.context);
   }
 
   warnWithMetadata(message: string, metadata?: LogMetadata) {
-    super.warn(message + this.formatMetadata(metadata));
+    this.logger.warn(message + this.formatMetadata(metadata), this.context);
   }
 
   debugWithMetadata(message: string, metadata?: LogMetadata) {
-    super.debug(message + this.formatMetadata(metadata));
+    this.logger.debug(message + this.formatMetadata(metadata), this.context);
   }
 
   // Helper method for operation logging

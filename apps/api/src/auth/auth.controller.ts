@@ -18,9 +18,10 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new LoggerService(AuthController.name);
-
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: LoggerService
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)

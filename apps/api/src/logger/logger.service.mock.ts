@@ -10,6 +10,7 @@ export class MockLoggerService extends LoggerService {
   errorWithMetadata() {}
   warnWithMetadata() {}
   debugWithMetadata() {}
+
   async logOperation<T>(_operation: string, fn: () => Promise<T>, _metadata?: any): Promise<T> {
     return fn();
   }

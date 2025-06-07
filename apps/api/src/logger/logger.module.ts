@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
+import { LoggerModule as PinoLoggerModule, Logger } from 'nestjs-pino';
 
 import { LoggerService } from './logger.service';
 
@@ -16,7 +16,13 @@ import { LoggerService } from './logger.service';
       },
     }),
   ],
-  providers: [LoggerService],
+  providers: [
+    {
+      provide: LoggerService,
+      useFactory: (logger: Logger) => new LoggerService(logger, 'LoggerService'),
+      inject: [Logger],
+    },
+  ],
   exports: [LoggerService],
 })
 export class LoggerModule {}

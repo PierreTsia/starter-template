@@ -23,9 +23,10 @@ import { UsersService } from './users.service';
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  private readonly logger = new LoggerService(UsersController.name);
-
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly logger: LoggerService
+  ) {}
 
   @Get('whoami')
   async whoami(@Request() req: { user: User }) {
