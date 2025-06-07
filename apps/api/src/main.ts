@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
@@ -25,8 +26,20 @@ async function bootstrap() {
 
   // Set global prefix for all routes except root
   app.setGlobalPrefix('api/v1', {
-    exclude: ['/'],
+    exclude: ['/', 'api/docs'],
   });
+
+  // Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('The API documentation for the application')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addCookieAuth('refreshToken')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -45,5 +58,6 @@ async function bootstrap() {
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
   console.log(`🚀 Server running on http://localhost:${port}/api/v1`);
+  console.log(`📚 API Documentation available at http://localhost:${port}/api/docs`);
 }
 bootstrap();
