@@ -23,12 +23,11 @@ interface IRegisterDto {
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new LoggerService(AuthService.name);
-
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly refreshTokenService: RefreshTokenService
+    private readonly refreshTokenService: RefreshTokenService,
+    private readonly logger: LoggerService
   ) {}
 
   private async hashPassword(password: string): Promise<string> {

@@ -5,6 +5,7 @@ import { Express } from 'express';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MockLoggerModule } from '../logger/logger.module.mock';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
@@ -33,6 +34,7 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [MockLoggerModule],
       controllers: [UsersController],
       providers: [
         {

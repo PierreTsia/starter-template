@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
+import { LoggerService } from '../logger/logger.service';
+import { MockLoggerService } from '../logger/logger.service.mock';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
@@ -55,6 +57,10 @@ describe('AuthService', () => {
         {
           provide: RefreshTokenService,
           useValue: mockRefreshTokenService,
+        },
+        {
+          provide: LoggerService,
+          useClass: MockLoggerService,
         },
       ],
     }).compile();
