@@ -1,9 +1,11 @@
 import { Controller, Get, Head, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AppService } from './app.service';
 import { LoggerService } from './logger/logger.service';
 
+@ApiTags('Root')
 @Controller()
 export class AppController {
   constructor(
@@ -11,6 +13,11 @@ export class AppController {
     private readonly logger: LoggerService
   ) {}
 
+  @ApiOperation({ summary: 'Root endpoint - redirects to health check' })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to /api/v1/health',
+  })
   @Get('/')
   @Head('/')
   getRoot(@Res() res: Response) {
