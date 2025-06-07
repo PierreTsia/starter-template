@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RefreshTokenService } from './refresh-token.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
@@ -38,6 +39,12 @@ describe('AuthController', () => {
         {
           provide: UsersService,
           useValue: {},
+        },
+        {
+          provide: RefreshTokenService,
+          useValue: {
+            validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
+          },
         },
       ],
     }).compile();
