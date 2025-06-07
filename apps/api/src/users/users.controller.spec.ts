@@ -42,7 +42,6 @@ describe('UsersController', () => {
       <T>(
         operation: string,
         fn: () => Promise<T>,
-
         _metadata?: Record<string, unknown>
       ): Promise<T> => fn()
     ),
