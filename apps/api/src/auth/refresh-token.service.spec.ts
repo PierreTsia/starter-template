@@ -53,10 +53,9 @@ describe('RefreshTokenService', () => {
 
       expect(mockPrismaService.refreshToken.create).toHaveBeenCalledWith({
         data: {
-          token: expect.any(String),
+          token: expect.any(String) as string,
           userId,
-
-          expiresAt: expect.any(Date),
+          expiresAt: expect.any(Date) as Date,
         },
       });
     });

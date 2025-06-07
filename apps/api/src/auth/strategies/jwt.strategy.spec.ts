@@ -53,6 +53,7 @@ describe('JwtStrategy', () => {
       const result = await strategy.validate(payload);
 
       expect(result).toEqual(mockUser);
+
       expect(mockUsersService.findOne).toHaveBeenCalledWith('1');
     });
 
