@@ -6,17 +6,14 @@ import {
   HttpStatus,
   Headers,
   UseGuards,
-  Get,
-  Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { Request } from 'express';
 
 import { LoggerService } from '../logger/logger.service';
 
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
@@ -27,13 +24,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: { email: string; password: string }) {
+  async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() registerDto: { email: string; password: string; name?: string }) {
+  async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
@@ -57,11 +54,5 @@ export class AuthController {
       throw new UnauthorizedException('No refresh token provided');
     }
     return this.authService.logout(refreshToken);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('whoami')
-  whoami(@Req() req: Request): Omit<User, 'password'> {
-    return req.user as Omit<User, 'password'>;
   }
 }

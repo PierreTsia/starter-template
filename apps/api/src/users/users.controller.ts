@@ -9,11 +9,12 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Req,
+  Request,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,11 +23,23 @@ import { UsersService } from './users.service';
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
+  private readonly logger = new LoggerService(UsersController.name);
+
   constructor(private readonly usersService: UsersService) {}
 
   @Get('whoami')
-  whoAmI(@Req() req: Request & { user?: User }): User | undefined {
-    return req.user;
+  async whoami(@Request() req: { user: User }) {
+    return this.logger.logOperation(
+      'whoami',
+      async () => {
+        const user = await this.usersService.findOne(req.user.id);
+        return user;
+      },
+      {
+        userId: req.user.id,
+        email: req.user.email,
+      }
+    );
   }
 
   @Get()

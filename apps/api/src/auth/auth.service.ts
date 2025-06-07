@@ -31,17 +31,42 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService
   ) {}
 
+  private async hashPassword(password: string): Promise<string> {
+    return this.logger.logOperation(
+      'Password hashing',
+      async () => {
+        const salt = await bcrypt.genSalt(10);
+        return bcrypt.hash(password, salt);
+      },
+      { saltRounds: 10 }
+    );
+  }
+
+  private async verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+    return this.logger.logOperation('Password verification', () =>
+      bcrypt.compare(plainPassword, hashedPassword)
+    );
+  }
+
   async validateUser(email: string, password: string): Promise<SafeUser | null> {
     return this.logger.logOperation(
       'User validation',
       async () => {
         const user = await this.usersService.findByEmail(email);
-        if (user && (await bcrypt.compare(password, user.password))) {
-          const { password, ...result } = user;
-          void password; // explicitly ignore password
-          return result;
+        if (!user) {
+          this.logger.warnWithMetadata('User not found during validation', { email });
+          return null;
         }
-        return null;
+
+        const isValid = await this.verifyPassword(password, user.password);
+        if (!isValid) {
+          this.logger.warnWithMetadata('Invalid password during validation', { email });
+          return null;
+        }
+
+        const { password: _, ...result } = user;
+        void _; // explicitly ignore password
+        return result;
       },
       { email }
     );
@@ -75,7 +100,7 @@ export class AuthService {
     return this.logger.logOperation(
       'Registration',
       async () => {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await this.hashPassword(password);
         const user = await this.usersService.create({
           email,
           name,
