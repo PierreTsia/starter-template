@@ -54,6 +54,7 @@ describe('JwtStrategy', () => {
 
       expect(result).toEqual(mockUser);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockUsersService.findOne).toHaveBeenCalledWith('1');
     });
 
@@ -64,6 +65,7 @@ describe('JwtStrategy', () => {
 
       await expect(strategy.validate(payload)).rejects.toThrow(UnauthorizedException);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockUsersService.findOne).toHaveBeenCalledWith('1');
     });
 
