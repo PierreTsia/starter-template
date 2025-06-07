@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
+import { RefreshTokenService } from './refresh-token.service';
 
 jest.mock('bcrypt');
 
@@ -21,11 +22,19 @@ const mockUser = {
 const mockUsersService = {
   findByEmail: jest.fn(),
   create: jest.fn(),
+  findOne: jest.fn(),
 };
 
 const mockJwtService = {
   sign: jest.fn().mockReturnValue('mocked-jwt-token'),
   signAsync: jest.fn().mockResolvedValue('mocked-jwt-token'),
+};
+
+const mockRefreshTokenService = {
+  generateRefreshToken: jest.fn().mockResolvedValue('mocked-refresh-token'),
+  validateRefreshToken: jest.fn(),
+  revokeRefreshToken: jest.fn(),
+  revokeAllUserRefreshTokens: jest.fn(),
 };
 
 describe('AuthService', () => {
@@ -42,6 +51,10 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: mockJwtService,
+        },
+        {
+          provide: RefreshTokenService,
+          useValue: mockRefreshTokenService,
         },
       ],
     }).compile();
@@ -101,7 +114,8 @@ describe('AuthService', () => {
           createdAt: mockUser.createdAt,
           updatedAt: mockUser.updatedAt,
         },
-        token: 'mocked-jwt-token',
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-refresh-token',
       });
     });
 
@@ -136,12 +150,48 @@ describe('AuthService', () => {
           ...mockUser,
           ...newUser,
         },
-        token: 'mocked-jwt-token',
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-refresh-token',
       });
       expect(mockJwtService.signAsync).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: newUser.email,
       });
+    });
+  });
+
+  describe('refreshTokens', () => {
+    it('should return new tokens when refresh token is valid', async () => {
+      mockRefreshTokenService.validateRefreshToken.mockResolvedValueOnce({ userId: mockUser.id });
+      mockUsersService.findOne.mockResolvedValueOnce(mockUser);
+
+      const result = await service.refreshTokens('valid-refresh-token');
+
+      expect(result).toEqual({
+        user: mockUser,
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-refresh-token',
+      });
+      expect(mockRefreshTokenService.revokeRefreshToken).toHaveBeenCalledWith(
+        'valid-refresh-token'
+      );
+    });
+
+    it('should throw UnauthorizedException when refresh token is invalid', async () => {
+      mockRefreshTokenService.validateRefreshToken.mockResolvedValueOnce(null);
+
+      await expect(service.refreshTokens('invalid-refresh-token')).rejects.toThrow(
+        UnauthorizedException
+      );
+    });
+  });
+
+  describe('logout', () => {
+    it('should revoke refresh token', async () => {
+      await service.logout('valid-refresh-token');
+      expect(mockRefreshTokenService.revokeRefreshToken).toHaveBeenCalledWith(
+        'valid-refresh-token'
+      );
     });
   });
 });

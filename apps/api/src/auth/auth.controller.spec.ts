@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RefreshTokenService } from './refresh-token.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
@@ -20,6 +21,8 @@ describe('AuthController', () => {
       register: jest.fn(),
       validateUser: jest.fn(),
       generateJwt: jest.fn(),
+      refreshTokens: jest.fn(),
+      logout: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +41,12 @@ describe('AuthController', () => {
         {
           provide: UsersService,
           useValue: {},
+        },
+        {
+          provide: RefreshTokenService,
+          useValue: {
+            validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
+          },
         },
       ],
     }).compile();
@@ -146,6 +155,72 @@ describe('AuthController', () => {
         .post('/auth/register')
         .send({ email: 'new@example.com', password: 'Test123!@#', name: 'New User', extra: 'nope' })
         .expect(400);
+    });
+  });
+
+  describe('/auth/refresh (POST)', () => {
+    it('should refresh tokens with valid refresh token', async () => {
+      const mockResponse = {
+        user: {
+          id: '1',
+          email: 'test@test.com',
+          name: 'Test User',
+        },
+        token: 'new-jwt-token',
+      };
+      (mockAuthService.refreshTokens as jest.Mock).mockResolvedValue(mockResponse);
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .set('Authorization', 'Bearer valid-refresh-token')
+        .expect(200);
+
+      expect(response.body).toEqual(mockResponse);
+      expect(mockAuthService.refreshTokens).toHaveBeenCalledWith('valid-refresh-token');
+    });
+
+    it('should return 401 when no refresh token is provided', async () => {
+      await request(app.getHttpServer()).post('/auth/refresh').expect(401);
+    });
+
+    it('should return 401 when refresh token is invalid', async () => {
+      (mockAuthService.refreshTokens as jest.Mock).mockRejectedValue(
+        new UnauthorizedException('Invalid refresh token')
+      );
+
+      await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .set('Authorization', 'Bearer invalid-token')
+        .expect(401);
+    });
+  });
+
+  describe('/auth/logout (POST)', () => {
+    it('should logout successfully with valid refresh token', async () => {
+      (mockAuthService.logout as jest.Mock).mockResolvedValue({ success: true });
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/logout')
+        .set('Authorization', 'Bearer valid-refresh-token')
+        .expect(200);
+
+      expect(response.body).toEqual({ success: true });
+      expect(mockAuthService.logout).toHaveBeenCalledWith('valid-refresh-token');
+    });
+
+    it('should return 401 when no refresh token is provided', async () => {
+      await request(app.getHttpServer()).post('/auth/logout').expect(401);
+    });
+
+    it('should return 401 when refresh token is invalid', async () => {
+      (mockAuthService.logout as jest.Mock).mockRejectedValue(
+        new UnauthorizedException('Invalid refresh token')
+      );
+
+      await request(app.getHttpServer())
+        .post('/auth/logout')
+        .set('Authorization', 'Bearer invalid-token')
+        .expect(401);
     });
   });
 });

@@ -5,6 +5,8 @@ import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
 
+import { RefreshTokenService } from './refresh-token.service';
+
 type SafeUser = Omit<PrismaUser, 'password'>;
 
 interface ILoginDto {
@@ -22,7 +24,8 @@ interface IRegisterDto {
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   async validateUser(email: string, password: string): Promise<SafeUser | null> {
@@ -41,10 +44,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = await this.generateJwt(user);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateJwt(user),
+      this.refreshTokenService.generateRefreshToken(user.id),
+    ]);
+
     return {
       user,
-      token, // This will be used by the controller to set the cookie
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -56,11 +64,48 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const token = await this.generateJwt(user);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateJwt(user),
+      this.refreshTokenService.generateRefreshToken(user.id),
+    ]);
+
     return {
       user,
-      token, // This will be used by the controller to set the cookie
+      accessToken,
+      refreshToken,
     };
+  }
+
+  async refreshTokens(refreshToken: string) {
+    const payload = await this.refreshTokenService.validateRefreshToken(refreshToken);
+    if (!payload) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.usersService.findOne(payload.userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Generate new tokens
+    const [newAccessToken, newRefreshToken] = await Promise.all([
+      this.generateJwt(user),
+      this.refreshTokenService.generateRefreshToken(user.id),
+    ]);
+
+    // Revoke the old refresh token
+    await this.refreshTokenService.revokeRefreshToken(refreshToken);
+
+    return {
+      user,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  }
+
+  async logout(refreshToken: string) {
+    await this.refreshTokenService.revokeRefreshToken(refreshToken);
+    return { message: 'Logged out successfully' };
   }
 
   async generateJwt(user: SafeUser) {
