@@ -48,7 +48,8 @@ describe('Auth Hooks', () => {
 
       vi.mocked(authApi.login).mockResolvedValueOnce({
         user: mockUser,
-        token: 'mocked-jwt-token',
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-refresh-token',
       });
 
       const { result } = renderHook(() => useAuth(), {

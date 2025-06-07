@@ -7,6 +7,9 @@ import type { LoginFormData, RegisterDto } from '@/types/auth';
 const ONE_HOUR = 1000 * 60 * 60;
 const FIVE_MINUTES = 1000 * 60 * 5;
 
+const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY;
+const REFRESH_TOKEN_KEY = 'refreshToken';
+
 export const useMe = () =>
   useQuery({
     queryKey: ['me'],
@@ -24,8 +27,9 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormData) => authApi.login(data),
     onSuccess: (data) => {
-      if (data?.token) {
-        localStorage.setItem('token', data.token);
+      if (data?.accessToken && data?.refreshToken) {
+        localStorage.setItem(AUTH_TOKEN_KEY, data.accessToken);
+        localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
       }
       navigate(from, { replace: true });
     },
@@ -34,8 +38,9 @@ export const useAuth = () => {
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
     onSuccess: (data) => {
-      if (data?.token) {
-        localStorage.setItem('token', data.token);
+      if (data?.accessToken && data?.refreshToken) {
+        localStorage.setItem(AUTH_TOKEN_KEY, data.accessToken);
+        localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
       }
       navigate(from, { replace: true });
     },
@@ -44,7 +49,8 @@ export const useAuth = () => {
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
-      localStorage.removeItem('token');
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
       queryClient.removeQueries({ queryKey: ['me'] });
       navigate('/login', { replace: true });
     },
