@@ -9,7 +9,7 @@ import { ValidationExceptionFilter } from './common/filters/validation-exception
 const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   // Enable CORS
   app.enableCors({
@@ -23,8 +23,10 @@ async function bootstrap() {
   // Enable cookie parsing
   app.use(cookieParser());
 
-  // Set global prefix for all routes
-  app.setGlobalPrefix('api/v1');
+  // Set global prefix for all routes except root
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['/'],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({

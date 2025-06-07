@@ -9,6 +9,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { LoggerService } from '../logger/logger.service';
+
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -16,7 +18,10 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: LoggerService
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -30,8 +35,8 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @Post('refresh')
   @UseGuards(RefreshTokenGuard)
+  @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshTokens(@Headers('Authorization') auth: string) {
     const refreshToken = auth?.replace('Bearer ', '');
@@ -41,8 +46,8 @@ export class AuthController {
     return this.authService.refreshTokens(refreshToken);
   }
 
-  @Post('logout')
   @UseGuards(RefreshTokenGuard)
+  @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Headers('Authorization') auth: string) {
     const refreshToken = auth?.replace('Bearer ', '');

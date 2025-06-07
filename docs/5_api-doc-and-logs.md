@@ -20,12 +20,12 @@ This document outlines the steps and options for implementing API documentation 
 
 ### Server Logging
 
-- [ ] Choose a logging solution
-  - [ ] NestJS built-in Logger
-  - [ ] Winston (with @nestjs/winston)
-  - [ ] Pino (with @nestjs/pino)
-  - [ ] Other (TBD)
-- [ ] Implement a dedicated logging service (wraps or extends the chosen logger)
+- [x] Choose a logging solution
+  - [-] NestJS built-in Logger
+  - [-] Winston (with @nestjs/winston)
+  - [x] Pino (with @nestjs/pino)
+  - [-] Other (TBD)
+- [-] Implement a dedicated logging service (wraps or extends the chosen logger)
 - [ ] Use structured logs (JSON, timestamps, log levels, context)
 - [ ] Add informative logs to key events (requests, errors, auth, DB ops, etc.)
 - [ ] Configure log output (console, file, external service)
@@ -77,3 +77,144 @@ The API documentation and logging setup is considered complete when:
 ---
 
 **This doc is your checklist and reference for implementing robust API documentation and logging in your backend.**
+
+## Detailed Logging Implementation Plan
+
+### 1. Authentication & Authorization
+
+- **AuthController**:
+
+  - ✅ Login attempts (success/failure)
+  - ✅ Logout events
+  - ✅ Token refresh attempts
+  - ❌ Password reset requests (NOT IMPLEMENTED)
+  - ✅ Registration attempts
+
+- **AuthService**:
+  - ✅ Token generation
+  - ✅ Token validation
+  - ✅ Password hashing operations
+  - ✅ User verification steps
+  - ✅ whoami endpoint
+
+### 2. User Management
+
+- **UsersController**:
+
+  - ✅ User creation
+  - ✅ User updates
+  - ✅ User deletion
+  - ✅ Profile updates
+  - ✅ Password changes (handled in AuthService)
+
+- **UsersService**:
+  - Database operations
+  - Data validation results
+  - Cache operations (if any)
+
+### 3. Database Operations (Prisma)
+
+- **PrismaService**:
+  - Connection events
+  - Query execution times
+  - Transaction starts/completions
+  - Migration events
+
+### 4. Error Handling
+
+- **AllExceptionsFilter**:
+
+  - Unhandled exceptions
+  - Error stack traces
+  - Error context
+
+- **ValidationExceptionFilter**:
+
+  - Validation failures
+  - Invalid input data
+
+- **PrismaExceptionFilter**:
+  - Database errors
+  - Connection issues
+  - Query failures
+
+### 5. Request/Response Lifecycle
+
+- **Global Interceptors**:
+  - Request start/end
+  - Response times
+  - Request sizes
+  - Response sizes
+
+### 6. Health Checks
+
+- **HealthController**:
+  - Health check requests
+  - System status changes
+  - Dependency status (DB, cache, etc.)
+
+### 7. Application Lifecycle
+
+- **main.ts**:
+  - Application startup
+  - Configuration loading
+  - Environment detection
+  - Port binding
+
+### 8. Security Events
+
+- **Rate Limiting**:
+
+  - Rate limit hits
+  - IP blocking events
+
+- **CORS**:
+  - Cross-origin request attempts
+  - CORS policy violations
+
+### 9. Performance Monitoring
+
+- **Cache Operations**:
+
+  - Cache hits/misses
+  - Cache invalidation
+
+- **External Service Calls**:
+  - API calls
+  - Response times
+  - Failures
+
+### 10. Business Logic
+
+- **Business Services**:
+  - Important state changes
+  - Business rule validations
+  - Critical operations
+
+### Implementation Priority Order
+
+1. Authentication (security-critical)
+2. Error handling (debugging-critical)
+3. Database operations (performance-critical)
+4. Request/Response lifecycle (monitoring-critical)
+5. Health checks and application lifecycle
+6. Security events
+7. Performance monitoring
+8. Business logic
+9. User management
+10. Other areas
+
+### Log Structure Template
+
+```typescript
+{
+  timestamp: string;
+  level: 'info' | 'warn' | 'error' | 'debug';
+  context: string;
+  message: string;
+  correlationId?: string;
+  userId?: string;
+  metadata?: Record<string, any>;
+  duration?: number; // for performance metrics
+}
+```

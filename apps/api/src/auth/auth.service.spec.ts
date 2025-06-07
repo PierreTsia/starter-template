@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
+import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
@@ -37,6 +38,19 @@ const mockRefreshTokenService = {
   revokeAllUserRefreshTokens: jest.fn(),
 };
 
+const mockLoggerService = {
+  log: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+  debug: jest.fn(),
+  warnWithMetadata: jest.fn(),
+
+  logOperation: jest.fn(
+    <T>(operation: string, fn: () => Promise<T>, _metadata?: Record<string, unknown>): Promise<T> =>
+      fn()
+  ),
+};
+
 describe('AuthService', () => {
   let service: AuthService;
 
@@ -55,6 +69,10 @@ describe('AuthService', () => {
         {
           provide: RefreshTokenService,
           useValue: mockRefreshTokenService,
+        },
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

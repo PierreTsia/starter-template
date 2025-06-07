@@ -5,6 +5,7 @@ import { Express } from 'express';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersController } from './users.controller';
@@ -31,6 +32,21 @@ describe('UsersController', () => {
     delete: jest.fn(),
   };
 
+  const mockLoggerService = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+
+    logOperation: jest.fn(
+      <T>(
+        operation: string,
+        fn: () => Promise<T>,
+        _metadata?: Record<string, unknown>
+      ): Promise<T> => fn()
+    ),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
@@ -38,6 +54,10 @@ describe('UsersController', () => {
         {
           provide: UsersService,
           useValue: mockUsersService,
+        },
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
         },
       ],
     })

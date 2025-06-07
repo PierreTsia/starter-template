@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
@@ -13,7 +15,25 @@ import { RefreshTokenService } from './refresh-token.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
+  let controller: AuthController;
   let mockAuthService: Partial<AuthService>;
+
+  const mockLoggerService = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    warnWithMetadata: jest.fn(),
+
+    logOperation: jest.fn(
+      <T>(
+        operation: string,
+        fn: () => Promise<T>,
+
+        _metadata?: Record<string, unknown>
+      ): Promise<T> => fn()
+    ),
+  };
 
   beforeEach(async () => {
     mockAuthService = {
@@ -48,8 +68,17 @@ describe('AuthController', () => {
             validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
           },
         },
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: () => true,
+      })
+      .compile();
 
     app = module.createNestApplication();
     app.useGlobalPipes(
@@ -60,10 +89,17 @@ describe('AuthController', () => {
       })
     );
     await app.init();
+
+    controller = module.get<AuthController>(AuthController);
   });
 
   afterEach(async () => {
     await app.close();
+    jest.clearAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('/auth/login (POST)', () => {
