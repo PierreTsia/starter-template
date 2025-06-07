@@ -2,13 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { authApi } from '@/api/resources/auth/api';
-import { env } from '@/lib/env';
 import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const FIVE_MINUTES = 1000 * 60 * 5;
 
-const AUTH_TOKEN_KEY = env.VITE_AUTH_TOKEN_KEY;
+const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY;
 const REFRESH_TOKEN_KEY = 'refreshToken';
 
 export const useMe = () =>
