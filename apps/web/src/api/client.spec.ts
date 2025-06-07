@@ -2,12 +2,6 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 
 import { apiFetch } from './client';
 
-// Mock environment variables
-vi.mock('import.meta.env', () => ({
-  VITE_API_URL: 'http://localhost:3000',
-  VITE_AUTH_TOKEN_KEY: 'token',
-}));
-
 // Mock fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
