@@ -32,8 +32,14 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
       headers,
     });
 
-    // Skip token refresh for logout endpoint
-    if (res.status === 401 && refreshToken && !isRefreshing && !endpoint.includes('/auth/logout')) {
+    // Skip token refresh for logout and refresh endpoints to prevent infinite recursion
+    if (
+      res.status === 401 &&
+      refreshToken &&
+      !isRefreshing &&
+      !endpoint.includes('/auth/logout') &&
+      !endpoint.includes('/auth/refresh')
+    ) {
       isRefreshing = true;
 
       try {
