@@ -44,18 +44,42 @@ export class UsersController {
 
   @Get()
   async findAll(): Promise<Partial<User>[]> {
-    return this.usersService.findAll();
+    return this.logger.logOperation(
+      'findAll',
+      async () => {
+        const users = await this.usersService.findAll();
+        return users;
+      },
+      { operation: 'list_users' }
+    );
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Partial<User>> {
-    return this.usersService.findOne(id);
+    return this.logger.logOperation(
+      'findOne',
+      async () => {
+        const user = await this.usersService.findOne(id);
+        return user;
+      },
+      { userId: id }
+    );
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto): Promise<Partial<User>> {
-    return this.usersService.create(createUserDto);
+    return this.logger.logOperation(
+      'create',
+      async () => {
+        const user = await this.usersService.create(createUserDto);
+        return user;
+      },
+      {
+        email: createUserDto.email,
+        name: createUserDto.name,
+      }
+    );
   }
 
   @Put(':id')
@@ -63,12 +87,28 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<Partial<User>> {
-    return this.usersService.update(id, updateUserDto);
+    return this.logger.logOperation(
+      'update',
+      async () => {
+        const user = await this.usersService.update(id, updateUserDto);
+        return user;
+      },
+      {
+        userId: id,
+        updatedFields: Object.keys(updateUserDto),
+      }
+    );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
-    await this.usersService.delete(id);
+    return this.logger.logOperation(
+      'delete',
+      async () => {
+        await this.usersService.delete(id);
+      },
+      { userId: id }
+    );
   }
 }
