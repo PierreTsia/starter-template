@@ -23,8 +23,10 @@ async function bootstrap() {
   // Enable cookie parsing
   app.use(cookieParser());
 
-  // Set global prefix for all routes
-  app.setGlobalPrefix('api/v1');
+  // Set global prefix for all routes except root
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['/'],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
