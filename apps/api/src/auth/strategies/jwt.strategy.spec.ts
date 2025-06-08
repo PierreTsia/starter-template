@@ -52,6 +52,10 @@ describe('JwtStrategy', () => {
         name: 'Test User',
         createdAt: new Date(),
         updatedAt: new Date(),
+        isEmailConfirmed: false,
+        emailConfirmationToken: null,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       };
       const payload = { sub: '123', email: 'test@example.com' };
 

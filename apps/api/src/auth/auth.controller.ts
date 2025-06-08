@@ -7,14 +7,19 @@ import {
   Headers,
   UseGuards,
   UnauthorizedException,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 
 import { LoggerService } from '../logger/logger.service';
 
 import { AuthService } from './auth.service';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('Authentication')
@@ -97,5 +102,46 @@ export class AuthController {
       throw new UnauthorizedException('No refresh token provided');
     }
     return this.authService.logout(refreshToken);
+  }
+
+  @ApiOperation({ summary: 'Confirm email address' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Email confirmed successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Invalid confirmation token',
+  })
+  @Get('confirm-email')
+  @HttpCode(HttpStatus.OK)
+  async confirmEmail(@Query() { token }: ConfirmEmailDto) {
+    return this.authService.confirmEmail(token);
+  }
+
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'If email is registered, a reset link will be sent',
+  })
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(@Body() { email }: ForgotPasswordDto) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @ApiOperation({ summary: 'Reset password' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password reset successful',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Invalid or expired reset token',
+  })
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() { token, password }: ResetPasswordDto) {
+    return this.authService.resetPassword(token, password);
   }
 }
