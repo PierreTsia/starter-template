@@ -59,6 +59,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.3(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/config':
+        specifier: ^4.0.2
+        version: 4.0.2(@nestjs/common@11.1.3)(rxjs@7.8.2)
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.3(@nestjs/common@11.1.3)(@nestjs/platform-express@11.1.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -95,6 +98,9 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.1.0
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       nestjs-pino:
         specifier: ^4.4.0
         version: 4.4.0(@nestjs/common@11.1.3)(pino-http@10.5.0)(pino@9.7.0)(rxjs@7.8.2)
@@ -1179,6 +1185,16 @@ packages:
       levn: 0.4.1
     dev: true
 
+  /@hapi/hoek@9.3.0:
+    resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==, tarball: https://registry.npmjs.org/@hapi/hoek/-/hoek-9.3.0.tgz}
+    dev: false
+
+  /@hapi/topo@5.1.0:
+    resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==, tarball: https://registry.npmjs.org/@hapi/topo/-/topo-5.1.0.tgz}
+    dependencies:
+      '@hapi/hoek': 9.3.0
+    dev: false
+
   /@hookform/resolvers@5.1.0(react-hook-form@7.57.0):
     resolution: {integrity: sha512-A5tY8gxqvvR0lFfropqpy/gUDOxjwT7LZCxJ8lNA9puK7nFNRl/O0egGKxzdF4JSz/pnnT1O8g76P/YMyTBEFw==, tarball: https://registry.npmjs.org/@hookform/resolvers/-/resolvers-5.1.0.tgz}
     peerDependencies:
@@ -1998,6 +2014,19 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@nestjs/config@4.0.2(@nestjs/common@11.1.3)(rxjs@7.8.2):
+    resolution: {integrity: sha512-McMW6EXtpc8+CwTUwFdg6h7dYcBUpH5iUILCclAsa+MbCEvC9ZKu4dCHRlJqALuhjLw97pbQu62l4+wRwGeZqA==, tarball: https://registry.npmjs.org/@nestjs/config/-/config-4.0.2.tgz}
+    peerDependencies:
+      '@nestjs/common': ^10.0.0 || ^11.0.0
+      rxjs: ^7.1.0
+    dependencies:
+      '@nestjs/common': 11.1.3(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      dotenv: 16.4.7
+      dotenv-expand: 12.0.1
+      lodash: 4.17.21
+      rxjs: 7.8.2
+    dev: false
+
   /@nestjs/core@11.1.3(@nestjs/common@11.1.3)(@nestjs/platform-express@11.1.3)(reflect-metadata@0.2.2)(rxjs@7.8.2):
     resolution: {integrity: sha512-5lTni0TCh8x7bXETRD57pQFnKnEg1T6M+VLE7wAmyQRIecKQU+2inRGZD+A4v2DC1I04eA0WffP0GKLxjOKlzw==, tarball: https://registry.npmjs.org/@nestjs/core/-/core-11.1.3.tgz}
     engines: {node: '>= 20'}
@@ -2743,6 +2772,20 @@ packages:
       prompts: 2.4.2
       zod: 3.25.56
     dev: true
+
+  /@sideway/address@4.1.5:
+    resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==, tarball: https://registry.npmjs.org/@sideway/address/-/address-4.1.5.tgz}
+    dependencies:
+      '@hapi/hoek': 9.3.0
+    dev: false
+
+  /@sideway/formula@3.0.1:
+    resolution: {integrity: sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==, tarball: https://registry.npmjs.org/@sideway/formula/-/formula-3.0.1.tgz}
+    dev: false
+
+  /@sideway/pinpoint@2.0.0:
+    resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==, tarball: https://registry.npmjs.org/@sideway/pinpoint/-/pinpoint-2.0.0.tgz}
+    dev: false
 
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==, tarball: https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.27.8.tgz}
@@ -5372,6 +5415,18 @@ packages:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==, tarball: https://registry.npmjs.org/dom-accessibility-api/-/dom-accessibility-api-0.6.3.tgz}
     dev: true
 
+  /dotenv-expand@12.0.1:
+    resolution: {integrity: sha512-LaKRbou8gt0RNID/9RoI+J2rvXsBRPMV7p+ElHlPhcSARbCPDYcYG2s1TIzAfWv4YSgyY5taidWzzs31lNV3yQ==, tarball: https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-12.0.1.tgz}
+    engines: {node: '>=12'}
+    dependencies:
+      dotenv: 16.4.7
+    dev: false
+
+  /dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==, tarball: https://registry.npmjs.org/dotenv/-/dotenv-16.4.7.tgz}
+    engines: {node: '>=12'}
+    dev: false
+
   /dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==, tarball: https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz}
     engines: {node: '>= 0.4'}
@@ -7661,6 +7716,16 @@ packages:
   /jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==, tarball: https://registry.npmjs.org/jiti/-/jiti-2.4.2.tgz}
     hasBin: true
+
+  /joi@17.13.3:
+    resolution: {integrity: sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==, tarball: https://registry.npmjs.org/joi/-/joi-17.13.3.tgz}
+    dependencies:
+      '@hapi/hoek': 9.3.0
+      '@hapi/topo': 5.1.0
+      '@sideway/address': 4.1.5
+      '@sideway/formula': 3.0.1
+      '@sideway/pinpoint': 2.0.0
+    dev: false
 
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==, tarball: https://registry.npmjs.org/joycon/-/joycon-3.1.1.tgz}

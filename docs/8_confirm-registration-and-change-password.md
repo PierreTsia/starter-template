@@ -1,12 +1,12 @@
 # Email Confirmation and Password Reset
 
-This guide explains how to implement email confirmation for new registrations and password reset functionality using SendGrid's free tier.
+This guide explains how to implement email confirmation for new registrations and password reset functionality using `@nestjs-modules/mailer` with SendGrid's SMTP service.
 
 ---
 
 ## Checklist
 
-- [ ] Set up SendGrid account and API key
+- [ ] Set up SendGrid account and SMTP credentials
 - [ ] Configure email templates for confirmation and password reset
 - [ ] Update registration flow to require email confirmation
 - [ ] Implement password reset flow
@@ -14,20 +14,77 @@ This guide explains how to implement email confirmation for new registrations an
 - [ ] Create frontend components for email confirmation and password reset
 - [ ] Test both flows end-to-end
 
+## PR Breakdown
+
+### PR 1: Email Service Foundation
+
+- [ ] Install and configure @nestjs-modules/mailer
+- [ ] Create basic EmailService with test endpoint
+- [ ] Add environment variables for SMTP
+- [ ] Add email templates
+- [ ] Add unit tests for email service
+- [ ] Add integration tests for test endpoint
+- [ ] Document local testing setup
+- [ ] Test email delivery in production
+
+### PR 2: User Model Updates
+
+- [ ] Add email confirmation fields to Prisma schema
+- [ ] Update user model with confirmation status
+- [ ] Add migration for new fields
+- [ ] Update user service to handle confirmation status
+- [ ] Add tests for new user model functionality
+
+### PR 3: Registration Flow Updates
+
+- [ ] Modify registration endpoint to require email confirmation
+- [ ] Add email confirmation endpoint
+- [ ] Update auth service to handle unconfirmed users
+- [ ] Add tests for new registration flow
+- [ ] Update frontend registration flow
+
+### PR 4: Password Reset Implementation
+
+- [ ] Add password reset endpoints
+- [ ] Implement password reset email flow
+- [ ] Add token expiration handling
+- [ ] Add tests for password reset flow
+- [ ] Update frontend with password reset UI
+
+### PR 5: Frontend Components
+
+- [ ] Create email confirmation page
+- [ ] Create password reset pages
+- [ ] Add loading states and error handling
+- [ ] Add tests for frontend components
+- [ ] Update documentation
+
+### PR 6: Final Integration & Testing
+
+- [ ] End-to-end testing of all flows
+- [ ] Security review
+- [ ] Performance testing
+- [ ] Documentation updates
+- [ ] Production deployment verification
+
 ---
 
-## 1. SendGrid Setup
+## 1. Email Service Setup
 
-- Create a free SendGrid account (100 emails/day)
-- Generate an API key in SendGrid dashboard
-- Add SendGrid to your project:
+- Install required packages:
+
   ```bash
-  npm install @sendgrid/mail
+  pnpm add @nestjs-modules/mailer nodemailer
+  pnpm add -D @types/nodemailer
   ```
-- Store API key in environment variables:
+
+- Store SMTP credentials in environment variables:
   ```env
-  SENDGRID_API_KEY=your_api_key
-  SENDGRID_FROM_EMAIL=your_verified_sender@domain.com
+  SMTP_HOST=smtp.sendgrid.net
+  SMTP_PORT=587
+  SMTP_USER=apikey
+  SMTP_PASS=your_sendgrid_api_key
+  SMTP_FROM_EMAIL=your_verified_sender@domain.com
   ```
 
 ---
@@ -60,37 +117,104 @@ This guide explains how to implement email confirmation for new registrations an
 
 ## 3. Email Service Setup
 
-- Create an email service to handle sending:
+- Create an email module with templates:
 
   ```typescript
-  // src/services/email.service.ts
-  import * as sendgrid from '@sendgrid/mail';
+  // src/email/email.module.ts
+  import { Module } from '@nestjs/common';
+  import { MailerModule } from '@nestjs-modules/mailer';
+  import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+  import { join } from 'path';
+  import { ConfigService } from '@nestjs/config';
+
+  @Module({
+    imports: [
+      MailerModule.forRootAsync({
+        useFactory: async (config: ConfigService) => ({
+          transport: {
+            host: config.get('SMTP_HOST'),
+            port: config.get('SMTP_PORT'),
+            secure: false,
+            auth: {
+              user: config.get('SMTP_USER'),
+              pass: config.get('SMTP_PASS'),
+            },
+          },
+          defaults: {
+            from: config.get('SMTP_FROM_EMAIL'),
+          },
+          template: {
+            dir: join(__dirname, 'templates'),
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        }),
+        inject: [ConfigService],
+      }),
+    ],
+    providers: [EmailService],
+    exports: [EmailService],
+  })
+  export class EmailModule {}
+  ```
+
+- Create email templates:
+
+  ```handlebars
+  // src/email/templates/confirmation.hbs
+  <h1>Confirm Your Email</h1>
+  <p>Please click the link below to confirm your email address:</p>
+  <a href='{{confirmationUrl}}'>Confirm Email</a>
+  ```
+
+  ```handlebars
+  // src/email/templates/reset-password.hbs
+  <h1>Reset Your Password</h1>
+  <p>Please click the link below to reset your password:</p>
+  <a href='{{resetUrl}}'>Reset Password</a>
+  <p>This link will expire in 1 hour.</p>
+  ```
+
+- Create the email service:
+
+  ```typescript
+  // src/email/email.service.ts
+  import { Injectable } from '@nestjs/common';
+  import { MailerService } from '@nestjs-modules/mailer';
+  import { ConfigService } from '@nestjs/config';
 
   @Injectable()
   export class EmailService {
-    constructor() {
-      sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
-    }
+    constructor(
+      private readonly mailerService: MailerService,
+      private readonly config: ConfigService
+    ) {}
 
     async sendConfirmationEmail(email: string, token: string) {
-      const confirmationUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
+      const confirmationUrl = `${this.config.get('FRONTEND_URL')}/confirm-email?token=${token}`;
 
-      await sendgrid.send({
+      await this.mailerService.sendMail({
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL,
         subject: 'Confirm your email',
-        html: `Click <a href="${confirmationUrl}">here</a> to confirm your email.`,
+        template: 'confirmation',
+        context: {
+          confirmationUrl,
+        },
       });
     }
 
     async sendPasswordResetEmail(email: string, token: string) {
-      const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+      const resetUrl = `${this.config.get('FRONTEND_URL')}/reset-password?token=${token}`;
 
-      await sendgrid.send({
+      await this.mailerService.sendMail({
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL,
         subject: 'Reset your password',
-        html: `Click <a href="${resetUrl}">here</a> to reset your password.`,
+        template: 'reset-password',
+        context: {
+          resetUrl,
+        },
       });
     }
   }
@@ -322,7 +446,7 @@ This guide explains how to implement email confirmation for new registrations an
 - [ ] New users must confirm email before logging in
 - [ ] Users can request password reset via email
 - [ ] Reset links expire after 1 hour
-- [ ] All emails are sent via SendGrid
+- [ ] All emails are sent via SMTP (SendGrid)
 - [ ] Frontend handles all states (loading, success, error)
 - [ ] Both flows work end-to-end in production
 

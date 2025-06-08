@@ -1,4 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -7,12 +8,12 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ValidationExceptionFilter } from './common/filters/validation-exception.filter';
 
-const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const configService = app.get(ConfigService);
 
   // Enable CORS
+  const corsOrigin = configService.get<string>('CORS_ORIGIN') ?? 'http://localhost:3000';
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
@@ -55,9 +56,9 @@ async function bootstrap() {
   // Global exception filters
   app.useGlobalFilters(new AllExceptionsFilter(), new ValidationExceptionFilter());
 
-  const port = process.env.PORT ?? 3000;
+  const port = configService.get<number>('PORT') ?? 3000;
   await app.listen(port);
-  console.log(`🚀 Server running on http://localhost:${port}/api/v1`);
+  console.log(`Application is running on: ${await app.getUrl()}`);
   console.log(`📚 API Documentation available at http://localhost:${port}/api/docs`);
 }
 bootstrap();
