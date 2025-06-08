@@ -13,6 +13,10 @@ interface User {
   name: string | null;
   createdAt: Date;
   updatedAt: Date;
+  isEmailConfirmed: boolean;
+  emailConfirmationToken: string | null;
+  passwordResetToken: string | null;
+  passwordResetExpires: Date | null;
 }
 
 describe('UsersService', () => {
@@ -60,6 +64,10 @@ describe('UsersService', () => {
           password: 'hashed',
           createdAt: new Date(),
           updatedAt: new Date(),
+          isEmailConfirmed: false,
+          emailConfirmationToken: null,
+          passwordResetToken: null,
+          passwordResetExpires: null,
         },
       ];
       mockPrismaService.user.findMany.mockResolvedValue(mockUsers);
@@ -73,6 +81,10 @@ describe('UsersService', () => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          isEmailConfirmed: true,
+          emailConfirmationToken: true,
+          passwordResetToken: true,
+          passwordResetExpires: true,
         },
       });
     });
@@ -87,6 +99,10 @@ describe('UsersService', () => {
         password: 'hashed',
         createdAt: new Date(),
         updatedAt: new Date(),
+        isEmailConfirmed: false,
+        emailConfirmationToken: null,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       };
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
@@ -100,6 +116,10 @@ describe('UsersService', () => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          isEmailConfirmed: true,
+          emailConfirmationToken: true,
+          passwordResetToken: true,
+          passwordResetExpires: true,
         },
       });
     });
@@ -124,6 +144,10 @@ describe('UsersService', () => {
         password: createUserDto.password,
         createdAt: new Date(),
         updatedAt: new Date(),
+        isEmailConfirmed: false,
+        emailConfirmationToken: null,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       };
       mockPrismaService.user.create.mockResolvedValue(mockUser);
 
@@ -137,6 +161,10 @@ describe('UsersService', () => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          isEmailConfirmed: true,
+          emailConfirmationToken: true,
+          passwordResetToken: true,
+          passwordResetExpires: true,
         },
       });
     });
@@ -152,6 +180,10 @@ describe('UsersService', () => {
         password: 'hashed',
         createdAt: new Date(),
         updatedAt: new Date(),
+        isEmailConfirmed: false,
+        emailConfirmationToken: null,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       };
       mockPrismaService.user.update.mockResolvedValue(mockUser);
 
@@ -166,6 +198,10 @@ describe('UsersService', () => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          isEmailConfirmed: true,
+          emailConfirmationToken: true,
+          passwordResetToken: true,
+          passwordResetExpires: true,
         },
       });
     });
@@ -180,6 +216,10 @@ describe('UsersService', () => {
         password: 'hashed',
         createdAt: new Date(),
         updatedAt: new Date(),
+        isEmailConfirmed: false,
+        emailConfirmationToken: null,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       };
       mockPrismaService.user.delete.mockResolvedValue(mockUser);
 
@@ -193,6 +233,10 @@ describe('UsersService', () => {
           name: true,
           createdAt: true,
           updatedAt: true,
+          isEmailConfirmed: true,
+          emailConfirmationToken: true,
+          passwordResetToken: true,
+          passwordResetExpires: true,
         },
       });
     });

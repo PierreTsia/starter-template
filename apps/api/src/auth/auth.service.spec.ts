@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
+import { EmailService } from '../email/email.service';
 import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
@@ -51,6 +52,12 @@ const mockLoggerService = {
   ),
 };
 
+const mockEmailService = {
+  sendEmail: jest.fn(),
+  sendConfirmationEmail: jest.fn(),
+  sendPasswordResetEmail: jest.fn(),
+};
+
 describe('AuthService', () => {
   let service: AuthService;
 
@@ -73,6 +80,10 @@ describe('AuthService', () => {
         {
           provide: LoggerService,
           useValue: mockLoggerService,
+        },
+        {
+          provide: EmailService,
+          useValue: mockEmailService,
         },
       ],
     }).compile();
