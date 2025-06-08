@@ -32,7 +32,14 @@ describe('EmailService', () => {
   });
 
   it('should call sendMail on sendTestEmail', async () => {
-    await service.sendTestEmail('test@example.com');
-    expect(mailerService.sendMail).toHaveBeenCalled();
+    await service.sendTestEmail('test@example.com', 'Test User');
+    expect(mailerService.sendMail).toHaveBeenCalledWith({
+      to: 'test@example.com',
+      subject: 'Test Email',
+      template: 'test',
+      context: {
+        name: 'Test User',
+      },
+    });
   });
 });
