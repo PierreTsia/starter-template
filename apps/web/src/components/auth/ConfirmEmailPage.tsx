@@ -22,7 +22,7 @@ export const ConfirmEmailPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardContent className="flex flex-col items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" data-testid="loading-spinner" />
           <p className="mt-4 text-sm text-muted-foreground">Confirming your email...</p>
         </CardContent>
       </Card>
