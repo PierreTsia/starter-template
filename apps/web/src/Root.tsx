@@ -9,11 +9,16 @@ import { NotFoundPage } from './components/NotFoundPage';
 import { SettingsPage } from './components/SettingsPage';
 import { TanstackDemo } from './components/TanstackDemo';
 import { AuthPage } from './components/auth/AuthPage';
+import { ConfirmEmailPage } from './components/auth/ConfirmEmailPage';
+import { EmailConfirmationPage } from './components/auth/EmailConfirmationPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+
+import { Toaster } from '@/components/ui/sonner';
 
 export const Root = () => {
   return (
     <div className="container min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4">
+      <Toaster />
       <Routes>
         <Route
           path="/"
@@ -25,6 +30,8 @@ export const Root = () => {
         />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
+        <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
+        <Route path="/confirm-email" element={<ConfirmEmailPage />} />
         <Route
           path="/about"
           element={

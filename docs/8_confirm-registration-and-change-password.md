@@ -18,37 +18,37 @@ This guide explains how to implement email confirmation for new registrations an
 
 ### PR 1: Email Service Foundation
 
-- [ ] Install and configure @nestjs-modules/mailer
-- [ ] Create basic EmailService with test endpoint
-- [ ] Add environment variables for SMTP
-- [ ] Add email templates
-- [ ] Add unit tests for email service
-- [ ] Add integration tests for test endpoint
-- [ ] Document local testing setup
-- [ ] Test email delivery in production
+- [x] Install and configure @nestjs-modules/mailer
+- [x] Create basic EmailService with test endpoint
+- [x] Add environment variables for SMTP
+- [x] Add email templates
+- [x] Add unit tests for email service
+- [x] Add integration tests for test endpoint
+- [x] Document local testing setup
+- [x] Test email delivery in production
 
 ### PR 2: User Model Updates
 
-- [ ] Add email confirmation fields to Prisma schema
-- [ ] Update user model with confirmation status
-- [ ] Add migration for new fields
-- [ ] Update user service to handle confirmation status
-- [ ] Add tests for new user model functionality
+- [x] Add email confirmation fields to Prisma schema
+- [x] Update user model with confirmation status
+- [x] Add migration for new fields
+- [x] Update user service to handle confirmation status
+- [x] Add tests for new user model functionality
 
 ### PR 3: Registration Flow Updates
 
-- [ ] Modify registration endpoint to require email confirmation
-- [ ] Add email confirmation endpoint
-- [ ] Update auth service to handle unconfirmed users
-- [ ] Add tests for new registration flow
+- [x] Modify registration endpoint to require email confirmation
+- [x] Add email confirmation endpoint
+- [x] Update auth service to handle unconfirmed users
+- [x] Add tests for new registration flow
 - [ ] Update frontend registration flow
 
 ### PR 4: Password Reset Implementation
 
-- [ ] Add password reset endpoints
-- [ ] Implement password reset email flow
-- [ ] Add token expiration handling
-- [ ] Add tests for password reset flow
+- [x] Add password reset endpoints
+- [x] Implement password reset email flow
+- [x] Add token expiration handling
+- [x] Add tests for password reset flow
 - [ ] Update frontend with password reset UI
 
 ### PR 5: Frontend Components

@@ -12,6 +12,10 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(input),
     }),
+  confirmEmail: (token: string) =>
+    apiFetch<{ message: string }>(`/api/v1/auth/confirm-email?token=${token}`, {
+      method: 'GET',
+    }),
   logout: () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
