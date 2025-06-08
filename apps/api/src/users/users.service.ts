@@ -7,12 +7,20 @@ interface CreateUserData {
   email: string;
   password: string;
   name?: string;
+  isEmailConfirmed?: boolean;
+  emailConfirmationToken?: string | null;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
 }
 
 interface UpdateUserData {
   email?: string;
   password?: string;
   name?: string;
+  isEmailConfirmed?: boolean;
+  emailConfirmationToken?: string | null;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
 }
 
 const userSelect = {
@@ -21,6 +29,10 @@ const userSelect = {
   name: true,
   createdAt: true,
   updatedAt: true,
+  isEmailConfirmed: true,
+  emailConfirmationToken: true,
+  passwordResetToken: true,
+  passwordResetExpires: true,
 };
 type SafeUser = Omit<User, 'password'>;
 
@@ -80,5 +92,22 @@ export class UsersService {
     } catch {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
+  }
+
+  async findByEmailConfirmationToken(token: string): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: { emailConfirmationToken: token },
+    });
+  }
+
+  async findByPasswordResetToken(token: string): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        passwordResetToken: token,
+        passwordResetExpires: {
+          gt: new Date(),
+        },
+      },
+    });
   }
 }

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,14 +8,18 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  password      String
-  name          String?
-  todos         Todo[]
-  refreshTokens RefreshToken[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id                     String         @id @default(uuid())
+  email                  String         @unique
+  password               String
+  name                   String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  emailConfirmationToken String?
+  isEmailConfirmed       Boolean        @default(false)
+  passwordResetExpires   DateTime?
+  passwordResetToken     String?
+  refreshTokens          RefreshToken[]
+  todos                  Todo[]
 
   @@map("users")
 }
@@ -32,9 +30,9 @@ model Todo {
   description String?
   completed   Boolean  @default(false)
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("todos")
 }
@@ -43,10 +41,10 @@ model RefreshToken {
   id        String   @id @default(uuid())
   token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }

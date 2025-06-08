@@ -1,8 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import * as crypto from 'crypto';
+
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User as PrismaUser } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
+import { EmailService } from '../email/email.service';
 import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
@@ -27,6 +30,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly emailService: EmailService,
     private readonly logger: LoggerService
   ) {}
 
@@ -99,12 +103,25 @@ export class AuthService {
     return this.logger.logOperation(
       'Registration',
       async () => {
+        // Check if user already exists
+        const existingUser = await this.usersService.findByEmail(email);
+        if (existingUser) {
+          throw new UnauthorizedException('Email already registered');
+        }
+
         const hashedPassword = await this.hashPassword(password);
+        const confirmationToken = crypto.randomBytes(32).toString('hex');
+
         const user = await this.usersService.create({
           email,
           name,
           password: hashedPassword,
+          isEmailConfirmed: false,
+          emailConfirmationToken: confirmationToken,
         });
+
+        // Send confirmation email
+        await this.emailService.sendConfirmationEmail(email, confirmationToken);
 
         const [accessToken, refreshToken] = await Promise.all([
           this.generateJwt(user),
@@ -162,6 +179,75 @@ export class AuthService {
       'JWT generation',
       () => this.jwtService.signAsync({ sub: user.id, email: user.email }),
       { userId: user.id }
+    );
+  }
+
+  async confirmEmail(token: string) {
+    return this.logger.logOperation(
+      'Email confirmation',
+      async () => {
+        const user = await this.usersService.findByEmailConfirmationToken(token);
+        if (!user) {
+          throw new NotFoundException('Invalid confirmation token');
+        }
+
+        await this.usersService.update(user.id, {
+          isEmailConfirmed: true,
+          emailConfirmationToken: null,
+        });
+
+        return { message: 'Email confirmed successfully' };
+      },
+      { token }
+    );
+  }
+
+  async forgotPassword(email: string) {
+    return this.logger.logOperation(
+      'Password reset request',
+      async () => {
+        const user = await this.usersService.findByEmail(email);
+        if (!user) {
+          // Don't reveal if email exists
+          return { message: 'If your email is registered, you will receive a reset link' };
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetExpires = new Date(Date.now() + 3600000); // 1 hour
+
+        await this.usersService.update(user.id, {
+          passwordResetToken: resetToken,
+          passwordResetExpires: resetExpires,
+        });
+
+        await this.emailService.sendPasswordResetEmail(user.email, resetToken);
+
+        return { message: 'If your email is registered, you will receive a reset link' };
+      },
+      { email }
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    return this.logger.logOperation(
+      'Password reset',
+      async () => {
+        const user = await this.usersService.findByPasswordResetToken(token);
+        if (!user || !user.passwordResetExpires || user.passwordResetExpires < new Date()) {
+          throw new NotFoundException('Invalid or expired reset token');
+        }
+
+        const hashedPassword = await this.hashPassword(newPassword);
+
+        await this.usersService.update(user.id, {
+          password: hashedPassword,
+          passwordResetToken: null,
+          passwordResetExpires: null,
+        });
+
+        return { message: 'Password reset successful' };
+      },
+      { token }
     );
   }
 }
