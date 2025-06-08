@@ -56,6 +56,7 @@ export class AuthService {
       'User validation',
       async () => {
         const user = await this.usersService.findByEmail(email);
+
         if (!user) {
           this.logger.warnWithMetadata('User not found during validation', { email });
           return null;
@@ -65,6 +66,11 @@ export class AuthService {
         if (!isValid) {
           this.logger.warnWithMetadata('Invalid password during validation', { email });
           return null;
+        }
+
+        if (!user.isEmailConfirmed) {
+          this.logger.warnWithMetadata('Unconfirmed email during validation', { email });
+          throw new UnauthorizedException('Please confirm your email before logging in');
         }
 
         const { password: _, ...result } = user;
@@ -112,7 +118,7 @@ export class AuthService {
         const hashedPassword = await this.hashPassword(password);
         const confirmationToken = crypto.randomBytes(32).toString('hex');
 
-        const user = await this.usersService.create({
+        await this.usersService.create({
           email,
           name,
           password: hashedPassword,
@@ -123,16 +129,7 @@ export class AuthService {
         // Send confirmation email
         await this.emailService.sendConfirmationEmail(email, confirmationToken);
 
-        const [accessToken, refreshToken] = await Promise.all([
-          this.generateJwt(user),
-          this.refreshTokenService.generateRefreshToken(user.id),
-        ]);
-
-        return {
-          user,
-          accessToken,
-          refreshToken,
-        };
+        return { message: 'Please check your email to confirm your account' };
       },
       { email }
     );
