@@ -48,8 +48,11 @@ export const useAuth = () => {
   const confirmEmailMutation = useMutation({
     mutationFn: (token: string) => authApi.confirmEmail(token),
     onSuccess: () => {
-      navigate('/login', { replace: true });
       toast.success('Email confirmed successfully');
+      navigate('/confirm-email/success', { replace: true });
+    },
+    onError: () => {
+      navigate('/confirm-email/error', { replace: true });
     },
   });
 
