@@ -20,8 +20,7 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@apps/*": ["./apps/*"],
-      "@packages/*": ["./packages/*"]
+      "@apps/*": ["./apps/*"]
     }
   },
   "exclude": ["node_modules", ".eslintrc.cjs"]
