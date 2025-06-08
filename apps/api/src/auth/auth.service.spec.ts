@@ -1,4 +1,6 @@
-import { UnauthorizedException } from '@nestjs/common';
+import * as crypto from 'crypto';
+
+import { UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
@@ -10,21 +12,31 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { RefreshTokenService } from './refresh-token.service';
 
-jest.mock('bcrypt');
+jest.mock('bcrypt', () => ({
+  hash: jest.fn(),
+  compare: jest.fn(),
+  genSalt: jest.fn(),
+}));
 
 const mockUser = {
   id: '1',
-  email: 'test@test.com',
+  email: 'test@example.com',
   name: 'Test User',
   password: 'hashedPassword',
   createdAt: new Date(),
   updatedAt: new Date(),
+  isEmailConfirmed: false,
+  emailConfirmationToken: 'confirmation-token',
+  passwordResetToken: null,
+  passwordResetExpires: null,
 };
 
 const mockUsersService = {
   findByEmail: jest.fn(),
   create: jest.fn(),
   findOne: jest.fn(),
+  update: jest.fn(),
+  findByEmailConfirmationToken: jest.fn(),
 };
 
 const mockJwtService = {
@@ -60,6 +72,8 @@ const mockEmailService = {
 
 describe('AuthService', () => {
   let service: AuthService;
+  let usersService: UsersService;
+  let emailService: EmailService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -89,6 +103,8 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    usersService = module.get<UsersService>(UsersService);
+    emailService = module.get<EmailService>(EmailService);
   });
 
   afterEach(() => {
@@ -103,11 +119,15 @@ describe('AuthService', () => {
     it('should return user object without password when credentials are valid', async () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
-      const result = await service.validateUser('test@test.com', 'password123');
+      const result = await service.validateUser('test@example.com', 'password123');
       expect(result).toEqual({
         id: mockUser.id,
         email: mockUser.email,
         name: mockUser.name,
+        isEmailConfirmed: mockUser.isEmailConfirmed,
+        emailConfirmationToken: mockUser.emailConfirmationToken,
+        passwordResetToken: mockUser.passwordResetToken,
+        passwordResetExpires: mockUser.passwordResetExpires,
         createdAt: mockUser.createdAt,
         updatedAt: mockUser.updatedAt,
       });
@@ -116,7 +136,7 @@ describe('AuthService', () => {
     it('should return null when credentials are invalid', async () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
-      const result = await service.validateUser('test@test.com', 'wrongpassword');
+      const result = await service.validateUser('test@example.com', 'wrongpassword');
       expect(result).toBeNull();
     });
 
@@ -132,7 +152,7 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
       const result = await service.login({
-        email: 'test@test.com',
+        email: 'test@example.com',
         password: 'password123',
       });
       expect(result).toEqual({
@@ -140,6 +160,10 @@ describe('AuthService', () => {
           id: mockUser.id,
           email: mockUser.email,
           name: mockUser.name,
+          isEmailConfirmed: mockUser.isEmailConfirmed,
+          emailConfirmationToken: mockUser.emailConfirmationToken,
+          passwordResetToken: mockUser.passwordResetToken,
+          passwordResetExpires: mockUser.passwordResetExpires,
           createdAt: mockUser.createdAt,
           updatedAt: mockUser.updatedAt,
         },
@@ -153,7 +177,7 @@ describe('AuthService', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
       await expect(
         service.login({
-          email: 'test@test.com',
+          email: 'test@example.com',
           password: 'wrongpassword',
         })
       ).rejects.toThrow(UnauthorizedException);
@@ -161,31 +185,86 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should create a new user and return user data', async () => {
+    it('should throw UnauthorizedException if email already exists', async () => {
+      jest.spyOn(usersService, 'findByEmail').mockResolvedValue(mockUser);
+
+      await expect(
+        service.register({
+          email: 'test@example.com',
+          password: 'password123',
+        })
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should create user and send confirmation email', async () => {
       const newUser = {
-        email: 'new@test.com',
+        email: 'test@example.com',
         password: 'password123',
-        name: 'New User',
+        name: 'Test User',
       };
-      (bcrypt.hash as jest.Mock).mockResolvedValueOnce('hashedPassword');
-      mockUsersService.create.mockResolvedValueOnce({
-        ...mockUser,
-        ...newUser,
-      });
+
+      const createdUser = {
+        id: '1',
+        email: newUser.email,
+        name: newUser.name,
+        isEmailConfirmed: false,
+        emailConfirmationToken: 'confirmation-token',
+        passwordResetToken: null,
+        passwordResetExpires: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+      jest.spyOn(usersService, 'create').mockResolvedValue(createdUser);
+      const mockBuffer = Buffer.from('confirmation-token');
+      jest.spyOn(crypto, 'randomBytes').mockImplementation(() => mockBuffer);
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
+      (bcrypt.genSalt as jest.Mock).mockResolvedValue('salt');
 
       const result = await service.register(newUser);
+
+      expect(usersService.create).toHaveBeenCalledWith({
+        email: newUser.email,
+        password: 'hashedPassword',
+        isEmailConfirmed: false,
+        emailConfirmationToken: expect.any(String) as string,
+        name: newUser.name,
+      });
+      expect(emailService.sendConfirmationEmail).toHaveBeenCalledWith(
+        newUser.email,
+        expect.any(String) as string
+      );
       expect(result).toEqual({
-        user: {
-          ...mockUser,
-          ...newUser,
-        },
+        user: createdUser,
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-refresh-token',
       });
-      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
-        sub: mockUser.id,
-        email: newUser.email,
+    });
+  });
+
+  describe('confirmEmail', () => {
+    it('should throw NotFoundException if token is invalid', async () => {
+      jest.spyOn(usersService, 'findByEmailConfirmationToken').mockResolvedValue(null);
+
+      await expect(service.confirmEmail('invalid-token')).rejects.toThrow(NotFoundException);
+    });
+
+    it('should confirm email and clear token', async () => {
+      jest.spyOn(usersService, 'findByEmailConfirmationToken').mockResolvedValue(mockUser);
+      jest.spyOn(usersService, 'update').mockResolvedValue({
+        ...mockUser,
+        isEmailConfirmed: true,
+        emailConfirmationToken: null,
       });
+
+      const result = await service.confirmEmail('valid-token');
+
+      expect(usersService.update).toHaveBeenCalledWith(mockUser.id, {
+        isEmailConfirmed: true,
+        emailConfirmationToken: null,
+      });
+      expect(result).toEqual({ message: 'Email confirmed successfully' });
     });
   });
 
