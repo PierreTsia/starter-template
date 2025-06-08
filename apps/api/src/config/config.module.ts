@@ -16,6 +16,11 @@ import Joi from 'joi';
         JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
         DATABASE_URL: Joi.string().required(),
         FRONTEND_URL: Joi.string().required(),
+        SMTP_HOST: Joi.string().required(),
+        SMTP_PORT: Joi.number().required(),
+        SMTP_USER: Joi.string().required(),
+        SMTP_PASS: Joi.string().required(),
+        SMTP_FROM_EMAIL: Joi.string().email().required(),
       }),
       validationOptions: {
         abortEarly: true,

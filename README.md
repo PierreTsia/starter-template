@@ -37,9 +37,14 @@ starter-template/
 - **Features:**
   - User CRUD (protected by JWT)
   - Auth (register, login, whoami, guards)
+  - Email confirmation and password reset flow
   - DTO validation, global error handling
   - Test coverage with Jest
   - Ready for deployment (see docs/6_back-end-deployment-setup.md)
+- **Email Service:**
+  - Uses Brevo (formerly Sendinblue) for transactional emails
+  - Development: Mailtrap for email testing
+  - Production: Requires verified sender email and domain
 - **Setup:**
   1. `cd apps/api`
   2. `pnpm install`
