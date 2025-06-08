@@ -10,6 +10,7 @@ import { SettingsPage } from './components/SettingsPage';
 import { TanstackDemo } from './components/TanstackDemo';
 import { AuthPage } from './components/auth/AuthPage';
 import { ConfirmEmailPage } from './components/auth/ConfirmEmailPage';
+import { EmailConfirmationPage } from './components/auth/EmailConfirmationPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 import { ConfirmEmailErrorPage } from '@/components/auth/ConfirmEmailErrorPage';
@@ -34,6 +35,7 @@ export const Root = () => {
         />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
+        <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
         <Route path="/confirm-email">
           <Route index element={<ConfirmEmailPage />} />
           <Route path="success" element={<ConfirmEmailSuccessPage />} />
