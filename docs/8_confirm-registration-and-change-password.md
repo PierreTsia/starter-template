@@ -14,6 +14,58 @@ This guide explains how to implement email confirmation for new registrations an
 - [ ] Create frontend components for email confirmation and password reset
 - [ ] Test both flows end-to-end
 
+## PR Breakdown
+
+### PR 1: Email Service Foundation
+
+- [ ] Install and configure SendGrid
+- [ ] Create basic EmailService with test endpoint
+- [ ] Add environment variables for SendGrid
+- [ ] Add unit tests for email service
+- [ ] Add integration tests for test endpoint
+- [ ] Document local testing setup
+- [ ] Test email delivery in production
+
+### PR 2: User Model Updates
+
+- [ ] Add email confirmation fields to Prisma schema
+- [ ] Update user model with confirmation status
+- [ ] Add migration for new fields
+- [ ] Update user service to handle confirmation status
+- [ ] Add tests for new user model functionality
+
+### PR 3: Registration Flow Updates
+
+- [ ] Modify registration endpoint to require email confirmation
+- [ ] Add email confirmation endpoint
+- [ ] Update auth service to handle unconfirmed users
+- [ ] Add tests for new registration flow
+- [ ] Update frontend registration flow
+
+### PR 4: Password Reset Implementation
+
+- [ ] Add password reset endpoints
+- [ ] Implement password reset email flow
+- [ ] Add token expiration handling
+- [ ] Add tests for password reset flow
+- [ ] Update frontend with password reset UI
+
+### PR 5: Frontend Components
+
+- [ ] Create email confirmation page
+- [ ] Create password reset pages
+- [ ] Add loading states and error handling
+- [ ] Add tests for frontend components
+- [ ] Update documentation
+
+### PR 6: Final Integration & Testing
+
+- [ ] End-to-end testing of all flows
+- [ ] Security review
+- [ ] Performance testing
+- [ ] Documentation updates
+- [ ] Production deployment verification
+
 ---
 
 ## 1. SendGrid Setup

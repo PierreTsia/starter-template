@@ -8,15 +8,15 @@ This document outlines the steps and options for implementing API documentation 
 
 ### API Documentation
 
-- [ ] Choose a documentation tool
-  - [ ] Swagger (OpenAPI via NestJS @nestjs/swagger)
-  - [ ] Redoc
-  - [ ] Other (TBD)
-- [ ] Install and configure the chosen tool
-- [ ] Annotate controllers, DTOs, and endpoints with documentation decorators/comments
-- [ ] Expose the API docs at a dedicated route (e.g., `/api/docs`)
-- [ ] Secure the docs route (optional, e.g., only in non-production or behind auth)
-- [ ] Keep docs up to date as the API evolves
+- [x] Choose a documentation tool
+  - [x] Swagger (OpenAPI via NestJS @nestjs/swagger)
+  - [-] Redoc
+  - [-] Other (TBD)
+- [x] Install and configure the chosen tool
+- [x] Annotate controllers, DTOs, and endpoints with documentation decorators/comments
+- [x] Expose the API docs at a dedicated route (e.g., `/api/docs`)
+- [-] Secure the docs route (optional, e.g., only in non-production or behind auth)
+- [-] Keep docs up to date as the API evolves
 
 ### Server Logging
 
@@ -26,12 +26,12 @@ This document outlines the steps and options for implementing API documentation 
   - [x] Pino (with @nestjs/pino)
   - [-] Other (TBD)
 - [-] Implement a dedicated logging service (wraps or extends the chosen logger)
-- [ ] Use structured logs (JSON, timestamps, log levels, context)
-- [ ] Add informative logs to key events (requests, errors, auth, DB ops, etc.)
-- [ ] Configure log output (console, file, external service)
-- [ ] Set up log rotation and retention (if writing to files)
-- [ ] Ensure logs do not leak sensitive data (scrub tokens, passwords, etc.)
-- [ ] Add request correlation IDs for tracing (optional, but recommended)
+- [x] Use structured logs (JSON, timestamps, log levels, context)
+- [x] Add informative logs to key events (requests, errors, auth, DB ops, etc.)
+- [x] Configure log output (console, file, external service)
+- [x] Set up log rotation and retention (if writing to files)
+- [x] Ensure logs do not leak sensitive data (scrub tokens, passwords, etc.)
+- [-] Add request correlation IDs for tracing (optional, but recommended)
 
 ---
 
@@ -68,11 +68,11 @@ This document outlines the steps and options for implementing API documentation 
 
 The API documentation and logging setup is considered complete when:
 
-- [ ] All required checkboxes above are checked
-- [ ] API documentation is available, accurate, and up to date at `/api/docs`
-- [ ] Server logs are structured, informative, and do not leak sensitive data
-- [ ] Logs are accessible and useful for debugging and monitoring
-- [ ] (Optional) Request correlation IDs are present in logs for tracing
+- [-] All required checkboxes above are checked
+- [x] API documentation is available, accurate, and up to date at `/api/docs`
+- [x] Server logs are structured, informative, and do not leak sensitive data
+- [x] Logs are accessible and useful for debugging and monitoring
+- [-] (Optional) Request correlation IDs are present in logs for tracing
 
 ---
 
