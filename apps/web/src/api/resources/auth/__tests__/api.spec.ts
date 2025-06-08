@@ -25,7 +25,7 @@ describe('authApi', () => {
   describe('login', () => {
     it('should call apiFetch with correct parameters', async () => {
       const mockResponse = { accessToken: 'token', refreshToken: 'refresh' };
-      (apiFetch as any).mockResolvedValueOnce(mockResponse);
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
 
       const input = { email: 'test@example.com', password: 'password' };
       const result = await authApi.login(input);
@@ -41,7 +41,7 @@ describe('authApi', () => {
   describe('register', () => {
     it('should call apiFetch with correct parameters', async () => {
       const mockResponse = { accessToken: 'token', refreshToken: 'refresh' };
-      (apiFetch as any).mockResolvedValueOnce(mockResponse);
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
 
       const input = { email: 'test@example.com', password: 'password', name: 'Test User' };
       const result = await authApi.register(input);
@@ -57,7 +57,7 @@ describe('authApi', () => {
   describe('logout', () => {
     it('should call apiFetch with refresh token from localStorage', async () => {
       const mockResponse = { message: 'Logged out successfully' };
-      (apiFetch as any).mockResolvedValueOnce(mockResponse);
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
       mockLocalStorage.getItem.mockReturnValueOnce('refresh-token');
 
       const result = await authApi.logout();
@@ -83,7 +83,7 @@ describe('authApi', () => {
   describe('refresh', () => {
     it('should call apiFetch with provided refresh token', async () => {
       const mockResponse = { accessToken: 'new-token', refreshToken: 'new-refresh' };
-      (apiFetch as any).mockResolvedValueOnce(mockResponse);
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
 
       const result = await authApi.refresh('refresh-token');
 
@@ -100,11 +100,55 @@ describe('authApi', () => {
   describe('me', () => {
     it('should call apiFetch with correct endpoint', async () => {
       const mockResponse = { id: '1', email: 'test@example.com', name: 'Test User' };
-      (apiFetch as any).mockResolvedValueOnce(mockResponse);
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
 
       const result = await authApi.me();
 
       expect(apiFetch).toHaveBeenCalledWith('/api/v1/users/whoami');
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockResponse = { message: 'Reset email sent' };
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
+
+      const result = await authApi.forgotPassword('test@example.com');
+
+      expect(apiFetch).toHaveBeenCalledWith('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: 'test@example.com' }),
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockResponse = { message: 'Password reset successful' };
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
+
+      const result = await authApi.resetPassword('valid-token', 'new-password');
+
+      expect(apiFetch).toHaveBeenCalledWith('/api/v1/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ token: 'valid-token', password: 'new-password' }),
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('confirmEmail', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockResponse = { message: 'Email confirmed' };
+      (apiFetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockResponse);
+
+      const result = await authApi.confirmEmail('valid-token');
+
+      expect(apiFetch).toHaveBeenCalledWith('/api/v1/auth/confirm-email?token=valid-token', {
+        method: 'GET',
+      });
       expect(result).toEqual(mockResponse);
     });
   });

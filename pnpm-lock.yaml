@@ -220,7 +220,7 @@ importers:
   apps/web:
     dependencies:
       '@hookform/resolvers':
-        specifier: ^5.0.1
+        specifier: ^5.1.0
         version: 5.1.0(react-hook-form@7.57.0)
       '@radix-ui/react-dialog':
         specifier: ^1.1.14
@@ -243,6 +243,9 @@ importers:
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@18.3.1)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -271,7 +274,7 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(react@18.3.1)
       zod:
-        specifier: ^3.25.48
+        specifier: ^3.25.56
         version: 3.25.56
     devDependencies:
       '@shadcn/ui':
@@ -9553,6 +9556,16 @@ packages:
       pino: 9.7.0
       pino-http: 10.5.0
       rxjs: 7.8.2
+    dev: false
+
+  /next-themes@0.4.6(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==, tarball: https://registry.npmjs.org/next-themes/-/next-themes-0.4.6.tgz}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /nice-try@1.0.5:

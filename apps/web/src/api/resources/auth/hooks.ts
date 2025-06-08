@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { authApi } from '@/api/resources/auth/api';
 import type { LoginFormData, RegisterDto } from '@/types/auth';
@@ -32,17 +33,43 @@ export const useAuth = () => {
         localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
       }
       navigate(from, { replace: true });
+      toast.success('Logged in successfully');
     },
   });
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
-    onSuccess: (data) => {
-      if (data?.accessToken && data?.refreshToken) {
-        localStorage.setItem(AUTH_TOKEN_KEY, data.accessToken);
-        localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
-      }
-      navigate(from, { replace: true });
+    onSuccess: () => {
+      // After successful registration, redirect to email confirmation page
+      navigate('/email-confirmation', { replace: true });
+    },
+  });
+
+  const confirmEmailMutation = useMutation({
+    mutationFn: (token: string) => authApi.confirmEmail(token),
+    onSuccess: () => {
+      toast.success('Email confirmed successfully');
+      navigate('/confirm-email/success', { replace: true });
+    },
+    onError: () => {
+      navigate('/confirm-email/error', { replace: true });
+    },
+  });
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (email: string) => authApi.forgotPassword(email),
+    onSuccess: () => {
+      toast.success('If an account exists with this email, you will receive a password reset link');
+      navigate('/forgot-password/success', { replace: true });
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: ({ token, password }: { token: string; password: string }) =>
+      authApi.resetPassword(token, password),
+    onSuccess: () => {
+      toast.success('Password reset successful');
+      navigate('/login', { replace: true });
     },
   });
 
@@ -53,20 +80,39 @@ export const useAuth = () => {
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       queryClient.removeQueries({ queryKey: ['me'] });
       navigate('/login', { replace: true });
+      toast.success('Logged out successfully');
     },
   });
 
   const resetError = () => {
     loginMutation.reset();
     registerMutation.reset();
+    confirmEmailMutation.reset();
+    forgotPasswordMutation.reset();
+    resetPasswordMutation.reset();
   };
 
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
+    confirmEmail: confirmEmailMutation.mutate,
+    forgotPassword: forgotPasswordMutation.mutate,
+    resetPassword: resetPasswordMutation.mutate,
     logout: logoutMutation.mutate,
-    isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending,
-    error: loginMutation.error || registerMutation.error || logoutMutation.error,
+    isLoading:
+      loginMutation.isPending ||
+      registerMutation.isPending ||
+      confirmEmailMutation.isPending ||
+      forgotPasswordMutation.isPending ||
+      resetPasswordMutation.isPending ||
+      logoutMutation.isPending,
+    error:
+      loginMutation.error ||
+      registerMutation.error ||
+      confirmEmailMutation.error ||
+      forgotPasswordMutation.error ||
+      resetPasswordMutation.error ||
+      logoutMutation.error,
     resetError,
   };
 };

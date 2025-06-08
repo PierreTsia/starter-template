@@ -12,6 +12,20 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(input),
     }),
+  confirmEmail: (token: string) =>
+    apiFetch<{ message: string }>(`/api/v1/auth/confirm-email?token=${token}`, {
+      method: 'GET',
+    }),
+  forgotPassword: (email: string) =>
+    apiFetch<{ message: string }>('/api/v1/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token: string, password: string) =>
+    apiFetch<{ message: string }>('/api/v1/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    }),
   logout: () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
