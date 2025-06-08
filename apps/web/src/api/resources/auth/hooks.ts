@@ -56,6 +56,23 @@ export const useAuth = () => {
     },
   });
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (email: string) => authApi.forgotPassword(email),
+    onSuccess: () => {
+      toast.success('If an account exists with this email, you will receive a password reset link');
+      navigate('/forgot-password/success', { replace: true });
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: ({ token, password }: { token: string; password: string }) =>
+      authApi.resetPassword(token, password),
+    onSuccess: () => {
+      toast.success('Password reset successful');
+      navigate('/login', { replace: true });
+    },
+  });
+
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
@@ -71,22 +88,30 @@ export const useAuth = () => {
     loginMutation.reset();
     registerMutation.reset();
     confirmEmailMutation.reset();
+    forgotPasswordMutation.reset();
+    resetPasswordMutation.reset();
   };
 
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
     confirmEmail: confirmEmailMutation.mutate,
+    forgotPassword: forgotPasswordMutation.mutate,
+    resetPassword: resetPasswordMutation.mutate,
     logout: logoutMutation.mutate,
     isLoading:
       loginMutation.isPending ||
       registerMutation.isPending ||
       confirmEmailMutation.isPending ||
+      forgotPasswordMutation.isPending ||
+      resetPasswordMutation.isPending ||
       logoutMutation.isPending,
     error:
       loginMutation.error ||
       registerMutation.error ||
       confirmEmailMutation.error ||
+      forgotPasswordMutation.error ||
+      resetPasswordMutation.error ||
       logoutMutation.error,
     resetError,
   };

@@ -52,6 +52,17 @@ export const AuthPage = () => {
             {isLogin ? 'Register' : 'Login'}
           </button>
         </p>
+        {isLogin && (
+          <p className="text-center text-sm text-gray-500">
+            <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              className="font-medium text-primary hover:underline"
+            >
+              Forgot your password?
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
