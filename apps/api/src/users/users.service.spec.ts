@@ -73,7 +73,7 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
-        select: expect.any(Object),
+        select: expect.any(Object) as Prisma.UserSelect,
       });
     });
 
