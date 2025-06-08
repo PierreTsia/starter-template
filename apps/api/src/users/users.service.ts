@@ -7,6 +7,10 @@ interface CreateUserData {
   email: string;
   password: string;
   name?: string;
+  isEmailConfirmed?: boolean;
+  emailConfirmationToken?: string | null;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
 }
 
 interface UpdateUserData {

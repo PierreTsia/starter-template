@@ -6,25 +6,26 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly config: ConfigService
+    private readonly configService: ConfigService
   ) {}
 
-  async sendTestEmail(to: string) {
+  async sendTestEmail(to: string, name: string): Promise<void> {
     await this.mailerService.sendMail({
       to,
       subject: 'Test Email',
       template: 'test',
       context: {
-        name: 'Test User',
+        name,
       },
     });
   }
 
-  async sendConfirmationEmail(email: string, token: string) {
-    const confirmationUrl = `${this.config.get('FRONTEND_URL')}/confirm-email?token=${token}`;
+  async sendConfirmationEmail(to: string, token: string): Promise<void> {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
+    const confirmationUrl = `${frontendUrl}/confirm-email?token=${token}`;
 
     await this.mailerService.sendMail({
-      to: email,
+      to,
       subject: 'Confirm your email',
       template: 'confirmation',
       context: {
@@ -33,11 +34,12 @@ export class EmailService {
     });
   }
 
-  async sendPasswordResetEmail(email: string, token: string) {
-    const resetUrl = `${this.config.get('FRONTEND_URL')}/reset-password?token=${token}`;
+  async sendPasswordResetEmail(to: string, token: string): Promise<void> {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
     await this.mailerService.sendMail({
-      to: email,
+      to,
       subject: 'Reset your password',
       template: 'reset-password',
       context: {

@@ -103,12 +103,25 @@ export class AuthService {
     return this.logger.logOperation(
       'Registration',
       async () => {
+        // Check if user already exists
+        const existingUser = await this.usersService.findByEmail(email);
+        if (existingUser) {
+          throw new UnauthorizedException('Email already registered');
+        }
+
         const hashedPassword = await this.hashPassword(password);
+        const confirmationToken = crypto.randomBytes(32).toString('hex');
+
         const user = await this.usersService.create({
           email,
           name,
           password: hashedPassword,
+          isEmailConfirmed: false,
+          emailConfirmationToken: confirmationToken,
         });
+
+        // Send confirmation email
+        await this.emailService.sendConfirmationEmail(email, confirmationToken);
 
         const [accessToken, refreshToken] = await Promise.all([
           this.generateJwt(user),
