@@ -139,7 +139,7 @@ describe('Auth Hooks', () => {
         password: 'password123',
         name: 'Test User',
       });
-      expect(mockNavigate).toHaveBeenCalledWith('/email-confirmation', { replace: true });
+      expect(mockNavigate).toHaveBeenCalledWith('/confirm-email', { replace: true });
     });
 
     it('handles registration error', async () => {

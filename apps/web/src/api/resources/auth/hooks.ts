@@ -41,7 +41,7 @@ export const useAuth = () => {
     mutationFn: (data: RegisterDto) => authApi.register(data),
     onSuccess: () => {
       // After successful registration, redirect to email confirmation page
-      navigate('/email-confirmation', { replace: true });
+      navigate('/confirm-email', { replace: true });
     },
   });
 
