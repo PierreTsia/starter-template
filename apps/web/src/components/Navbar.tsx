@@ -1,12 +1,12 @@
 import { Menu } from 'lucide-react';
-import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 export const Navbar = () => {
-  const { formatMessage } = useIntl();
+  const { t } = useTranslation();
 
   return (
     <nav className="w-full flex items-center justify-between px-6 py-3 border-b bg-background h-[var(--navbar-height)]">
@@ -26,7 +26,7 @@ export const Navbar = () => {
         </Link>
         <span className="text-muted-foreground">|</span>
         <Link to="/settings">
-          <Button variant="outline">{formatMessage({ id: 'common.settings' })}</Button>
+          <Button variant="outline">{t('common.settings')}</Button>
         </Link>
       </div>
       {/* Mobile hamburger */}
@@ -47,7 +47,7 @@ export const Navbar = () => {
               </Link>
               <Link to="/settings">
                 <Button variant="outline" className="w-full">
-                  {formatMessage({ id: 'common.settings' })}
+                  {t('common.settings')}
                 </Button>
               </Link>
             </div>

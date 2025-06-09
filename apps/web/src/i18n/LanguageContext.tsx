@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
 
-import enMessages from './en.json';
-import frMessages from './fr.json';
 import { Locale, getLocaleFromBrowser } from './languageDetector';
+import enMessages from './locales/en.json';
+import frMessages from './locales/fr.json';
 import { flattenMessages, type Messages } from './utils';
+
+// Import messages
 
 const messages: Record<Locale, Messages> = {
   en: enMessages,
@@ -52,13 +54,4 @@ export function useLanguage() {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-}
-
-// Convenience hook for translations
-export function useTranslation() {
-  const { locale } = useLanguage();
-  return {
-    locale,
-    messages: messages[locale],
-  };
 }

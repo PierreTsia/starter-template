@@ -3,7 +3,8 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",
-    "settings": "Settings"
+    "settings": "Settings",
+    "welcome": "Welcome, {name}!"
   },
   "auth": {
     "login": "Login",
