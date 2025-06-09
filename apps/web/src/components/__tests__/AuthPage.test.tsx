@@ -273,5 +273,33 @@ describe('AuthPage', () => {
         ).toBeInTheDocument();
       });
     });
+
+    it('switches language when clicking the language switcher', async () => {
+      // Mock localStorage
+      const localStorageMock = {
+        getItem: vi.fn(),
+        setItem: vi.fn(),
+        clear: vi.fn(),
+      };
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+      render(<TestApp initialEntries={['/login']} initialLocale="en" />);
+
+      // Initially in English
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByText(/enter your credentials to login/i)).toBeInTheDocument();
+
+      // Click language switcher
+      const languageButton = screen.getByRole('combobox');
+      fireEvent.click(languageButton);
+
+      // Select French
+      const frenchOption = screen.getByText('French');
+      expect(frenchOption).toBeInTheDocument();
+      fireEvent.click(frenchOption);
+
+      // Verify localStorage was updated
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('locale', 'fr');
+    });
   });
 });
