@@ -10,8 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
 import { loginSchema } from '@/lib/validations/auth';
 import type { LoginFormData } from '@/types/auth';
@@ -23,12 +30,12 @@ interface LoginFormProps {
 
 export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
   const { t } = useTranslation();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   return (
@@ -37,43 +44,47 @@ export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
         <CardTitle>{t('auth.loginTitle')}</CardTitle>
         <CardDescription>{t('auth.loginDescription')}</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)} data-testid="login-form">
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('auth.email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              {...register('email')}
-              placeholder={t('auth.emailPlaceholder')}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} data-testid="login-form">
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.email')}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t('auth.emailPlaceholder')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500" data-testid="email-error">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('auth.password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              placeholder={t('auth.passwordPlaceholder')}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.password')}</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder={t('auth.passwordPlaceholder')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.password && (
-              <p className="text-sm text-red-500" data-testid="password-error">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
-            {isSubmitting || isLoading ? t('common.loading') : t('auth.login')}
-          </Button>
-        </CardFooter>
-      </form>
+          </CardContent>
+          <CardFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting || isLoading}
+            >
+              {form.formState.isSubmitting || isLoading ? t('common.loading') : t('auth.login')}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 };

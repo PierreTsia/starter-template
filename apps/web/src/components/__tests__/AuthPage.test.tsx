@@ -149,8 +149,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/must be at least 8 characters/i);
+        expect(screen.getByText(/must be at least 8 characters/i)).toBeInTheDocument();
       });
     });
 
@@ -164,8 +163,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/uppercase/i);
+        expect(screen.getByText(/uppercase/i)).toBeInTheDocument();
       });
     });
 
@@ -179,8 +177,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/number/i);
+        expect(screen.getByText(/number/i)).toBeInTheDocument();
       });
     });
 
@@ -194,8 +191,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/special character/i);
+        expect(screen.getByText(/special character/i)).toBeInTheDocument();
       });
     });
   });
@@ -222,8 +218,7 @@ describe('AuthPage', () => {
     fireEvent.submit(form);
 
     await waitFor(() => {
-      const errorMessage = screen.getByTestId('confirm-password-error');
-      expect(errorMessage).toHaveTextContent(/passwords don't match/i);
+      expect(screen.getByText("Passwords don't match")).toBeInTheDocument();
     });
   });
 });

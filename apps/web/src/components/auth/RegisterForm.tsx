@@ -10,8 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
 import { registerSchema } from '@/lib/validations/auth';
 import type { RegisterFormData } from '@/types/auth';
@@ -23,12 +30,14 @@ interface RegisterFormProps {
 
 export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps) => {
   const { t } = useTranslation();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
+  const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   return (
@@ -37,67 +46,77 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
         <CardTitle>{t('auth.registerTitle')}</CardTitle>
         <CardDescription>{t('auth.registerDescription')}</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)} data-testid="register-form">
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">{t('auth.name')}</Label>
-            <Input
-              id="name"
-              type="text"
-              {...register('name')}
-              placeholder={t('auth.namePlaceholder')}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} data-testid="register-form">
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.name')}</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder={t('auth.namePlaceholder')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('auth.email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              {...register('email')}
-              placeholder={t('auth.emailPlaceholder')}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.email')}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t('auth.emailPlaceholder')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500" data-testid="email-error">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('auth.password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register('password')}
-              placeholder={t('auth.passwordPlaceholder')}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.password')}</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder={t('auth.passwordPlaceholder')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.password && (
-              <p className="text-sm text-red-500" data-testid="password-error">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              {...register('confirmPassword')}
-              placeholder={t('auth.confirmPasswordPlaceholder')}
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.confirmPassword')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder={t('auth.confirmPasswordPlaceholder')}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500" data-testid="confirm-password-error">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
-            {isSubmitting || isLoading ? t('common.loading') : t('auth.register')}
-          </Button>
-        </CardFooter>
-      </form>
+          </CardContent>
+          <CardFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting || isLoading}
+            >
+              {form.formState.isSubmitting || isLoading ? t('common.loading') : t('auth.register')}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 };
