@@ -112,6 +112,12 @@ describe('RefreshTokenService', () => {
     it('should delete the refresh token', async () => {
       const mockToken = 'token-to-revoke';
 
+      mockPrismaService.refreshToken.findUnique.mockResolvedValue({
+        token: mockToken,
+        userId: 'test-user-id',
+        expiresAt: new Date(),
+      });
+
       await service.revokeRefreshToken(mockToken);
 
       expect(mockPrismaService.refreshToken.delete).toHaveBeenCalledWith({
