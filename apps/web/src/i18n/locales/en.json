@@ -99,5 +99,30 @@
     "passwordsDontMatch": "Passwords don't match",
     "nameTooShort": "Name must be at least 2 characters",
     "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and application preferences",
+    "user": {
+      "title": "User Settings",
+      "description": "Manage your account information and preferences",
+      "displayName": "Display Name",
+      "email": "Email"
+    },
+    "app": {
+      "title": "App Settings",
+      "description": "Customize your application experience",
+      "language": {
+        "title": "Language",
+        "description": "Choose your preferred language"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Choose your preferred theme",
+        "light": "Light",
+        "dark": "Dark",
+        "changed": "Theme changed to {theme}"
+      }
+    }
   }
 }

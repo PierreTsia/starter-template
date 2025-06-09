@@ -1,6 +1,5 @@
 import { LogOut } from 'lucide-react';
 
-import { useAuth, useMe } from '@/api/resources/auth/hooks';
 import { Avatar as ShadAvatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,28 +11,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
+import { User } from '@/types/auth';
 
 interface AvatarProps {
-  showDetails?: boolean;
+  user: User;
+  handleLogout: () => void;
   className?: string;
 }
 
-export const UserAvatar = ({ showDetails = false, className }: AvatarProps) => {
-  const { logout } = useAuth();
-  const { data: user, refetch } = useMe();
+export const UserAvatar = ({ user, handleLogout, className }: AvatarProps) => {
   const { t } = useTranslation();
 
-  const handleLogout = () => {
-    logout();
-    refetch();
-  };
-
-  const initials =
-    user?.name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase() || 'U';
+  const initials = user.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase();
 
   if (!user) return null;
 
@@ -61,12 +54,6 @@ export const UserAvatar = ({ showDetails = false, className }: AvatarProps) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {showDetails && (
-        <div className="flex flex-col ml-3">
-          <span className="text-sm font-medium leading-none">{user.name}</span>
-          <span className="text-xs text-muted-foreground">{user.email}</span>
-        </div>
-      )}
     </div>
   );
 };
