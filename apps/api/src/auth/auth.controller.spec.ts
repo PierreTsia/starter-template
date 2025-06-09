@@ -212,7 +212,7 @@ describe('AuthController', () => {
         .expect(200);
 
       expect(response.body).toEqual(mockResponse);
-      expect(mockAuthService.refreshTokens).toHaveBeenCalledWith('valid-refresh-token');
+      expect(mockAuthService.refreshTokens).toHaveBeenCalledWith('Bearer valid-refresh-token');
     });
 
     it('should return 401 when no refresh token is provided', async () => {
@@ -241,7 +241,7 @@ describe('AuthController', () => {
         .expect(200);
 
       expect(response.body).toEqual({ success: true });
-      expect(mockAuthService.logout).toHaveBeenCalledWith('valid-refresh-token');
+      expect(mockAuthService.logout).toHaveBeenCalledWith('Bearer valid-refresh-token');
     });
 
     it('should return 401 when no refresh token is provided', async () => {
