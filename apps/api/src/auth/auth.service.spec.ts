@@ -1,4 +1,5 @@
 import { UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
@@ -68,6 +69,18 @@ const mockEmailService = {
   sendPasswordResetEmail: jest.fn(),
 };
 
+const mockConfigService = {
+  get: jest.fn((key: string): string => {
+    const config: Record<string, string> = {
+      'jwt.access.secret': 'access-secret',
+      'jwt.access.expiresIn': '15m',
+      'jwt.refresh.secret': 'refresh-secret',
+      'jwt.refresh.expiresIn': '7d',
+    };
+    return config[key];
+  }),
+};
+
 describe('AuthService', () => {
   let service: AuthService;
   let usersService: UsersService;
@@ -95,6 +108,10 @@ describe('AuthService', () => {
         {
           provide: EmailService,
           useValue: mockEmailService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
         },
       ],
     }).compile();
