@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.string().email('validation.invalidEmail'),
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;

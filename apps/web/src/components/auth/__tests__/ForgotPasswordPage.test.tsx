@@ -32,7 +32,7 @@ describe('ForgotPasswordPage', () => {
       error: null,
     });
     mockUseMe.mockReturnValue({
-      data: null,
+      data: undefined,
       isLoading: false,
       error: null,
     });
