@@ -38,7 +38,7 @@ Implement internationalization to support both English (en) and French (fr) lang
 
 ### Testing
 
-- [ ] Test language switching
+- [x] Test language switching
 
 ## Backend Implementation
 
@@ -90,14 +90,14 @@ Implement internationalization to support both English (en) and French (fr) lang
 
 ### Frontend
 
-- [ ] Language switching works
-- [ ] All static text is internationalized
-- [ ] Date/time formatting is localized
-- [ ] Number formatting is localized
-- [ ] Error messages are translated
-- [ ] Language preference is persisted
-- [ ] Default language fallback works
-- [ ] Loading states during language switch
+- [x] Language switching works
+- [x] All static text is internationalized
+- [x] Date/time formatting is localized
+- [x] Number formatting is localized
+- [x] Error messages are translated
+- [x] Language preference is persisted
+- [x] Default language fallback works
+- [x] Loading states during language switch
 
 ### Backend
 
