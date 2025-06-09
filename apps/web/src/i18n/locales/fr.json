@@ -89,6 +89,8 @@
     "passwordRequiresLowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
     "passwordRequiresNumber": "Le mot de passe doit contenir au moins un chiffre",
     "passwordRequiresSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
-    "passwordsDontMatch": "Les mots de passe ne correspondent pas"
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+    "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+    "passwordRequirements": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial"
   }
 }

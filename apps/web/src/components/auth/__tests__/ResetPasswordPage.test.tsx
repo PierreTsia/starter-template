@@ -59,10 +59,8 @@ describe('ResetPasswordPage', () => {
     renderComponent(null);
 
     expect(screen.getByText('Invalid Reset Link')).toBeInTheDocument();
-    expect(
-      screen.getByText(/This password reset link is invalid or has expired/)
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Request New Reset Link' })).toBeInTheDocument();
+    expect(screen.getByText(/This reset link is invalid or has expired/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Request New Link' })).toBeInTheDocument();
   });
 
   it('validates password requirements', async () => {
@@ -197,7 +195,7 @@ describe('ResetPasswordPage', () => {
   it('navigates to forgot password page when clicking request new link', () => {
     renderComponent(null);
 
-    const requestNewLinkButton = screen.getByRole('button', { name: 'Request New Reset Link' });
+    const requestNewLinkButton = screen.getByRole('button', { name: 'Request New Link' });
     fireEvent.click(requestNewLinkButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/forgot-password');

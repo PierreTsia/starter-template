@@ -21,10 +21,10 @@ describe('ForgotPasswordSuccessPage', () => {
   it('renders success message and navigation button', () => {
     renderComponent();
 
-    expect(screen.getByText('Check Your Email')).toBeInTheDocument();
+    expect(screen.getByText('Check your email')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'If an account exists with this email, you will receive a password reset link. Please check your email and follow the instructions.'
+        'If an account exists with this email, you will receive a reset link. Please check your email and follow the instructions.'
       )
     ).toBeInTheDocument();
     expect(screen.getByText('Back to Login')).toBeInTheDocument();

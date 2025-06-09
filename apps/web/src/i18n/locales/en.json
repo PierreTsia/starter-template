@@ -28,7 +28,7 @@
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "switchToRegister": "Create an account",
-    "switchToLogin": "Log in to your account",
+    "switchToLogin": "Sign in to your account",
     "loginTitle": "Login",
     "loginDescription": "Enter your credentials to login",
     "registerTitle": "Register",
@@ -42,8 +42,8 @@
       "description": "We've sent a confirmation link to ",
       "descriptionNoEmail": "We've sent you a confirmation link to verify your email address.",
       "instructions": "Please check your inbox and click the link to confirm your email address. If you don't see the email, check your spam folder.",
-      "backToLogin": "Back to login",
-      "afterConfirmation": "Once you've confirmed your email, you can log in to your account."
+      "backToLogin": "Back to Login",
+      "afterConfirmation": "Once you've confirmed your email, you'll be able to log in to your account."
     },
     "confirmEmail": {
       "confirming": "Confirming your email...",
@@ -62,8 +62,8 @@
       "sending": "Sending...",
       "backToLogin": "Back to Login",
       "success": {
-        "title": "Check Your Email",
-        "description": "If an account exists with this email, you will receive a password reset link. Please check your email and follow the instructions."
+        "title": "Check your email",
+        "description": "If an account exists with this email, you will receive a reset link. Please check your email and follow the instructions."
       },
       "resetPassword": {
         "title": "Reset Password",
@@ -76,8 +76,8 @@
         "submitting": "Resetting...",
         "invalidLink": {
           "title": "Invalid Reset Link",
-          "description": "This password reset link is invalid or has expired. Please request a new password reset link.",
-          "requestNew": "Request New Reset Link"
+          "description": "This reset link is invalid or has expired. Please request a new reset link.",
+          "requestNew": "Request New Link"
         }
       }
     }
@@ -90,6 +90,8 @@
     "passwordRequiresLowercase": "Password must contain at least one lowercase letter",
     "passwordRequiresNumber": "Password must contain at least one number",
     "passwordRequiresSpecial": "Password must contain at least one special character",
-    "passwordsDontMatch": "Passwords don't match"
+    "passwordsDontMatch": "Passwords don't match",
+    "nameTooShort": "Name must be at least 2 characters",
+    "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
   }
 }
