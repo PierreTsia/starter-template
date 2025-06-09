@@ -1,4 +1,4 @@
-import { UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { UnauthorizedException, NotFoundException, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -163,10 +163,12 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException when email is not confirmed', async () => {
-      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
+      mockUsersService.findByEmail.mockResolvedValueOnce(unconfirmedUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+
       await expect(service.validateUser('test@example.com', 'password123')).rejects.toThrow(
-        new UnauthorizedException('Please confirm your email before logging in')
+        new UnauthorizedException('AUTH.EMAIL_NOT_CONFIRMED')
       );
     });
   });
@@ -211,27 +213,30 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for unconfirmed email', async () => {
-      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      const unconfirmedUser = { ...mockUser, isEmailConfirmed: false };
+      mockUsersService.findByEmail.mockResolvedValueOnce(unconfirmedUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+
       await expect(
         service.login({
           email: 'test@example.com',
           password: 'password123',
         })
-      ).rejects.toThrow(new UnauthorizedException('Please confirm your email before logging in'));
+      ).rejects.toThrow(new UnauthorizedException('AUTH.EMAIL_NOT_CONFIRMED'));
     });
   });
 
   describe('register', () => {
-    it('should throw UnauthorizedException if email already exists', async () => {
+    it('should throw ConflictException if email already exists', async () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+
       await expect(
         service.register({
           email: 'test@example.com',
           password: 'password123',
           name: 'Test User',
         })
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new ConflictException('AUTH.EMAIL_ALREADY_EXISTS'));
     });
 
     it('should return success message without user data or tokens', async () => {
