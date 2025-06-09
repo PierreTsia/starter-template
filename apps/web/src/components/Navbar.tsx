@@ -75,7 +75,7 @@ const FeatureLink = ({
 }) => {
   return (
     <Link to={href} className="rounded-md p-3 transition-colors hover:bg-muted/70">
-      <div key={title}>
+      <div>
         <p className="mb-1 font-semibold text-foreground">{title}</p>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
