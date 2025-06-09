@@ -1,13 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { useAuth, useMe } from '@/api/resources/auth/hooks';
 import { TestApp } from '@/test-utils';
+
+const mockUseAuth = vi.fn();
+const mockUseMe = vi.fn();
 
 // Mock the useAuth hook
 vi.mock('@/api/resources/auth/hooks', () => ({
-  useAuth: vi.fn(),
-  useMe: vi.fn(),
+  useAuth: () => mockUseAuth(),
+  useMe: () => mockUseMe(),
 }));
 
 // Mock useNavigate
@@ -25,12 +27,12 @@ describe('ResetPasswordPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
       isLoading: false,
       error: null,
     });
-    (useMe as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseMe.mockReturnValue({
       data: null,
       isLoading: false,
       error: null,
@@ -158,7 +160,7 @@ describe('ResetPasswordPage', () => {
   });
 
   it('handles loading state', () => {
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
       isLoading: true,
       error: null,
@@ -172,7 +174,7 @@ describe('ResetPasswordPage', () => {
 
   it('displays error message when API call fails', () => {
     const errorMessage = 'Failed to reset password';
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
       isLoading: false,
       error: new Error(errorMessage),
