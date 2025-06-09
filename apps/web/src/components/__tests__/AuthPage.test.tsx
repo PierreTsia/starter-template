@@ -221,4 +221,57 @@ describe('AuthPage', () => {
       expect(screen.getByText("Passwords don't match")).toBeInTheDocument();
     });
   });
+
+  describe('Language Switching', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        login: vi.fn(),
+        register: vi.fn(),
+        logout: vi.fn(),
+        isLoading: false,
+        error: null,
+        resetError: vi.fn(),
+      });
+    });
+
+    it('displays English content by default', () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="en" />);
+
+      // Check form labels
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+
+      // Check button texts
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByText(/create an account/i)).toBeInTheDocument();
+    });
+
+    it('displays French content when French locale is set', () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="fr" />);
+
+      // Check form labels in French
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/mot de passe/i)).toBeInTheDocument();
+
+      // Check button texts in French
+      expect(screen.getByRole('button', { name: /connexion/i })).toBeInTheDocument();
+      expect(screen.getByText(/créer un compte/i)).toBeInTheDocument();
+    });
+
+    it('displays validation messages in French', async () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="fr" />);
+
+      // Submit empty form to trigger validation
+      const form = screen.getByTestId('login-form');
+      fireEvent.submit(form);
+
+      // Check validation messages in French
+      await waitFor(() => {
+        expect(screen.getByText(/veuillez entrer une adresse email valide/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/le mot de passe doit contenir au moins 8 caractères/i)
+        ).toBeInTheDocument();
+      });
+    });
+  });
 });

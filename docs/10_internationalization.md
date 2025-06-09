@@ -8,40 +8,37 @@ Implement internationalization to support both English (en) and French (fr) lang
 
 ### Setup
 
-- [ ] Install required dependencies:
+- [x] Install required dependencies:
   ```bash
   pnpm add react-intl @formatjs/intl-localematcher
   ```
-- [ ] Create language detection utility
-- [ ] Set up language context/provider
-- [ ] Configure language switching mechanism
+- [x] Create language detection utility
+- [x] Set up language context/provider
+- [x] Configure language switching mechanism
 
 ### Message Structure
 
-- [ ] Create message files:
+- [x] Create message files:
   ```
   apps/web/src/i18n/
   ├── en.json
   └── fr.json
   ```
-- [ ] Organize messages by feature/component
-- [ ] Include common UI elements
-- [ ] Include error messages
-- [ ] Include validation messages
+- [x] Organize messages by feature/component
+- [x] Include common UI elements
+- [x] Include error messages
+- [x] Include validation messages
 
 ### Components
 
-- [ ] Wrap app with IntlProvider
-- [ ] Create language switcher component
-- [ ] Add language persistence (localStorage)
-- [ ] Add loading states for language switching
+- [x] Wrap app with IntlProvider
+- [x] Create language switcher component
+- [x] Add language persistence (localStorage)
+- [x] Add loading states for language switching
 
 ### Testing
 
 - [ ] Test language switching
-- [ ] Test message fallbacks
-- [ ] Test date/number formatting
-- [ ] Test RTL support if implemented
 
 ## Backend Implementation
 
