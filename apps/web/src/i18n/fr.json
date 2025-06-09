@@ -2,7 +2,8 @@
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "settings": "Paramètres"
   },
   "auth": {
     "login": "Connexion",

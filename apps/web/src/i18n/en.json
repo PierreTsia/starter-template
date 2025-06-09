@@ -2,7 +2,8 @@
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
-    "retry": "Retry"
+    "retry": "Retry",
+    "settings": "Settings"
   },
   "auth": {
     "login": "Login",

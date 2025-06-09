@@ -1,14 +1,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
 
-// Import messages
 import enMessages from './en.json';
 import frMessages from './fr.json';
 import { Locale, getLocaleFromBrowser } from './languageDetector';
-
-type Messages = {
-  [key: string]: string | Messages;
-};
+import { flattenMessages, type Messages } from './utils';
 
 const messages: Record<Locale, Messages> = {
   en: enMessages,
@@ -22,7 +18,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>(() => {
     // Try to get from localStorage first
     const savedLocale = localStorage.getItem('locale') as Locale;
@@ -38,18 +34,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('locale', locale);
   }, [locale]);
 
+  // Flatten messages for the current locale
+  const flattenedMessages = flattenMessages(messages[locale]);
+
   return (
     <LanguageContext.Provider value={{ locale, setLocale }}>
-      <IntlProvider
-        messages={messages[locale] as Record<string, string>}
-        locale={locale}
-        defaultLocale="en"
-      >
+      <IntlProvider messages={flattenedMessages} locale={locale} defaultLocale="en">
         {children}
       </IntlProvider>
     </LanguageContext.Provider>
   );
-}
+};
 
 export function useLanguage() {
   const context = useContext(LanguageContext);
