@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AppService } from './app.service';
+import { SYSTEM_ERROR_RESPONSES, createApiResponse } from './common/swagger/schemas';
 import { LoggerService } from './logger/logger.service';
 
 @ApiTags('Root')
@@ -18,6 +19,8 @@ export class AppController {
     status: 302,
     description: 'Redirects to /api/v1/health',
   })
+  @createApiResponse(SYSTEM_ERROR_RESPONSES.INTERNAL_ERROR)
+  @createApiResponse(SYSTEM_ERROR_RESPONSES.SERVICE_UNAVAILABLE)
   @Get('/')
   @Head('/')
   getRoot(@Res() res: Response) {

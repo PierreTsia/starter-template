@@ -1,6 +1,8 @@
 import { Controller, Get, Head } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+import { SYSTEM_ERROR_RESPONSES, createApiResponse } from '../common/swagger/schemas';
+
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
@@ -18,6 +20,8 @@ export class HealthController {
       },
     },
   })
+  @createApiResponse(SYSTEM_ERROR_RESPONSES.INTERNAL_ERROR)
+  @createApiResponse(SYSTEM_ERROR_RESPONSES.SERVICE_UNAVAILABLE)
   @Get()
   @Head()
   check() {

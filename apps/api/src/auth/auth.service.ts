@@ -1,11 +1,18 @@
 import * as crypto from 'crypto';
 
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User as PrismaUser } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { EmailService } from '../email/email.service';
+import { ErrorCodes } from '../errors/codes';
 import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
@@ -31,7 +38,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly emailService: EmailService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    private readonly configService: ConfigService
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -70,7 +78,7 @@ export class AuthService {
 
         if (!user.isEmailConfirmed) {
           this.logger.warnWithMetadata('Unconfirmed email during validation', { email });
-          throw new UnauthorizedException('Please confirm your email before logging in');
+          throw new UnauthorizedException(ErrorCodes.AUTH.EMAIL_NOT_CONFIRMED);
         }
 
         const { password: _, ...result } = user;
@@ -112,7 +120,7 @@ export class AuthService {
         // Check if user already exists
         const existingUser = await this.usersService.findByEmail(email);
         if (existingUser) {
-          throw new UnauthorizedException('Email already registered');
+          throw new ConflictException(ErrorCodes.AUTH.EMAIL_ALREADY_EXISTS);
         }
 
         const hashedPassword = await this.hashPassword(password);

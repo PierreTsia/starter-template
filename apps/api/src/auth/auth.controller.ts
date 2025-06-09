@@ -6,12 +6,16 @@ import {
   HttpStatus,
   Headers,
   UseGuards,
-  UnauthorizedException,
   Get,
   Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 
+import {
+  AUTH_ERROR_RESPONSES,
+  VALIDATION_ERROR_RESPONSES,
+  createApiResponse,
+} from '../common/swagger/schemas';
 import { LoggerService } from '../logger/logger.service';
 
 import { AuthService } from './auth.service';
@@ -35,10 +39,7 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User successfully logged in',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid credentials',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_CREDENTIALS)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
@@ -50,10 +51,9 @@ export class AuthController {
     status: HttpStatus.CREATED,
     description: 'User successfully registered',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.EMAIL_EXISTS)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_EMAIL)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.PASSWORD_TOO_SHORT)
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
@@ -63,22 +63,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Tokens successfully refreshed',
+    description: 'New access token generated',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid refresh token',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.TOKEN_EXPIRED)
   @ApiBearerAuth()
   @ApiCookieAuth('refreshToken')
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refreshTokens(@Headers('Authorization') auth: string) {
-    const refreshToken = auth?.replace('Bearer ', '');
-    if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token provided');
-    }
+  async refreshTokens(@Headers('authorization') refreshToken: string) {
     return this.authService.refreshTokens(refreshToken);
   }
 
@@ -87,58 +80,47 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User successfully logged out',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid refresh token',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_TOKEN)
   @ApiBearerAuth()
   @ApiCookieAuth('refreshToken')
   @UseGuards(RefreshTokenGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Headers('Authorization') auth: string) {
-    const refreshToken = auth?.replace('Bearer ', '');
-    if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token provided');
-    }
+  async logout(@Headers('authorization') refreshToken: string) {
     return this.authService.logout(refreshToken);
   }
 
   @ApiOperation({ summary: 'Confirm email address' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Email confirmed successfully',
+    description: 'Email successfully confirmed',
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Invalid confirmation token',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_TOKEN)
   @Get('confirm-email')
   @HttpCode(HttpStatus.OK)
-  async confirmEmail(@Query() { token }: ConfirmEmailDto) {
-    return this.authService.confirmEmail(token);
+  async confirmEmail(@Query() confirmEmailDto: ConfirmEmailDto) {
+    return this.authService.confirmEmail(confirmEmailDto.token);
   }
 
   @ApiOperation({ summary: 'Request password reset' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'If email is registered, a reset link will be sent',
+    description: 'Password reset email sent',
   })
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_EMAIL)
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  async forgotPassword(@Body() { email }: ForgotPasswordDto) {
-    return this.authService.forgotPassword(email);
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @ApiOperation({ summary: 'Reset password' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Password reset successful',
+    description: 'Password successfully reset',
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Invalid or expired reset token',
-  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_TOKEN)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.PASSWORD_TOO_SHORT)
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() { token, password }: ResetPasswordDto) {

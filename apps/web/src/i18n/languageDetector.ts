@@ -12,3 +12,20 @@ export function getLocaleFromBrowser(): Locale {
     return defaultLocale;
   }
 }
+
+/**
+ * Get the current locale using the following priority:
+ * 1. localStorage if available and valid
+ * 2. Browser language if available and supported
+ * 3. Default locale (en)
+ */
+export function getCurrentLocale(): Locale {
+  // Try to get from localStorage first
+  const savedLocale = localStorage.getItem('locale') as Locale;
+  if (savedLocale && locales.includes(savedLocale)) {
+    return savedLocale;
+  }
+
+  // Fallback to browser language
+  return getLocaleFromBrowser();
+}

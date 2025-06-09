@@ -9,6 +9,10 @@
     {
       "include": "email/templates/**/*",
       "outDir": "dist/src/email/templates"
+    },
+    {
+      "include": "errors/messages/**/*.json",
+      "outDir": "dist/src/errors/messages"
     }
   ]
 }

@@ -18,7 +18,7 @@
   },
   "auth": {
     "login": "Connexion",
-    "register": "S'inscrire",
+    "register": "Inscription",
     "logout": "Déconnexion",
     "email": "Email",
     "password": "Mot de passe",
@@ -54,7 +54,7 @@
     "noAccount": "Vous n'avez pas de compte ?",
     "hasAccount": "Vous avez déjà un compte ?",
     "switchToRegister": "Créer un compte",
-    "switchToLogin": "Connectez-vous à votre compte",
+    "switchToLogin": "Se connecter",
     "loginTitle": "Connexion",
     "loginDescription": "Entrez vos identifiants pour vous connecter",
     "registerTitle": "Inscription",
@@ -62,7 +62,7 @@
     "emailPlaceholder": "john@exemple.com",
     "passwordPlaceholder": "••••••••",
     "confirmPasswordPlaceholder": "••••••••",
-    "namePlaceholder": "Jean Dupont",
+    "namePlaceholder": "John Doe",
     "checkEmail": {
       "title": "Vérifiez votre email",
       "description": "Nous avons envoyé un lien de confirmation à ",
@@ -74,12 +74,15 @@
     "confirmEmail": {
       "confirming": "Confirmation de votre email...",
       "success": {
-        "title": "Email Confirmé !",
+        "title": "Email confirmé !",
         "description": "Votre email a été confirmé avec succès",
-        "goToLogin": "Aller à la Connexion",
+        "goToLogin": "Aller à la connexion",
         "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
       }
     }
+  },
+  "profile": {
+    "memberSince": "Membre depuis"
   },
   "validation": {
     "required": "Ce champ est requis",

@@ -10,11 +10,17 @@ import {
   HttpStatus,
   UseGuards,
   Request,
+  Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  USER_ERROR_RESPONSES,
+  VALIDATION_ERROR_RESPONSES,
+  createApiResponse,
+} from '../common/swagger/schemas';
 import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -36,16 +42,16 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Returns the current user profile',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
   @Get('whoami')
-  async whoami(@Request() req: { user: User }) {
+  async whoami(
+    @Request() req: { user: User },
+    @Headers('accept-language') acceptLanguage?: string
+  ) {
     return this.logger.logOperation(
       'whoami',
       async () => {
-        const user = await this.usersService.findOne(req.user.id);
+        const user = await this.usersService.findOne(req.user.id, acceptLanguage);
         return user;
       },
       {
@@ -60,10 +66,8 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Returns a list of all users',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Get()
   async findAll(): Promise<Partial<User>[]> {
     return this.logger.logOperation(
@@ -86,20 +90,18 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Returns the user with the specified ID',
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'User not found',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(USER_ERROR_RESPONSES.NOT_FOUND)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Partial<User>> {
+  async findOne(
+    @Param('id') id: string,
+    @Headers('accept-language') acceptLanguage?: string
+  ): Promise<Partial<User>> {
     return this.logger.logOperation(
       'findOne',
       async () => {
-        const user = await this.usersService.findOne(id);
+        const user = await this.usersService.findOne(id, acceptLanguage);
         return user;
       },
       { userId: id }
@@ -111,21 +113,20 @@ export class UsersController {
     status: HttpStatus.CREATED,
     description: 'User has been successfully created',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_EMAIL)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.PASSWORD_TOO_SHORT)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDto): Promise<Partial<User>> {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Headers('accept-language') acceptLanguage?: string
+  ): Promise<Partial<User>> {
     return this.logger.logOperation(
       'create',
       async () => {
-        const user = await this.usersService.create(createUserDto);
+        const user = await this.usersService.create(createUserDto, acceptLanguage);
         return user;
       },
       {
@@ -145,27 +146,20 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'User has been successfully updated',
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'User not found',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(USER_ERROR_RESPONSES.NOT_FOUND)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_EMAIL)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
+    @Headers('accept-language') acceptLanguage?: string
   ): Promise<Partial<User>> {
     return this.logger.logOperation(
       'update',
       async () => {
-        const user = await this.usersService.update(id, updateUserDto);
+        const user = await this.usersService.update(id, updateUserDto, acceptLanguage);
         return user;
       },
       {
@@ -185,21 +179,19 @@ export class UsersController {
     status: HttpStatus.NO_CONTENT,
     description: 'User has been successfully deleted',
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'User not found',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @createApiResponse(USER_ERROR_RESPONSES.NOT_FOUND)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string): Promise<void> {
+  async delete(
+    @Param('id') id: string,
+    @Headers('accept-language') acceptLanguage?: string
+  ): Promise<void> {
     return this.logger.logOperation(
       'delete',
       async () => {
-        await this.usersService.delete(id);
+        await this.usersService.delete(id, acceptLanguage);
       },
       { userId: id }
     );

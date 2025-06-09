@@ -1,24 +1,43 @@
-import { ArgumentsHost, BadRequestException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
+import { ArgumentsHost } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
+import { Request } from 'express';
 
 import { ValidationExceptionFilter } from './validation-exception.filter';
 
 describe('ValidationExceptionFilter', () => {
   let filter: ValidationExceptionFilter;
   let mockResponse: Partial<Response>;
-  let mockHost: Partial<ArgumentsHost>;
+  let mockRequest: Partial<Request>;
+  let originalConsoleError: typeof console.error;
 
-  beforeEach(() => {
-    filter = new ValidationExceptionFilter();
+  beforeEach(async () => {
+    // Save original console.error and mock it
+    originalConsoleError = console.error;
+    console.error = jest.fn();
+
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      json: jest.fn().mockReturnThis(),
     };
-    mockHost = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getResponse: () => mockResponse,
-      }),
+
+    mockRequest = {
+      headers: {
+        'accept-language': 'en',
+      },
     };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ValidationExceptionFilter],
+    }).compile();
+
+    filter = module.get(ValidationExceptionFilter);
+  });
+
+  afterEach(() => {
+    // Restore original console.error
+    console.error = originalConsoleError;
   });
 
   it('should be defined', () => {
@@ -27,31 +46,52 @@ describe('ValidationExceptionFilter', () => {
 
   describe('catch', () => {
     it('should format validation errors when message is an array', () => {
-      const validationErrors = ['Error 1', 'Error 2'];
-      const exception = new BadRequestException(validationErrors);
+      const exception = new BadRequestException(['Error 1', 'Error 2']);
+      const mockHttpContext = {
+        getResponse: () => mockResponse,
+        getRequest: () => mockRequest,
+      };
+      const host = {
+        switchToHttp: () => mockHttpContext,
+        getType: () => 'http',
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        statusCode: 400,
+        code: 'VALIDATION.FAILED',
         message: 'Validation failed',
-        errors: validationErrors,
+        status: 400,
+        meta: {
+          errors: ['Error 1', 'Error 2'],
+          language: 'en',
+        },
       });
     });
 
     it('should return original response for non-validation errors', () => {
-      const errorResponse = {
-        statusCode: 400,
-        message: 'Bad Request',
-        error: 'Bad Request',
+      const exception = new BadRequestException('Not a validation error');
+      const mockHttpContext = {
+        getResponse: () => mockResponse,
+        getRequest: () => mockRequest,
       };
-      const exception = new BadRequestException(errorResponse);
+      const host = {
+        switchToHttp: () => mockHttpContext,
+        getType: () => 'http',
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith(errorResponse);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        code: 'VALIDATION.INVALID_REQUEST',
+        message: 'Invalid request',
+        status: 400,
+        meta: {
+          language: 'en',
+        },
+      });
     });
   });
 });

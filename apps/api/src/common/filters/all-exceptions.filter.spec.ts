@@ -1,5 +1,8 @@
-import { ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Response } from 'express';
+import { Request } from 'express';
 
 import { AllExceptionsFilter } from './all-exceptions.filter';
 
@@ -7,31 +10,34 @@ describe('AllExceptionsFilter', () => {
   let filter: AllExceptionsFilter;
   let mockResponse: Partial<Response>;
   let mockRequest: Partial<Request>;
-  let mockHost: Partial<ArgumentsHost>;
+  let originalConsoleError: typeof console.error;
 
-  beforeEach(() => {
-    filter = new AllExceptionsFilter();
+  beforeEach(async () => {
+    // Save original console.error and mock it
+    originalConsoleError = console.error;
+    console.error = jest.fn();
+
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      json: jest.fn().mockReturnThis(),
     };
+
     mockRequest = {
-      url: '/test',
-      method: 'GET',
-      body: { test: 'data' },
+      headers: {
+        'accept-language': 'en',
+      },
     };
-    mockHost = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getResponse: () => mockResponse as Response,
-        getRequest: () => mockRequest as Request & { body?: Record<string, unknown> },
-      }),
-    };
-    // Mock console.error to keep test output clean
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [AllExceptionsFilter],
+    }).compile();
+
+    filter = module.get(AllExceptionsFilter);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    // Restore original console.error
+    console.error = originalConsoleError;
   });
 
   it('should be defined', () => {
@@ -41,64 +47,92 @@ describe('AllExceptionsFilter', () => {
   describe('catch', () => {
     it('should handle HttpException with string response', () => {
       const exception = new HttpException('Test error', HttpStatus.BAD_REQUEST);
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        statusCode: HttpStatus.BAD_REQUEST,
-        timestamp: expect.any(String) as string,
-        path: '/test',
-        message: 'Test error',
+        code: 'HTTP.400',
+        message: 'Bad request',
+        status: HttpStatus.BAD_REQUEST,
+        meta: {
+          language: 'en',
+        },
       });
     });
 
     it('should handle HttpException with object response', () => {
       const exception = new HttpException(
-        { message: 'Custom error', error: 'Bad Request' },
+        { message: 'Test error', error: 'Bad Request' },
         HttpStatus.BAD_REQUEST
       );
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        statusCode: HttpStatus.BAD_REQUEST,
-
-        timestamp: expect.any(String) as string,
-        path: '/test',
-        message: 'Custom error',
+        code: 'HTTP.400',
+        message: 'Bad request',
+        status: HttpStatus.BAD_REQUEST,
+        meta: {
+          language: 'en',
+        },
       });
     });
 
     it('should handle non-HttpException', () => {
-      const exception = new Error('Unknown error');
+      const exception = new Error('Test error');
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        timestamp: expect.any(String) as string,
-        path: '/test',
-        message: 'Internal server error',
+        code: 'SYSTEM.UNKNOWN_ERROR',
+        message: 'An unexpected error occurred',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        meta: {
+          language: 'en',
+        },
       });
     });
 
     it('should handle HttpException with array message', () => {
-      const exception = new HttpException(
-        { message: ['Error 1', 'Error 2'], error: 'Bad Request' },
-        HttpStatus.BAD_REQUEST
-      );
+      const exception = new HttpException(['Test error 1', 'Test error 2'], HttpStatus.BAD_REQUEST);
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as ArgumentsHost;
 
-      filter.catch(exception, mockHost as ArgumentsHost);
+      filter.catch(exception, host);
 
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        statusCode: HttpStatus.BAD_REQUEST,
-        timestamp: expect.any(String) as string,
-        path: '/test',
-        message: ['Error 1', 'Error 2'],
+        code: 'HTTP.400',
+        message: 'Bad request',
+        status: HttpStatus.BAD_REQUEST,
+        meta: {
+          language: 'en',
+        },
       });
     });
   });

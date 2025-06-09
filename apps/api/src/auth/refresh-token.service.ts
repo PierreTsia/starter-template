@@ -41,6 +41,17 @@ export class RefreshTokenService {
   }
 
   async revokeRefreshToken(token: string): Promise<void> {
+    // First check if the token exists
+    const existingToken = await this.prisma.refreshToken.findUnique({
+      where: { token },
+    });
+
+    // If token doesn't exist, we can safely return
+    if (!existingToken) {
+      return;
+    }
+
+    // If token exists, delete it
     await this.prisma.refreshToken.delete({
       where: { token },
     });

@@ -1,7 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { PrismaService } from '../prisma/prisma.service';
+
+import { UserException } from './exceptions/user.exception';
 
 interface CreateUserData {
   email: string;
@@ -44,14 +47,14 @@ export class UsersService {
     return this.prisma.user.findMany({ select: userSelect });
   }
 
-  async findOne(id: string): Promise<SafeUser> {
+  async findOne(id: string, acceptLanguage?: string): Promise<SafeUser> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: userSelect,
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw UserException.notFound(id, acceptLanguage);
     }
 
     return user;
@@ -64,33 +67,51 @@ export class UsersService {
     });
   }
 
-  async create(data: CreateUserData): Promise<SafeUser> {
-    return this.prisma.user.create({
-      data,
-      select: userSelect,
-    });
+  async create(data: CreateUserData, acceptLanguage?: string): Promise<SafeUser> {
+    try {
+      return await this.prisma.user.create({
+        data,
+        select: userSelect,
+      });
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw UserException.invalidEmail(acceptLanguage);
+      }
+      throw error;
+    }
   }
 
-  async update(id: string, data: UpdateUserData): Promise<SafeUser> {
+  async update(id: string, data: UpdateUserData, acceptLanguage?: string): Promise<SafeUser> {
     try {
       return await this.prisma.user.update({
         where: { id },
         data,
         select: userSelect,
       });
-    } catch {
-      throw new NotFoundException(`User with ID ${id} not found`);
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw UserException.notFound(id, acceptLanguage);
+        }
+        if (error.code === 'P2002') {
+          throw UserException.invalidEmail(acceptLanguage);
+        }
+      }
+      throw error;
     }
   }
 
-  async delete(id: string): Promise<SafeUser> {
+  async delete(id: string, acceptLanguage?: string): Promise<SafeUser> {
     try {
       return await this.prisma.user.delete({
         where: { id },
         select: userSelect,
       });
-    } catch {
-      throw new NotFoundException(`User with ID ${id} not found`);
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw UserException.notFound(id, acceptLanguage);
+      }
+      throw error;
     }
   }
 
