@@ -4,12 +4,14 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/api/resources/auth/hooks';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 export const ConfirmEmailPage = () => {
   const [searchParams] = useSearchParams();
   const { confirmEmail } = useAuth();
   const hasAttemptedConfirmation = useRef(false);
   const token = searchParams.get('token');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (token && !hasAttemptedConfirmation.current) {
@@ -23,7 +25,7 @@ export const ConfirmEmailPage = () => {
       <Card className="w-full max-w-md">
         <CardContent className="flex flex-col items-center justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" data-testid="loading-spinner" />
-          <p className="mt-4 text-sm text-muted-foreground">Confirming your email...</p>
+          <p className="mt-4 text-sm text-muted-foreground">{t('auth.confirmEmail.confirming')}</p>
         </CardContent>
       </Card>
     </div>

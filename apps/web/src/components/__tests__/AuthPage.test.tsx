@@ -35,7 +35,7 @@ describe('AuthPage', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/register/i));
+    fireEvent.click(screen.getByText('Create an account'));
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();

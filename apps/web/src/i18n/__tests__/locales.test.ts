@@ -4,7 +4,7 @@ import enMessages from '../locales/en.json';
 import frMessages from '../locales/fr.json';
 
 type Messages = {
-  [key: string]: string | { [key: string]: string | { [key: string]: string } };
+  [key: string]: string | Messages;
 };
 
 function getAllKeys(obj: Messages, prefix = ''): string[] {

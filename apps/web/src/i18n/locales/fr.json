@@ -14,7 +14,33 @@
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "name": "Nom",
-    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "description": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "emailPlaceholder": "Entrez votre email",
+      "sendLink": "Envoyer le lien",
+      "sending": "Envoi en cours...",
+      "backToLogin": "Retour à la connexion",
+      "success": {
+        "title": "Vérifiez votre email",
+        "description": "Si un compte existe avec cet email, vous recevrez un lien de réinitialisation de mot de passe. Veuillez vérifier votre email et suivre les instructions."
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe",
+        "description": "Entrez votre nouveau mot de passe ci-dessous",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+        "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+        "submit": "Réinitialiser le mot de passe",
+        "submitting": "Réinitialisation...",
+        "invalidLink": {
+          "title": "Lien de réinitialisation invalide",
+          "description": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien de réinitialisation.",
+          "requestNew": "Demander un nouveau lien"
+        }
+      }
+    },
     "noAccount": "Vous n'avez pas de compte ?",
     "hasAccount": "Vous avez déjà un compte ?",
     "switchToRegister": "S'inscrire",
@@ -32,8 +58,17 @@
       "description": "Nous avons envoyé un lien de confirmation à ",
       "descriptionNoEmail": "Nous vous avons envoyé un lien de confirmation pour vérifier votre adresse email.",
       "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour confirmer votre adresse email. Si vous ne voyez pas l'email, vérifiez votre dossier spam.",
-      "backToLogin": "Retour à la page de connexion",
+      "backToLogin": "Retour à la connexion",
       "afterConfirmation": "Une fois que vous aurez confirmé votre email, vous pourrez vous connecter à votre compte."
+    },
+    "confirmEmail": {
+      "confirming": "Confirmation de votre email en cours...",
+      "success": {
+        "title": "Email confirmé !",
+        "description": "Votre email a été confirmé avec succès",
+        "goToLogin": "Aller à la connexion",
+        "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
+      }
     }
   },
   "validation": {

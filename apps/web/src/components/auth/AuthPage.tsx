@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
@@ -56,13 +57,9 @@ export const AuthPage = () => {
         </p>
         {isLogin && (
           <p className="text-center text-sm text-gray-500">
-            <button
-              type="button"
-              onClick={() => navigate('/forgot-password')}
-              className="font-medium text-primary hover:underline"
-            >
-              {t('auth.forgotPassword')}
-            </button>
+            <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+              {t('auth.forgotPassword.title')}
+            </Link>
           </p>
         )}
       </div>
