@@ -124,9 +124,9 @@ describe('UsersController', () => {
       };
       mockUsersService.findOne.mockResolvedValue(mockUser);
 
-      const result = await controller.findOne('1');
+      const result = await controller.findOne('1', 'en');
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.findOne).toHaveBeenCalledWith('1');
+      expect(mockUsersService.findOne).toHaveBeenCalledWith('1', 'en');
     });
   });
 
@@ -147,9 +147,9 @@ describe('UsersController', () => {
       };
       mockUsersService.create.mockResolvedValue(mockUser);
 
-      const result = await controller.create(createUserDto);
+      const result = await controller.create(createUserDto, 'en');
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
+      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto, 'en');
     });
 
     it('should throw BadRequestException for invalid password', async () => {
@@ -179,9 +179,9 @@ describe('UsersController', () => {
       };
       mockUsersService.update.mockResolvedValue(mockUser);
 
-      const result = await controller.update('1', updateData);
+      const result = await controller.update('1', updateData, 'en');
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.update).toHaveBeenCalledWith('1', updateData);
+      expect(mockUsersService.update).toHaveBeenCalledWith('1', updateData, 'en');
     });
   });
 
@@ -197,8 +197,8 @@ describe('UsersController', () => {
       };
       mockUsersService.delete.mockResolvedValue(mockUser);
 
-      await controller.delete('1');
-      expect(mockUsersService.delete).toHaveBeenCalledWith('1');
+      await controller.delete('1', 'en');
+      expect(mockUsersService.delete).toHaveBeenCalledWith('1', 'en');
     });
   });
 });
