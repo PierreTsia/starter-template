@@ -7,7 +7,8 @@
     "welcome": "Bienvenue, {name} !",
     "somethingWentWrong": "Une erreur est survenue",
     "unexpectedError": "Une erreur inattendue est survenue",
-    "tryAgain": "Réessayer"
+    "tryAgain": "Réessayer",
+    "save": "Enregistrer"
   },
   "languages": {
     "en": "Anglais",

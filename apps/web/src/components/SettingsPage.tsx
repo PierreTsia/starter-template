@@ -1,5 +1,6 @@
 import { LanguageSwitcherSelect } from '@/components/LanguageSwitcherSelect';
 import { ThemeSelect } from '@/components/ThemeSelect';
+import { UserProfile } from '@/components/UserProfile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Page } from '@/components/ui/page';
 import { PageTitle } from '@/components/ui/page-title';
@@ -12,44 +13,16 @@ export const SettingsPage = () => {
     <Page>
       <PageTitle title={t('settings.title')} description={t('settings.description')} centered />
       <div className="max-w-2xl mx-auto space-y-8">
-        {/* User Settings Section */}
         <Card>
           <CardHeader>
             <CardTitle>{t('settings.user.title')}</CardTitle>
             <CardDescription>{t('settings.user.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-muted" />
-              <div>
-                <h3 className="font-medium">John Doe</h3>
-                <p className="text-sm text-muted-foreground">john.doe@example.com</p>
-              </div>
-            </div>
-            <div className="grid gap-4">
-              <div>
-                <label className="text-sm font-medium">{t('settings.user.displayName')}</label>
-                <input
-                  type="text"
-                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  placeholder="John Doe"
-                  disabled
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">{t('settings.user.email')}</label>
-                <input
-                  type="email"
-                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  placeholder="john.doe@example.com"
-                  disabled
-                />
-              </div>
-            </div>
+            <UserProfile />
           </CardContent>
         </Card>
 
-        {/* App Settings Section */}
         <Card>
           <CardHeader>
             <CardTitle>{t('settings.app.title')}</CardTitle>
