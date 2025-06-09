@@ -47,11 +47,13 @@ describe('ValidationExceptionFilter', () => {
   describe('catch', () => {
     it('should format validation errors when message is an array', () => {
       const exception = new BadRequestException(['Error 1', 'Error 2']);
+      const mockHttpContext = {
+        getResponse: () => mockResponse,
+        getRequest: () => mockRequest,
+      };
       const host = {
-        switchToHttp: () => ({
-          getResponse: () => mockResponse,
-          getRequest: () => mockRequest,
-        }),
+        switchToHttp: () => mockHttpContext,
+        getType: () => 'http',
       } as ArgumentsHost;
 
       filter.catch(exception, host);
@@ -70,11 +72,13 @@ describe('ValidationExceptionFilter', () => {
 
     it('should return original response for non-validation errors', () => {
       const exception = new BadRequestException('Not a validation error');
+      const mockHttpContext = {
+        getResponse: () => mockResponse,
+        getRequest: () => mockRequest,
+      };
       const host = {
-        switchToHttp: () => ({
-          getResponse: () => mockResponse,
-          getRequest: () => mockRequest,
-        }),
+        switchToHttp: () => mockHttpContext,
+        getType: () => 'http',
       } as ArgumentsHost;
 
       filter.catch(exception, host);
