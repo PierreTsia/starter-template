@@ -85,6 +85,11 @@
   "validation": {
     "required": "This field is required",
     "invalidEmail": "Please enter a valid email address",
-    "passwordTooShort": "Password must be at least 8 characters"
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordRequiresUppercase": "Password must contain at least one uppercase letter",
+    "passwordRequiresLowercase": "Password must contain at least one lowercase letter",
+    "passwordRequiresNumber": "Password must contain at least one number",
+    "passwordRequiresSpecial": "Password must contain at least one special character",
+    "passwordsDontMatch": "Passwords don't match"
   }
 }
