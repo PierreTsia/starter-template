@@ -1,0 +1,34 @@
+{
+  "AUTH": {
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "EMAIL_NOT_CONFIRMED": "Please confirm your email before logging in",
+    "TOKEN_EXPIRED": "Your session has expired. Please log in again",
+    "INVALID_TOKEN": "Invalid token",
+    "RATE_LIMIT_EXCEEDED": "Too many attempts. Please try again later",
+    "EMAIL_ALREADY_EXISTS": "This email address is already registered"
+  },
+  "VALIDATION": {
+    "FAILED": "Validation failed",
+    "INVALID_REQUEST": "Invalid request",
+    "REQUIRED_FIELD": "This field is required",
+    "INVALID_EMAIL": "Please enter a valid email address",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
+    "PASSWORD_MISMATCH": "Passwords do not match"
+  },
+  "DATABASE": {
+    "UNIQUE_CONSTRAINT_VIOLATION": "A record with this {field} already exists",
+    "RECORD_NOT_FOUND": "Record not found",
+    "UNKNOWN_ERROR": "An unexpected database error occurred"
+  },
+  "HTTP": {
+    "400": "Bad request",
+    "401": "Unauthorized",
+    "403": "Forbidden",
+    "404": "Not found",
+    "409": "Conflict",
+    "500": "Internal server error"
+  },
+  "SYSTEM": {
+    "UNKNOWN_ERROR": "An unexpected error occurred"
+  }
+}

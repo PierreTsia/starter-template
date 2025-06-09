@@ -18,6 +18,11 @@ describe('apiFetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch.mockReset();
+    // Default locale to 'en'
+    mockLocalStorage.getItem.mockImplementation((key) => {
+      if (key === 'locale') return 'en';
+      return null;
+    });
   });
 
   it('should make a basic request without auth token', async () => {
@@ -32,14 +37,16 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/test', {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': 'en',
       },
     });
     expect(result).toEqual(mockResponse);
   });
 
-  it('should include auth token in headers when available', async () => {
+  it('should include auth token and language in headers when available', async () => {
     mockLocalStorage.getItem.mockImplementation((key) => {
       if (key === 'token') return 'test-token';
+      if (key === 'locale') return 'fr';
       return null;
     });
 
@@ -54,6 +61,7 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/test', {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': 'fr',
         Authorization: 'Bearer test-token',
       },
     });
@@ -63,6 +71,7 @@ describe('apiFetch', () => {
   it('should not include auth token for logout endpoint', async () => {
     mockLocalStorage.getItem.mockImplementation((key) => {
       if (key === 'token') return 'test-token';
+      if (key === 'locale') return 'fr';
       return null;
     });
 
@@ -77,6 +86,7 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/auth/logout', {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': 'fr',
       },
     });
     expect(result).toEqual(mockResponse);
@@ -87,6 +97,7 @@ describe('apiFetch', () => {
     mockLocalStorage.getItem.mockImplementation((key) => {
       if (key === 'token') return 'old-token';
       if (key === 'refreshToken') return 'refresh-token';
+      if (key === 'locale') return 'fr';
       return null;
     });
 
@@ -120,6 +131,7 @@ describe('apiFetch', () => {
       method: 'POST',
       headers: {
         Authorization: 'Bearer refresh-token',
+        'Accept-Language': 'fr',
       },
     });
 
@@ -131,6 +143,7 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/test', {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': 'fr',
         Authorization: 'Bearer new-token',
       },
     });
@@ -143,6 +156,7 @@ describe('apiFetch', () => {
     mockLocalStorage.getItem.mockImplementation((key) => {
       if (key === 'token') return 'old-token';
       if (key === 'refreshToken') return 'refresh-token';
+      if (key === 'locale') return 'fr';
       return null;
     });
 

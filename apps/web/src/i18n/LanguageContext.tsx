@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
 
-import { Locale, getLocaleFromBrowser } from './languageDetector';
+import { Locale, getCurrentLocale } from './languageDetector';
 import enMessages from './locales/en.json';
 import frMessages from './locales/fr.json';
 import { flattenMessages, type Messages } from './utils';
@@ -21,15 +21,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [locale, setLocale] = useState<Locale>(() => {
-    // Try to get from localStorage first
-    const savedLocale = localStorage.getItem('locale') as Locale;
-    if (savedLocale && ['en', 'fr'].includes(savedLocale)) {
-      return savedLocale;
-    }
-    // Fallback to browser language
-    return getLocaleFromBrowser();
-  });
+  const [locale, setLocale] = useState<Locale>(getCurrentLocale);
 
   useEffect(() => {
     // Save to localStorage whenever locale changes

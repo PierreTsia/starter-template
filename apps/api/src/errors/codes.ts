@@ -1,0 +1,46 @@
+export const ErrorCodes = {
+  AUTH: {
+    INVALID_CREDENTIALS: 'AUTH.INVALID_CREDENTIALS',
+    EMAIL_NOT_CONFIRMED: 'AUTH.EMAIL_NOT_CONFIRMED',
+    TOKEN_EXPIRED: 'AUTH.TOKEN_EXPIRED',
+    INVALID_TOKEN: 'AUTH.INVALID_TOKEN',
+    RATE_LIMIT_EXCEEDED: 'AUTH.RATE_LIMIT_EXCEEDED',
+    EMAIL_ALREADY_EXISTS: 'AUTH.EMAIL_ALREADY_EXISTS',
+  },
+  VALIDATION: {
+    FAILED: 'VALIDATION.FAILED',
+    INVALID_REQUEST: 'VALIDATION.INVALID_REQUEST',
+    REQUIRED_FIELD: 'VALIDATION.REQUIRED_FIELD',
+    INVALID_EMAIL: 'VALIDATION.INVALID_EMAIL',
+    PASSWORD_TOO_SHORT: 'VALIDATION.PASSWORD_TOO_SHORT',
+    PASSWORD_MISMATCH: 'VALIDATION.PASSWORD_MISMATCH',
+  },
+  DATABASE: {
+    UNIQUE_CONSTRAINT_VIOLATION: 'DATABASE.UNIQUE_CONSTRAINT_VIOLATION',
+    RECORD_NOT_FOUND: 'DATABASE.RECORD_NOT_FOUND',
+    UNKNOWN_ERROR: 'DATABASE.UNKNOWN_ERROR',
+  },
+  HTTP: {
+    BAD_REQUEST: 'HTTP.400',
+    UNAUTHORIZED: 'HTTP.401',
+    FORBIDDEN: 'HTTP.403',
+    NOT_FOUND: 'HTTP.404',
+    CONFLICT: 'HTTP.409',
+    INTERNAL_SERVER_ERROR: 'HTTP.500',
+  },
+  SYSTEM: {
+    UNKNOWN_ERROR: 'SYSTEM.UNKNOWN_ERROR',
+  },
+} as const;
+
+type ErrorCodeValues = {
+  [K in keyof typeof ErrorCodes]: (typeof ErrorCodes)[K][keyof (typeof ErrorCodes)[K]];
+};
+
+export type ErrorCode = ErrorCodeValues[keyof ErrorCodeValues];
+
+export function isErrorCode(code: string): code is ErrorCode {
+  return Object.values(ErrorCodes).some((category) =>
+    Object.values(category).includes(code as ErrorCode)
+  );
+}

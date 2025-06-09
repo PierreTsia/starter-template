@@ -1,3 +1,5 @@
+import { getCurrentLocale } from '@/i18n/languageDetector';
+
 const API_URL = import.meta.env.VITE_API_URL;
 const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY;
 const REFRESH_TOKEN_KEY = 'refreshToken';
@@ -13,8 +15,11 @@ const onRefreshComplete = (token: string) => {
 export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const accessToken = localStorage.getItem(AUTH_TOKEN_KEY);
   const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+  const locale = getCurrentLocale();
+
   const baseHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Accept-Language': locale,
   };
   const customHeaders = options?.headers
     ? Object.fromEntries(Object.entries(options.headers).map(([k, v]) => [k, String(v)]))
@@ -47,6 +52,7 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
           method: 'POST',
           headers: {
             Authorization: `Bearer ${refreshToken}`,
+            'Accept-Language': locale,
           },
         });
 
