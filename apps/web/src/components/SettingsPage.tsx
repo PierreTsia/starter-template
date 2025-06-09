@@ -19,7 +19,7 @@ export const SettingsPage = () => {
             <CardDescription>{t('settings.user.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <UserProfile />
+            <UserProfile data-testid="user-profile" />
           </CardContent>
         </Card>
 
@@ -37,7 +37,7 @@ export const SettingsPage = () => {
                 </p>
               </div>
               <div className="w-full max-w-xs">
-                <LanguageSwitcherSelect />
+                <LanguageSwitcherSelect data-testid="language-switcher" />
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -48,7 +48,7 @@ export const SettingsPage = () => {
                 </p>
               </div>
               <div className="w-full max-w-xs">
-                <ThemeSelect />
+                <ThemeSelect data-testid="theme-select" />
               </div>
             </div>
           </CardContent>

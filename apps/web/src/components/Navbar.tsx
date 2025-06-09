@@ -107,9 +107,9 @@ const DesktopLinks = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <Link to="/about">About</Link>
-          </NavigationMenuLink>
+          <Link className={navigationMenuTriggerStyle()} to="/about">
+            About
+          </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
@@ -117,9 +117,9 @@ const DesktopLinks = () => {
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <Link to="/settings">Settings</Link>
-          </NavigationMenuLink>
+          <Link className={navigationMenuTriggerStyle()} to="/settings">
+            Settings
+          </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
