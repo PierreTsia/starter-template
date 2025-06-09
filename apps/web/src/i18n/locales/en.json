@@ -4,7 +4,10 @@
     "error": "An error occurred",
     "retry": "Retry",
     "settings": "Settings",
-    "welcome": "Welcome, {name}!"
+    "welcome": "Welcome, {name}!",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred",
+    "tryAgain": "Try Again"
   },
   "languages": {
     "en": "English",

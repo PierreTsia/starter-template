@@ -4,7 +4,10 @@
     "error": "Une erreur est survenue",
     "retry": "Réessayer",
     "settings": "Paramètres",
-    "welcome": "Bienvenue, {name} !"
+    "welcome": "Bienvenue, {name} !",
+    "somethingWentWrong": "Une erreur est survenue",
+    "unexpectedError": "Une erreur inattendue est survenue",
+    "tryAgain": "Réessayer"
   },
   "languages": {
     "en": "Anglais",
