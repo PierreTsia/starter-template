@@ -34,7 +34,11 @@ export const UserAvatar = ({ user, handleLogout, className }: AvatarProps) => {
     <div className={className}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Button
+            variant="ghost"
+            className="relative h-8 w-8 rounded-full"
+            data-testid="user-avatar"
+          >
             <ShadAvatar className="h-8 w-8">
               <AvatarFallback className="bg-gray-800 text-white">{initials}</AvatarFallback>
             </ShadAvatar>
