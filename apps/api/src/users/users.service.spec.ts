@@ -1,10 +1,10 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { PrismaService } from '../prisma/prisma.service';
 
+import { UserException } from './exceptions/user.exception';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -77,10 +77,10 @@ describe('UsersService', () => {
       });
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it('should throw UserException if user not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('1')).rejects.toThrow(UserException);
     });
   });
 
@@ -151,7 +151,7 @@ describe('UsersService', () => {
       });
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it('should throw UserException if user not found', async () => {
       mockPrismaService.user.update.mockRejectedValue(
         new PrismaClientKnownRequestError('Record not found', {
           code: 'P2025',
@@ -159,7 +159,7 @@ describe('UsersService', () => {
         })
       );
 
-      await expect(service.update('1', { name: 'New Name' })).rejects.toThrow(NotFoundException);
+      await expect(service.update('1', { name: 'New Name' })).rejects.toThrow(UserException);
     });
   });
 
@@ -175,7 +175,7 @@ describe('UsersService', () => {
       });
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it('should throw UserException if user not found', async () => {
       mockPrismaService.user.delete.mockRejectedValue(
         new PrismaClientKnownRequestError('Record not found', {
           code: 'P2025',
@@ -183,7 +183,7 @@ describe('UsersService', () => {
         })
       );
 
-      await expect(service.delete('1')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('1')).rejects.toThrow(UserException);
     });
   });
 
