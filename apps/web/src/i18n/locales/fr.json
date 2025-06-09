@@ -124,5 +124,42 @@
         "changed": "Thème changé pour {theme}"
       }
     }
+  },
+  "navbar": {
+    "features": {
+      "title": "Fonctionnalités",
+      "items": {
+        "dashboard": {
+          "title": "Tableau de bord",
+          "description": "Vue d'ensemble de votre activité"
+        },
+        "analytics": {
+          "title": "Analytique",
+          "description": "Suivez vos performances"
+        },
+        "settings": {
+          "title": "Paramètres",
+          "description": "Configurez vos préférences"
+        },
+        "integrations": {
+          "title": "Intégrations",
+          "description": "Connectez avec d'autres outils"
+        },
+        "storage": {
+          "title": "Stockage",
+          "description": "Gérez vos fichiers"
+        },
+        "support": {
+          "title": "Support",
+          "description": "Obtenez de l'aide quand vous en avez besoin"
+        }
+      }
+    },
+    "links": {
+      "about": "À propos",
+      "tasks": "Tâches",
+      "settings": "Paramètres",
+      "contact": "Contact"
+    }
   }
 }

@@ -125,5 +125,42 @@
         "changed": "Theme changed to {theme}"
       }
     }
+  },
+  "navbar": {
+    "features": {
+      "title": "Features",
+      "items": {
+        "dashboard": {
+          "title": "Dashboard",
+          "description": "Overview of your activity"
+        },
+        "analytics": {
+          "title": "Analytics",
+          "description": "Track your performance"
+        },
+        "settings": {
+          "title": "Settings",
+          "description": "Configure your preferences"
+        },
+        "integrations": {
+          "title": "Integrations",
+          "description": "Connect with other tools"
+        },
+        "storage": {
+          "title": "Storage",
+          "description": "Manage your files"
+        },
+        "support": {
+          "title": "Support",
+          "description": "Get help when needed"
+        }
+      }
+    },
+    "links": {
+      "about": "About",
+      "tasks": "Tasks",
+      "settings": "Settings",
+      "contact": "Contact"
+    }
   }
 }
