@@ -5,7 +5,6 @@ import App from './App';
 import { AboutPage } from './components/AboutPage';
 import { BuggyCounter } from './components/BuggyCounter';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { Navbar } from './components/Navbar';
 import { NotFoundPage } from './components/NotFoundPage';
 import { SettingsPage } from './components/SettingsPage';
 import { TanstackDemo } from './components/TanstackDemo';
@@ -14,6 +13,7 @@ import { ConfirmEmailPage } from './components/auth/ConfirmEmailPage';
 import { EmailConfirmationPage } from './components/auth/EmailConfirmationPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
+import { Navbar } from '@/components/Navbar';
 import { ConfirmEmailErrorPage } from '@/components/auth/ConfirmEmailErrorPage';
 import { ConfirmEmailSuccessPage } from '@/components/auth/ConfirmEmailSuccessPage';
 import { ForgotPasswordPage } from '@/components/auth/ForgotPasswordPage';

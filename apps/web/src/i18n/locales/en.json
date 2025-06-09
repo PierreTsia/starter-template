@@ -4,7 +4,11 @@
     "error": "An error occurred",
     "retry": "Retry",
     "settings": "Settings",
-    "welcome": "Welcome, {name}!"
+    "welcome": "Welcome, {name}!",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred",
+    "tryAgain": "Try Again",
+    "save": "Save"
   },
   "languages": {
     "en": "English",
@@ -96,5 +100,67 @@
     "passwordsDontMatch": "Passwords don't match",
     "nameTooShort": "Name must be at least 2 characters",
     "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and application preferences",
+    "user": {
+      "title": "User Settings",
+      "description": "Manage your account information and preferences",
+      "displayName": "Display Name",
+      "email": "Email"
+    },
+    "app": {
+      "title": "App Settings",
+      "description": "Customize your application experience",
+      "language": {
+        "title": "Language",
+        "description": "Choose your preferred language"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Choose your preferred theme",
+        "light": "Light",
+        "dark": "Dark",
+        "changed": "Theme changed to {theme}"
+      }
+    }
+  },
+  "navbar": {
+    "features": {
+      "title": "Features",
+      "items": {
+        "dashboard": {
+          "title": "Dashboard",
+          "description": "Overview of your activity"
+        },
+        "analytics": {
+          "title": "Analytics",
+          "description": "Track your performance"
+        },
+        "settings": {
+          "title": "Settings",
+          "description": "Configure your preferences"
+        },
+        "integrations": {
+          "title": "Integrations",
+          "description": "Connect with other tools"
+        },
+        "storage": {
+          "title": "Storage",
+          "description": "Manage your files"
+        },
+        "support": {
+          "title": "Support",
+          "description": "Get help when needed"
+        }
+      }
+    },
+    "links": {
+      "about": "About",
+      "tasks": "Tasks",
+      "settings": "Settings",
+      "contact": "Contact"
+    }
   }
 }

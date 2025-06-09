@@ -23,17 +23,17 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <LanguageProvider>
-          <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
+        <ThemeProvider>
+          <ErrorBoundary>
             <AppToaster />
             <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
               <Root />
             </BrowserRouter>
-          </ThemeProvider>
-        </LanguageProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+          </ErrorBoundary>
+        </ThemeProvider>
+      </LanguageProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );

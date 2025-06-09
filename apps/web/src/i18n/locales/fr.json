@@ -4,7 +4,11 @@
     "error": "Une erreur est survenue",
     "retry": "Réessayer",
     "settings": "Paramètres",
-    "welcome": "Bienvenue, {name} !"
+    "welcome": "Bienvenue, {name} !",
+    "somethingWentWrong": "Une erreur est survenue",
+    "unexpectedError": "Une erreur inattendue est survenue",
+    "tryAgain": "Réessayer",
+    "save": "Enregistrer"
   },
   "languages": {
     "en": "Anglais",
@@ -95,5 +99,67 @@
     "passwordsDontMatch": "Les mots de passe ne correspondent pas",
     "nameTooShort": "Le nom doit contenir au moins 2 caractères",
     "passwordRequirements": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Gérez votre compte et vos préférences d'application",
+    "user": {
+      "title": "Paramètres utilisateur",
+      "description": "Gérez vos informations de compte et vos préférences",
+      "displayName": "Nom d'affichage",
+      "email": "Email"
+    },
+    "app": {
+      "title": "Paramètres de l'application",
+      "description": "Personnalisez votre expérience d'application",
+      "language": {
+        "title": "Langue",
+        "description": "Choisissez votre langue préférée"
+      },
+      "theme": {
+        "title": "Thème",
+        "description": "Choisissez votre thème préféré",
+        "light": "Clair",
+        "dark": "Sombre",
+        "changed": "Thème changé pour {theme}"
+      }
+    }
+  },
+  "navbar": {
+    "features": {
+      "title": "Fonctionnalités",
+      "items": {
+        "dashboard": {
+          "title": "Tableau de bord",
+          "description": "Vue d'ensemble de votre activité"
+        },
+        "analytics": {
+          "title": "Analytique",
+          "description": "Suivez vos performances"
+        },
+        "settings": {
+          "title": "Paramètres",
+          "description": "Configurez vos préférences"
+        },
+        "integrations": {
+          "title": "Intégrations",
+          "description": "Connectez avec d'autres outils"
+        },
+        "storage": {
+          "title": "Stockage",
+          "description": "Gérez vos fichiers"
+        },
+        "support": {
+          "title": "Support",
+          "description": "Obtenez de l'aide quand vous en avez besoin"
+        }
+      }
+    },
+    "links": {
+      "about": "À propos",
+      "tasks": "Tâches",
+      "settings": "Paramètres",
+      "contact": "Contact"
+    }
   }
 }
