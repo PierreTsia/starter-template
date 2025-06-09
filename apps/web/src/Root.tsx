@@ -5,6 +5,7 @@ import App from './App';
 import { AboutPage } from './components/AboutPage';
 import { BuggyCounter } from './components/BuggyCounter';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { Navbar } from './components/Navbar';
 import { NotFoundPage } from './components/NotFoundPage';
 import { SettingsPage } from './components/SettingsPage';
 import { TanstackDemo } from './components/TanstackDemo';
@@ -22,66 +23,69 @@ import { Toaster } from '@/components/ui/sonner';
 
 export const Root = () => {
   return (
-    <div className="container min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4">
+    <div className="h-screen">
       <Toaster />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <App />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/register" element={<AuthPage />} />
-        <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
-        <Route path="/confirm-email">
-          <Route index element={<ConfirmEmailPage />} />
-          <Route path="success" element={<ConfirmEmailSuccessPage />} />
-          <Route path="error" element={<ConfirmEmailErrorPage />} />
-        </Route>
-        <Route path="/forgot-password">
-          <Route index element={<ForgotPasswordPage />} />
-          <Route path="success" element={<ForgotPasswordSuccessPage />} />
-        </Route>
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route
-          path="/about"
-          element={
-            <ProtectedRoute>
-              <AboutPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/buggy"
-          element={
-            <ProtectedRoute>
-              <BuggyCounter />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tanstack-demo"
-          element={
-            <ProtectedRoute>
-              <Suspense fallback={<LoadingSpinner />}>
-                <TanstackDemo />
-              </Suspense>
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Navbar />
+      <div className="min-h-[calc(100vh-var(--navbar-height))] mx-auto px-4 container">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <App />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
+          <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
+          <Route path="/confirm-email">
+            <Route index element={<ConfirmEmailPage />} />
+            <Route path="success" element={<ConfirmEmailSuccessPage />} />
+            <Route path="error" element={<ConfirmEmailErrorPage />} />
+          </Route>
+          <Route path="/forgot-password">
+            <Route index element={<ForgotPasswordPage />} />
+            <Route path="success" element={<ForgotPasswordSuccessPage />} />
+          </Route>
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/about"
+            element={
+              <ProtectedRoute>
+                <AboutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/buggy"
+            element={
+              <ProtectedRoute>
+                <BuggyCounter />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tanstack-demo"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TanstackDemo />
+                </Suspense>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </div>
     </div>
   );
 };

@@ -33,7 +33,7 @@ export const AuthPage = () => {
   const isLoading = isAuthLoading || isUserLoading;
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-[calc(100vh-var(--navbar-height))] items-center justify-center">
       <div className="space-y-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">

@@ -6,6 +6,16 @@
     "settings": "Paramètres",
     "welcome": "Bienvenue, {name} !"
   },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "navigation": {
+    "menu": {
+      "title": "Menu",
+      "description": "Navigation et paramètres"
+    }
+  },
   "auth": {
     "login": "Connexion",
     "register": "S'inscrire",

@@ -1,12 +1,13 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { useAuth } from '@/api/resources/auth/hooks';
+import { useAuth, useMe } from '@/api/resources/auth/hooks';
 import { TestApp } from '@/test-utils';
 
 // Mock the useAuth hook
 vi.mock('@/api/resources/auth/hooks', () => ({
   useAuth: vi.fn(),
+  useMe: vi.fn(),
 }));
 
 // Mock useNavigate
@@ -26,6 +27,11 @@ describe('ForgotPasswordPage', () => {
     vi.clearAllMocks();
     (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
       forgotPassword: mockForgotPassword,
+      isLoading: false,
+      error: null,
+    });
+    (useMe as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: null,
       isLoading: false,
       error: null,
     });

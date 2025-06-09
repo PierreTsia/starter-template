@@ -8,7 +8,6 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { LanguageProvider } from './i18n/LanguageContext';
 
 import { AppToaster } from '@/components/AppToaster';
-import { Navbar } from '@/components/Navbar';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 import './index.css';
@@ -30,7 +29,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <ThemeProvider>
             <AppToaster />
             <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-              <Navbar />
               <Root />
             </BrowserRouter>
           </ThemeProvider>

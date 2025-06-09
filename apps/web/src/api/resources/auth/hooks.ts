@@ -15,6 +15,7 @@ export const useMe = () =>
   useQuery({
     queryKey: ['me'],
     queryFn: () => authApi.me(),
+
     staleTime: FIVE_MINUTES,
     gcTime: ONE_HOUR,
   });
