@@ -1,12 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { useAuth } from '@/api/resources/auth/hooks';
 import { TestApp } from '@/test-utils';
+
+const mockUseAuth = vi.fn();
+const mockUseMe = vi.fn();
 
 // Mock the useAuth hook
 vi.mock('@/api/resources/auth/hooks', () => ({
-  useAuth: vi.fn(),
+  useAuth: () => mockUseAuth(),
+  useMe: () => mockUseMe(),
 }));
 
 // Mock useNavigate
@@ -24,8 +27,13 @@ describe('ResetPasswordPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
+      isLoading: false,
+      error: null,
+    });
+    mockUseMe.mockReturnValue({
+      data: null,
       isLoading: false,
       error: null,
     });
@@ -51,10 +59,8 @@ describe('ResetPasswordPage', () => {
     renderComponent(null);
 
     expect(screen.getByText('Invalid Reset Link')).toBeInTheDocument();
-    expect(
-      screen.getByText(/This password reset link is invalid or has expired/)
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Request New Reset Link' })).toBeInTheDocument();
+    expect(screen.getByText(/This reset link is invalid or has expired/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Request New Link' })).toBeInTheDocument();
   });
 
   it('validates password requirements', async () => {
@@ -152,7 +158,7 @@ describe('ResetPasswordPage', () => {
   });
 
   it('handles loading state', () => {
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
       isLoading: true,
       error: null,
@@ -166,7 +172,7 @@ describe('ResetPasswordPage', () => {
 
   it('displays error message when API call fails', () => {
     const errorMessage = 'Failed to reset password';
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       resetPassword: mockResetPassword,
       isLoading: false,
       error: new Error(errorMessage),
@@ -189,7 +195,7 @@ describe('ResetPasswordPage', () => {
   it('navigates to forgot password page when clicking request new link', () => {
     renderComponent(null);
 
-    const requestNewLinkButton = screen.getByRole('button', { name: 'Request New Reset Link' });
+    const requestNewLinkButton = screen.getByRole('button', { name: 'Request New Link' });
     fireEvent.click(requestNewLinkButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/forgot-password');

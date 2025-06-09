@@ -15,9 +15,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.string().email('validation.invalidEmail'),
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
@@ -25,6 +26,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export const ForgotPasswordPage = () => {
   const navigate = useNavigate();
   const { forgotPassword, isLoading, error } = useAuth();
+  const { t } = useTranslation();
 
   const form = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -41,10 +43,8 @@ export const ForgotPasswordPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Forgot Password</CardTitle>
-          <CardDescription>
-            Enter your email address and we'll send you a link to reset your password
-          </CardDescription>
+          <CardTitle>{t('auth.forgotPassword.title')}</CardTitle>
+          <CardDescription>{t('auth.forgotPassword.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -54,9 +54,9 @@ export const ForgotPasswordPage = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('auth.email')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
+                      <Input placeholder={t('auth.forgotPassword.emailPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -64,12 +64,12 @@ export const ForgotPasswordPage = () => {
               />
               {error && (
                 <div className="text-sm text-destructive">
-                  {error instanceof Error ? error.message : 'An error occurred'}
+                  {error instanceof Error ? error.message : t('common.error')}
                 </div>
               )}
               <div className="flex flex-col space-y-2">
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                  {isLoading ? t('auth.forgotPassword.sending') : t('auth.forgotPassword.sendLink')}
                 </Button>
                 <Button
                   type="button"
@@ -77,7 +77,7 @@ export const ForgotPasswordPage = () => {
                   onClick={() => navigate('/login')}
                   className="w-full"
                 >
-                  Back to Login
+                  {t('auth.forgotPassword.backToLogin')}
                 </Button>
               </div>
             </form>

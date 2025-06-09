@@ -15,7 +15,7 @@ const App = () => {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Welcome, {me?.name}!</CardTitle>

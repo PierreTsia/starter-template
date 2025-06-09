@@ -29,7 +29,7 @@ describe('EmailConfirmationPage', () => {
     expect(
       screen.getByText(/Please check your inbox and click the link to confirm your email address/)
     ).toBeInTheDocument();
-    expect(screen.getByText('Back to login')).toBeInTheDocument();
+    expect(screen.getByText('Back to Login')).toBeInTheDocument();
     expect(screen.getByText(/Once you've confirmed your email/)).toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe('EmailConfirmationPage', () => {
   it('navigates to login page when clicking the button', () => {
     renderComponent();
 
-    const loginButton = screen.getByRole('button', { name: 'Back to login' });
+    const loginButton = screen.getByRole('button', { name: 'Back to Login' });
     fireEvent.click(loginButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/login');

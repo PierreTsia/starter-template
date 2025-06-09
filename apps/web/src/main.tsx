@@ -5,9 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Root } from './Root';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { LanguageProvider } from './i18n/LanguageContext';
 
 import { AppToaster } from '@/components/AppToaster';
-import { Navbar } from '@/components/Navbar';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 import './index.css';
@@ -25,13 +25,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AppToaster />
-          <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-            <Navbar />
-            <Root />
-          </BrowserRouter>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AppToaster />
+            <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+              <Root />
+            </BrowserRouter>
+          </ThemeProvider>
+        </LanguageProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   </React.StrictMode>

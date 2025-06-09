@@ -15,20 +15,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-      .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
+      .min(8, 'validation.passwordTooShort')
+      .regex(/[A-Z]/, 'validation.passwordRequiresUppercase')
+      .regex(/[a-z]/, 'validation.passwordRequiresLowercase')
+      .regex(/[0-9]/, 'validation.passwordRequiresNumber')
+      .regex(/[^A-Za-z0-9]/, 'validation.passwordRequiresSpecial'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: 'validation.passwordsDontMatch',
     path: ['confirmPassword'],
   });
 
@@ -39,6 +40,7 @@ export const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const { resetPassword, isLoading, error } = useAuth();
+  const { t } = useTranslation();
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -53,15 +55,14 @@ export const ResetPasswordPage = () => {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Invalid Reset Link</CardTitle>
+            <CardTitle>{t('auth.forgotPassword.resetPassword.invalidLink.title')}</CardTitle>
             <CardDescription>
-              This password reset link is invalid or has expired. Please request a new password
-              reset link.
+              {t('auth.forgotPassword.resetPassword.invalidLink.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => navigate('/forgot-password')} className="w-full">
-              Request New Reset Link
+              {t('auth.forgotPassword.resetPassword.invalidLink.requestNew')}
             </Button>
           </CardContent>
         </Card>
@@ -77,8 +78,8 @@ export const ResetPasswordPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Reset Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
+          <CardTitle>{t('auth.forgotPassword.resetPassword.title')}</CardTitle>
+          <CardDescription>{t('auth.forgotPassword.resetPassword.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -88,9 +89,13 @@ export const ResetPasswordPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>{t('auth.forgotPassword.resetPassword.newPassword')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter your new password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder={t('auth.forgotPassword.resetPassword.newPasswordPlaceholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -101,9 +106,15 @@ export const ResetPasswordPage = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel>{t('auth.forgotPassword.resetPassword.confirmPassword')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Confirm your new password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder={t(
+                          'auth.forgotPassword.resetPassword.confirmPasswordPlaceholder'
+                        )}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,12 +122,14 @@ export const ResetPasswordPage = () => {
               />
               {error && (
                 <div className="text-sm text-destructive">
-                  {error instanceof Error ? error.message : 'An error occurred'}
+                  {error instanceof Error ? error.message : t('common.error')}
                 </div>
               )}
               <div className="flex flex-col space-y-2">
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Resetting...' : 'Reset Password'}
+                  {isLoading
+                    ? t('auth.forgotPassword.resetPassword.submitting')
+                    : t('auth.forgotPassword.resetPassword.submit')}
                 </Button>
                 <Button
                   type="button"
@@ -124,7 +137,7 @@ export const ResetPasswordPage = () => {
                   onClick={() => navigate('/login')}
                   className="w-full"
                 >
-                  Back to Login
+                  {t('auth.forgotPassword.backToLogin')}
                 </Button>
               </div>
             </form>

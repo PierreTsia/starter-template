@@ -1,14 +1,17 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 
 import { useAuth, useMe } from '@/api/resources/auth/hooks';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 import type { LoginFormData, RegisterFormData } from '@/types/auth';
 
 export const AuthPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login, register, error, resetError, isLoading: isAuthLoading } = useAuth();
   const { isLoading: isUserLoading } = useMe();
   const isLogin = location.pathname === '/login';
@@ -30,11 +33,11 @@ export const AuthPage = () => {
   const isLoading = isAuthLoading || isUserLoading;
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-[calc(100vh-var(--navbar-height))] items-center justify-center">
       <div className="space-y-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-            {error instanceof Error ? error.message : 'An error occurred'}
+            {error instanceof Error ? error.message : t('common.error')}
           </div>
         )}
         {isLogin ? (
@@ -43,24 +46,20 @@ export const AuthPage = () => {
           <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
         )}
         <p className="text-center text-sm text-gray-500">
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
+          {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}{' '}
           <button
             type="button"
             onClick={switchForm}
             className="font-medium text-primary hover:underline"
           >
-            {isLogin ? 'Register' : 'Login'}
+            {isLogin ? t('auth.switchToRegister') : t('auth.switchToLogin')}
           </button>
         </p>
         {isLogin && (
           <p className="text-center text-sm text-gray-500">
-            <button
-              type="button"
-              onClick={() => navigate('/forgot-password')}
-              className="font-medium text-primary hover:underline"
-            >
-              Forgot your password?
-            </button>
+            <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+              {t('auth.forgotPassword.title')}
+            </Link>
           </p>
         )}
       </div>

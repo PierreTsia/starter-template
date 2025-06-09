@@ -1,0 +1,96 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "settings": "Paramètres",
+    "welcome": "Bienvenue, {name} !"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "navigation": {
+    "menu": {
+      "title": "Menu",
+      "description": "Navigation et paramètres"
+    }
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "name": "Nom",
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "description": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "emailPlaceholder": "Entrez votre email",
+      "sendLink": "Envoyer le lien",
+      "sending": "Envoi en cours...",
+      "backToLogin": "Retour à la connexion",
+      "success": {
+        "title": "Vérifiez votre email",
+        "description": "Si un compte existe avec cet email, vous recevrez un lien de réinitialisation. Veuillez vérifier votre email et suivre les instructions."
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe",
+        "description": "Entrez votre nouveau mot de passe ci-dessous",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+        "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+        "submit": "Réinitialiser le mot de passe",
+        "submitting": "Réinitialisation...",
+        "invalidLink": {
+          "title": "Lien de réinitialisation invalide",
+          "description": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien de réinitialisation.",
+          "requestNew": "Demander un nouveau lien"
+        }
+      }
+    },
+    "noAccount": "Vous n'avez pas de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "switchToRegister": "Créer un compte",
+    "switchToLogin": "Connectez-vous à votre compte",
+    "loginTitle": "Connexion",
+    "loginDescription": "Entrez vos identifiants pour vous connecter",
+    "registerTitle": "Inscription",
+    "registerDescription": "Créez un nouveau compte",
+    "emailPlaceholder": "john@exemple.com",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordPlaceholder": "••••••••",
+    "namePlaceholder": "Jean Dupont",
+    "checkEmail": {
+      "title": "Vérifiez votre email",
+      "description": "Nous avons envoyé un lien de confirmation à ",
+      "descriptionNoEmail": "Nous vous avons envoyé un lien de confirmation pour vérifier votre adresse email.",
+      "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour confirmer votre adresse email. Si vous ne voyez pas l'email, vérifiez votre dossier spam.",
+      "backToLogin": "Retour à la connexion",
+      "afterConfirmation": "Une fois que vous aurez confirmé votre email, vous pourrez vous connecter à votre compte."
+    },
+    "confirmEmail": {
+      "confirming": "Confirmation de votre email...",
+      "success": {
+        "title": "Email Confirmé !",
+        "description": "Votre email a été confirmé avec succès",
+        "goToLogin": "Aller à la Connexion",
+        "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
+      }
+    }
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "invalidEmail": "Veuillez entrer une adresse email valide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordRequiresUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+    "passwordRequiresLowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
+    "passwordRequiresNumber": "Le mot de passe doit contenir au moins un chiffre",
+    "passwordRequiresSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+    "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+    "passwordRequirements": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial"
+  }
+}

@@ -35,7 +35,7 @@ describe('AuthPage', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/register/i));
+    fireEvent.click(screen.getByText('Create an account'));
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
@@ -149,8 +149,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/must be at least 8 characters/i);
+        expect(screen.getByText(/must be at least 8 characters/i)).toBeInTheDocument();
       });
     });
 
@@ -164,8 +163,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/uppercase/i);
+        expect(screen.getByText(/uppercase/i)).toBeInTheDocument();
       });
     });
 
@@ -179,8 +177,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/number/i);
+        expect(screen.getByText(/number/i)).toBeInTheDocument();
       });
     });
 
@@ -194,8 +191,7 @@ describe('AuthPage', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByTestId('password-error');
-        expect(errorMessage).toHaveTextContent(/special character/i);
+        expect(screen.getByText(/special character/i)).toBeInTheDocument();
       });
     });
   });
@@ -222,8 +218,88 @@ describe('AuthPage', () => {
     fireEvent.submit(form);
 
     await waitFor(() => {
-      const errorMessage = screen.getByTestId('confirm-password-error');
-      expect(errorMessage).toHaveTextContent(/passwords don't match/i);
+      expect(screen.getByText("Passwords don't match")).toBeInTheDocument();
+    });
+  });
+
+  describe('Language Switching', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        login: vi.fn(),
+        register: vi.fn(),
+        logout: vi.fn(),
+        isLoading: false,
+        error: null,
+        resetError: vi.fn(),
+      });
+    });
+
+    it('displays English content by default', () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="en" />);
+
+      // Check form labels
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+
+      // Check button texts
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByText(/create an account/i)).toBeInTheDocument();
+    });
+
+    it('displays French content when French locale is set', () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="fr" />);
+
+      // Check form labels in French
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/mot de passe/i)).toBeInTheDocument();
+
+      // Check button texts in French
+      expect(screen.getByRole('button', { name: /connexion/i })).toBeInTheDocument();
+      expect(screen.getByText(/créer un compte/i)).toBeInTheDocument();
+    });
+
+    it('displays validation messages in French', async () => {
+      render(<TestApp initialEntries={['/login']} initialLocale="fr" />);
+
+      // Submit empty form to trigger validation
+      const form = screen.getByTestId('login-form');
+      fireEvent.submit(form);
+
+      // Check validation messages in French
+      await waitFor(() => {
+        expect(screen.getByText(/veuillez entrer une adresse email valide/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/le mot de passe doit contenir au moins 8 caractères/i)
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('switches language when clicking the language switcher', async () => {
+      // Mock localStorage
+      const localStorageMock = {
+        getItem: vi.fn(),
+        setItem: vi.fn(),
+        clear: vi.fn(),
+      };
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+      render(<TestApp initialEntries={['/login']} initialLocale="en" />);
+
+      // Initially in English
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByText(/enter your credentials to login/i)).toBeInTheDocument();
+
+      // Click language switcher
+      const languageButton = screen.getByRole('combobox');
+      fireEvent.click(languageButton);
+
+      // Select French
+      const frenchOption = screen.getByText('French');
+      expect(frenchOption).toBeInTheDocument();
+      fireEvent.click(frenchOption);
+
+      // Verify localStorage was updated
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('locale', 'fr');
     });
   });
 });

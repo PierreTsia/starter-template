@@ -1,12 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { useAuth } from '@/api/resources/auth/hooks';
 import { TestApp } from '@/test-utils';
+
+const mockUseAuth = vi.fn();
+const mockUseMe = vi.fn();
 
 // Mock the useAuth hook
 vi.mock('@/api/resources/auth/hooks', () => ({
-  useAuth: vi.fn(),
+  useAuth: () => mockUseAuth(),
+  useMe: () => mockUseMe(),
 }));
 
 describe('ConfirmEmailPage', () => {
@@ -14,8 +17,13 @@ describe('ConfirmEmailPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseAuth.mockReturnValue({
       confirmEmail: mockConfirmEmail,
+      isLoading: false,
+      error: null,
+    });
+    mockUseMe.mockReturnValue({
+      data: null,
       isLoading: false,
       error: null,
     });

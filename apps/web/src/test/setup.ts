@@ -16,8 +16,10 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
+const mockGlobalFetch = vi.fn();
+
 // Mock fetch
-global.fetch = vi.fn();
+global.fetch = mockGlobalFetch;
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -42,5 +44,5 @@ beforeEach(() => {
   mockLocalStorage.removeItem.mockReset();
   mockLocalStorage.clear.mockReset();
   mockLocalStorage.key.mockReset();
-  (global.fetch as ReturnType<typeof vi.fn>).mockReset();
+  mockGlobalFetch.mockReset();
 });
