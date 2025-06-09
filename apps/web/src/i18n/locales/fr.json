@@ -26,7 +26,15 @@
     "emailPlaceholder": "jean@exemple.com",
     "passwordPlaceholder": "••••••••",
     "confirmPasswordPlaceholder": "••••••••",
-    "namePlaceholder": "Jean Dupont"
+    "namePlaceholder": "Jean Dupont",
+    "checkEmail": {
+      "title": "Vérifiez votre email",
+      "description": "Nous avons envoyé un lien de confirmation à ",
+      "descriptionNoEmail": "Nous vous avons envoyé un lien de confirmation pour vérifier votre adresse email.",
+      "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour confirmer votre adresse email. Si vous ne voyez pas l'email, vérifiez votre dossier spam.",
+      "backToLogin": "Retour à la page de connexion",
+      "afterConfirmation": "Une fois que vous aurez confirmé votre email, vous pourrez vous connecter à votre compte."
+    }
   },
   "validation": {
     "required": "Ce champ est obligatoire",

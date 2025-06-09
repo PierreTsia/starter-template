@@ -26,7 +26,15 @@
     "emailPlaceholder": "john@example.com",
     "passwordPlaceholder": "••••••••",
     "confirmPasswordPlaceholder": "••••••••",
-    "namePlaceholder": "John Doe"
+    "namePlaceholder": "John Doe",
+    "checkEmail": {
+      "title": "Check your email",
+      "description": "We've sent a confirmation link to ",
+      "descriptionNoEmail": "We've sent you a confirmation link to verify your email address.",
+      "instructions": "Please check your inbox and click the link to confirm your email address. If you don't see the email, check your spam folder.",
+      "backToLogin": "Back to login",
+      "afterConfirmation": "Once you've confirmed your email, you can log in to your account."
+    }
   },
   "validation": {
     "required": "This field is required",
