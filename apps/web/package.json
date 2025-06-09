@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint .",
+    "lint": "eslint src/**/*.{ts,tsx}",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "test": "vitest",
@@ -27,6 +27,7 @@
     "react-dom": "^18.3.1",
     "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.57.0",
+    "react-intl": "^7.1.11",
     "react-router-dom": "^6.22.0",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
