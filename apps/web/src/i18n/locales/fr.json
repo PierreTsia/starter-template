@@ -3,14 +3,20 @@
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
     "retry": "Réessayer",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "welcome": "Bienvenue, {name} !"
   },
   "auth": {
     "login": "Connexion",
-    "register": "S'inscrire",
+    "register": "Inscription",
     "logout": "Déconnexion",
     "email": "Email",
-    "password": "Mot de passe"
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "switchToRegister": "S'inscrire",
+    "switchToLogin": "Se connecter"
   },
   "validation": {
     "required": "Ce champ est obligatoire",

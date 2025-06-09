@@ -11,7 +11,12 @@
     "register": "Register",
     "logout": "Logout",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "switchToRegister": "Register",
+    "switchToLogin": "Login"
   },
   "validation": {
     "required": "This field is required",
