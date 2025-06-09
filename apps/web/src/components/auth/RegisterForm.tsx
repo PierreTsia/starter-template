@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 import { registerSchema } from '@/lib/validations/auth';
 import type { RegisterFormData } from '@/types/auth';
 
@@ -21,6 +22,7 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -32,19 +34,29 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Register</CardTitle>
-        <CardDescription>Create a new account</CardDescription>
+        <CardTitle>{t('auth.registerTitle')}</CardTitle>
+        <CardDescription>{t('auth.registerDescription')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)} data-testid="register-form">
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" {...register('name')} placeholder="John Doe" />
+            <Label htmlFor="name">{t('auth.name')}</Label>
+            <Input
+              id="name"
+              type="text"
+              {...register('name')}
+              placeholder={t('auth.namePlaceholder')}
+            />
             {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="text" {...register('email')} placeholder="john@example.com" />
+            <Label htmlFor="email">{t('auth.email')}</Label>
+            <Input
+              id="email"
+              type="email"
+              {...register('email')}
+              placeholder={t('auth.emailPlaceholder')}
+            />
             {errors.email && (
               <p className="text-sm text-red-500" data-testid="email-error">
                 {errors.email.message}
@@ -52,8 +64,13 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register('password')} placeholder="••••••••" />
+            <Label htmlFor="password">{t('auth.password')}</Label>
+            <Input
+              id="password"
+              type="password"
+              {...register('password')}
+              placeholder={t('auth.passwordPlaceholder')}
+            />
             {errors.password && (
               <p className="text-sm text-red-500" data-testid="password-error">
                 {errors.password.message}
@@ -61,12 +78,12 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
               {...register('confirmPassword')}
-              placeholder="••••••••"
+              placeholder={t('auth.confirmPasswordPlaceholder')}
             />
             {errors.confirmPassword && (
               <p className="text-sm text-red-500" data-testid="confirm-password-error">
@@ -77,7 +94,7 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
-            {isSubmitting || isLoading ? 'Loading...' : 'Register'}
+            {isSubmitting || isLoading ? t('common.loading') : t('auth.register')}
           </Button>
         </CardFooter>
       </form>

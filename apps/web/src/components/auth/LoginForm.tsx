@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 import { loginSchema } from '@/lib/validations/auth';
 import type { LoginFormData } from '@/types/auth';
 
@@ -21,6 +22,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -32,25 +34,43 @@ export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Enter your credentials to login</CardDescription>
+        <CardTitle>{t('auth.loginTitle')}</CardTitle>
+        <CardDescription>{t('auth.loginDescription')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)} data-testid="login-form">
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register('email')} placeholder="john@example.com" />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            <Label htmlFor="email">{t('auth.email')}</Label>
+            <Input
+              id="email"
+              type="email"
+              {...register('email')}
+              placeholder={t('auth.emailPlaceholder')}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500" data-testid="email-error">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register('password')} placeholder="••••••••" />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+            <Label htmlFor="password">{t('auth.password')}</Label>
+            <Input
+              id="password"
+              type="password"
+              {...register('password')}
+              placeholder={t('auth.passwordPlaceholder')}
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500" data-testid="password-error">
+                {errors.password.message}
+              </p>
+            )}
           </div>
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
-            {isSubmitting || isLoading ? 'Loading...' : 'Login'}
+            {isSubmitting || isLoading ? t('common.loading') : t('auth.login')}
           </Button>
         </CardFooter>
       </form>

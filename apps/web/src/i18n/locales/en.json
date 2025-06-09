@@ -12,11 +12,21 @@
     "logout": "Logout",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
     "forgotPassword": "Forgot your password?",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "switchToRegister": "Register",
-    "switchToLogin": "Login"
+    "switchToLogin": "Login",
+    "loginTitle": "Login",
+    "loginDescription": "Enter your credentials to login",
+    "registerTitle": "Register",
+    "registerDescription": "Create a new account",
+    "emailPlaceholder": "john@example.com",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordPlaceholder": "••••••••",
+    "namePlaceholder": "John Doe"
   },
   "validation": {
     "required": "This field is required",
