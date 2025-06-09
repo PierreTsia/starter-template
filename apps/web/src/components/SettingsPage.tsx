@@ -37,7 +37,7 @@ export const SettingsPage = () => {
                 </p>
               </div>
               <div className="w-full max-w-xs">
-                <LanguageSwitcherSelect data-testid="language-switcher" />
+                <LanguageSwitcherSelect />
               </div>
             </div>
             <div className="flex items-center justify-between">

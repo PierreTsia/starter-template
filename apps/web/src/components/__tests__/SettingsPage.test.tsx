@@ -63,4 +63,22 @@ describe('SettingsPage', () => {
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
   });
+
+  it('renders the app settings section with language and theme options', () => {
+    renderComponent();
+
+    expect(screen.getByText('App Settings')).toBeInTheDocument();
+    expect(screen.getByText('Customize your application experience')).toBeInTheDocument();
+
+    expect(screen.getByText('Language')).toBeInTheDocument();
+    expect(screen.getByText('Choose your preferred language')).toBeInTheDocument();
+    const languageSwitchers = screen.getAllByTestId('language-switcher');
+    expect(languageSwitchers[0]).toHaveTextContent('English');
+
+    expect(screen.getByText('Theme')).toBeInTheDocument();
+    expect(screen.getByText('Choose your preferred theme')).toBeInTheDocument();
+    const themeSelect = screen.getByTestId('theme-select');
+    expect(themeSelect).toBeInTheDocument();
+    expect(themeSelect).toHaveTextContent('Light');
+  });
 });

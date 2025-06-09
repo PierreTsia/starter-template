@@ -15,7 +15,7 @@ export const LanguageSwitcherSelect = () => {
 
   return (
     <Select value={locale} onValueChange={setLocale}>
-      <SelectTrigger className="flex items-center gap-2 w-full">
+      <SelectTrigger className="flex items-center gap-2 w-full" data-testid="language-switcher">
         <Globe className="w-4 h-4" />
         <SelectValue />
       </SelectTrigger>

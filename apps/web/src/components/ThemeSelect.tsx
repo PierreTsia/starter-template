@@ -23,7 +23,7 @@ export function ThemeSelect() {
 
   return (
     <Select value={theme} onValueChange={toggleTheme}>
-      <SelectTrigger className="flex items-center gap-2 w-full">
+      <SelectTrigger className="flex items-center gap-2 w-full" data-testid="theme-select">
         {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
         <SelectValue placeholder={t('settings.app.theme.title')} />
       </SelectTrigger>
