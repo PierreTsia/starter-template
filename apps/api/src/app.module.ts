@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 import { AppController } from './app.controller';
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
         },
       ],
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UsersModule,
     AuthModule,
