@@ -48,7 +48,8 @@
       "descriptionNoEmail": "Please check your email for a confirmation link",
       "instructions": "Click the link in the email to confirm your account",
       "backToLogin": "Back to Login",
-      "afterConfirmation": "After confirming your email, you can log in to your account"
+      "afterConfirmation": "After confirming your email, you can log in to your account",
+      "resendTitle": "Resend confirmation email"
     },
     "confirmEmail": {
       "confirming": "Confirming your email...",

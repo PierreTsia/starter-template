@@ -282,7 +282,10 @@ describe('Auth Hooks', () => {
       });
 
       expect(authApi.confirmEmail).toHaveBeenCalledWith('invalid-token');
-      expect(mockNavigate).toHaveBeenCalledWith('/confirm-email/error', { replace: true });
+      expect(mockNavigate).toHaveBeenCalledWith('/confirm-email/error', {
+        replace: true,
+        state: { error },
+      });
     });
   });
 
