@@ -27,7 +27,6 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResendConfirmationDto } from './dto/resend-confirmation.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { DevGuard } from './guards/dev.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('Authentication')
@@ -143,11 +142,5 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   async resendConfirmation(@Body() dto: ResendConfirmationDto) {
     return this.authService.resendConfirmation(dto.email);
-  }
-
-  @Post('test/trigger-cleanup')
-  @UseGuards(DevGuard)
-  async triggerCleanup() {
-    return this.cleanupService.cleanupExpiredUnconfirmedAccounts();
   }
 }
