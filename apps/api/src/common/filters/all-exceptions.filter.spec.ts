@@ -135,5 +135,61 @@ describe('AllExceptionsFilter', () => {
         },
       });
     });
+
+    it('should handle UnauthorizedException with CONFIRMATION_TOKEN_EXPIRED error code', () => {
+      const exception = new HttpException(
+        'AUTH.CONFIRMATION_TOKEN_EXPIRED',
+        HttpStatus.UNAUTHORIZED
+      );
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as ArgumentsHost;
+
+      filter.catch(exception, host);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        code: 'AUTH.CONFIRMATION_TOKEN_EXPIRED',
+        message: 'Your confirmation link has expired. Please request a new one',
+        status: HttpStatus.UNAUTHORIZED,
+        meta: {
+          language: 'en',
+        },
+      });
+    });
+
+    it('should handle UnauthorizedException with CONFIRMATION_TOKEN_EXPIRED error code in French', () => {
+      const exception = new HttpException(
+        'AUTH.CONFIRMATION_TOKEN_EXPIRED',
+        HttpStatus.UNAUTHORIZED
+      );
+      const frenchRequest = {
+        ...mockRequest,
+        headers: {
+          'accept-language': 'fr',
+        },
+      };
+      const host = {
+        switchToHttp: () => ({
+          getResponse: () => mockResponse,
+          getRequest: () => frenchRequest,
+        }),
+      } as ArgumentsHost;
+
+      filter.catch(exception, host);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        code: 'AUTH.CONFIRMATION_TOKEN_EXPIRED',
+        message: 'Votre lien de confirmation a expiré. Veuillez en demander un nouveau',
+        status: HttpStatus.UNAUTHORIZED,
+        meta: {
+          language: 'fr',
+        },
+      });
+    });
   });
 });

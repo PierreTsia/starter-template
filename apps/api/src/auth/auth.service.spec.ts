@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
 import { EmailService } from '../email/email.service';
+import { ErrorCodes } from '../errors/codes';
 import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
@@ -17,17 +18,33 @@ jest.mock('bcrypt', () => ({
   genSalt: jest.fn(),
 }));
 
+const TODAY = new Date();
+
+const SEVEN_DAYS_FROM_NOW = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+const ONE_DAY_AGO = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+const ONE_DAY_FROM_NOW = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
 const mockUser = {
   id: '1',
   email: 'test@example.com',
   name: 'Test User',
   password: 'hashedPassword',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: TODAY,
+  updatedAt: TODAY,
   isEmailConfirmed: false,
-  emailConfirmationToken: 'confirmation-token',
+  emailConfirmationToken: 'valid-token',
+  emailConfirmationExpires: SEVEN_DAYS_FROM_NOW,
   passwordResetToken: null,
   passwordResetExpires: null,
+};
+
+const confirmedMockUser = {
+  ...mockUser,
+  isEmailConfirmed: true,
+  emailConfirmationToken: null,
+  emailConfirmationExpires: null,
 };
 
 const mockUsersService = {
@@ -130,22 +147,20 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user object without password when credentials are valid', async () => {
-      mockUsersService.findByEmail.mockResolvedValueOnce({
-        ...mockUser,
-        isEmailConfirmed: true,
-      });
+      mockUsersService.findByEmail.mockResolvedValueOnce(confirmedMockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
       const result = await service.validateUser('test@example.com', 'password123');
       expect(result).toEqual({
-        id: mockUser.id,
-        email: mockUser.email,
-        name: mockUser.name,
-        isEmailConfirmed: true,
-        emailConfirmationToken: mockUser.emailConfirmationToken,
-        passwordResetToken: mockUser.passwordResetToken,
-        passwordResetExpires: mockUser.passwordResetExpires,
-        createdAt: mockUser.createdAt,
-        updatedAt: mockUser.updatedAt,
+        id: confirmedMockUser.id,
+        email: confirmedMockUser.email,
+        name: confirmedMockUser.name,
+        createdAt: confirmedMockUser.createdAt,
+        updatedAt: confirmedMockUser.updatedAt,
+        isEmailConfirmed: confirmedMockUser.isEmailConfirmed,
+        emailConfirmationToken: confirmedMockUser.emailConfirmationToken,
+        emailConfirmationExpires: confirmedMockUser.emailConfirmationExpires,
+        passwordResetToken: confirmedMockUser.passwordResetToken,
+        passwordResetExpires: confirmedMockUser.passwordResetExpires,
       });
     });
 
@@ -175,26 +190,28 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return access token for valid credentials', async () => {
-      mockUsersService.findByEmail.mockResolvedValueOnce({
-        ...mockUser,
-        isEmailConfirmed: true,
-      });
+      mockUsersService.findByEmail.mockResolvedValueOnce(confirmedMockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+      mockJwtService.signAsync.mockResolvedValueOnce('mocked-jwt-token');
+      mockRefreshTokenService.generateRefreshToken.mockResolvedValueOnce('mocked-refresh-token');
+
       const result = await service.login({
         email: 'test@example.com',
         password: 'password123',
       });
+
       expect(result).toEqual({
         user: {
-          id: mockUser.id,
-          email: mockUser.email,
-          name: mockUser.name,
-          isEmailConfirmed: true,
-          emailConfirmationToken: mockUser.emailConfirmationToken,
-          passwordResetToken: mockUser.passwordResetToken,
-          passwordResetExpires: mockUser.passwordResetExpires,
-          createdAt: mockUser.createdAt,
-          updatedAt: mockUser.updatedAt,
+          id: confirmedMockUser.id,
+          email: confirmedMockUser.email,
+          name: confirmedMockUser.name,
+          createdAt: confirmedMockUser.createdAt,
+          updatedAt: confirmedMockUser.updatedAt,
+          isEmailConfirmed: confirmedMockUser.isEmailConfirmed,
+          emailConfirmationToken: confirmedMockUser.emailConfirmationToken,
+          emailConfirmationExpires: confirmedMockUser.emailConfirmationExpires,
+          passwordResetToken: confirmedMockUser.passwordResetToken,
+          passwordResetExpires: confirmedMockUser.passwordResetExpires,
         },
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-refresh-token',
@@ -276,10 +293,11 @@ describe('AuthService', () => {
         password: 'hashedPassword',
         isEmailConfirmed: false,
         emailConfirmationToken: expect.any(String) as string,
+        emailConfirmationExpires: expect.any(Date) as Date,
       });
       expect(mockEmailService.sendConfirmationEmail).toHaveBeenCalledWith(
         'test@example.com',
-        expect.any(String)
+        expect.any(String) as string
       );
     });
   });
@@ -291,19 +309,37 @@ describe('AuthService', () => {
       await expect(service.confirmEmail('invalid-token')).rejects.toThrow(NotFoundException);
     });
 
-    it('should confirm email and clear token', async () => {
-      jest.spyOn(usersService, 'findByEmailConfirmationToken').mockResolvedValue(mockUser);
-      jest.spyOn(usersService, 'update').mockResolvedValue({
+    it('should throw UnauthorizedException if token has expired', async () => {
+      const expiredUser = {
         ...mockUser,
+        emailConfirmationExpires: ONE_DAY_AGO,
+      };
+      jest.spyOn(usersService, 'findByEmailConfirmationToken').mockResolvedValue(expiredUser);
+
+      await expect(service.confirmEmail('expired-token')).rejects.toThrow(
+        new UnauthorizedException(ErrorCodes.AUTH.CONFIRMATION_TOKEN_EXPIRED)
+      );
+    });
+
+    it('should confirm email and clear token when valid and not expired', async () => {
+      const validUser = {
+        ...mockUser,
+        emailConfirmationExpires: ONE_DAY_FROM_NOW,
+      };
+      jest.spyOn(usersService, 'findByEmailConfirmationToken').mockResolvedValue(validUser);
+      jest.spyOn(usersService, 'update').mockResolvedValue({
+        ...validUser,
         isEmailConfirmed: true,
         emailConfirmationToken: null,
+        emailConfirmationExpires: null,
       });
 
       const result = await service.confirmEmail('valid-token');
 
-      expect(usersService.update).toHaveBeenCalledWith(mockUser.id, {
+      expect(usersService.update).toHaveBeenCalledWith(validUser.id, {
         isEmailConfirmed: true,
         emailConfirmationToken: null,
+        emailConfirmationExpires: null,
       });
       expect(result).toEqual({ message: 'Email confirmed successfully' });
     });
@@ -340,6 +376,54 @@ describe('AuthService', () => {
       await service.logout('valid-refresh-token');
       expect(mockRefreshTokenService.revokeRefreshToken).toHaveBeenCalledWith(
         'valid-refresh-token'
+      );
+    });
+  });
+
+  describe('resendConfirmation', () => {
+    it('should return generic message if email not found', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(null);
+
+      const result = await service.resendConfirmation('nonexistent@example.com');
+
+      expect(result).toEqual({
+        message: 'If your email is registered, you will receive a new confirmation link',
+      });
+      expect(mockEmailService.sendConfirmationEmail).not.toHaveBeenCalled();
+    });
+
+    it('should throw if email is already confirmed', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce({
+        ...mockUser,
+        isEmailConfirmed: true,
+      });
+
+      await expect(service.resendConfirmation('test@example.com')).rejects.toThrow(
+        new ConflictException(ErrorCodes.AUTH.EMAIL_ALREADY_CONFIRMED)
+      );
+      expect(mockEmailService.sendConfirmationEmail).not.toHaveBeenCalled();
+    });
+
+    it('should resend confirmation email and update token', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      mockUsersService.update.mockResolvedValueOnce({
+        ...mockUser,
+        emailConfirmationToken: 'new-token',
+        emailConfirmationExpires: expect.any(Date) as Date,
+      });
+
+      const result = await service.resendConfirmation('test@example.com');
+
+      expect(result).toEqual({
+        message: 'If your email is registered, you will receive a new confirmation link',
+      });
+      expect(mockUsersService.update).toHaveBeenCalledWith(mockUser.id, {
+        emailConfirmationToken: expect.any(String) as string,
+        emailConfirmationExpires: expect.any(Date) as Date,
+      });
+      expect(mockEmailService.sendConfirmationEmail).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.any(String)
       );
     });
   });

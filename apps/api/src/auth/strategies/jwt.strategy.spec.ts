@@ -47,13 +47,14 @@ describe('JwtStrategy', () => {
   describe('validate', () => {
     it('should return user when valid payload is provided', async () => {
       const mockUser: SafeUser = {
-        id: '123',
+        id: '1',
         email: 'test@example.com',
         name: 'Test User',
         createdAt: new Date(),
         updatedAt: new Date(),
         isEmailConfirmed: false,
         emailConfirmationToken: null,
+        emailConfirmationExpires: null,
         passwordResetToken: null,
         passwordResetExpires: null,
       };

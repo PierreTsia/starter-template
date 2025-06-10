@@ -15,6 +15,7 @@ model User {
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   emailConfirmationToken String?
+  emailConfirmationExpires DateTime?
   isEmailConfirmed       Boolean        @default(false)
   passwordResetExpires   DateTime?
   passwordResetToken     String?

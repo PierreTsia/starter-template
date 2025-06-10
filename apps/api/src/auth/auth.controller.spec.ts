@@ -1,10 +1,12 @@
 import { INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ThrottlerModule } from '@nestjs/throttler';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
@@ -18,23 +20,6 @@ describe('AuthController', () => {
   let controller: AuthController;
   let mockAuthService: Partial<AuthService>;
 
-  const mockLoggerService = {
-    log: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-    warnWithMetadata: jest.fn(),
-
-    logOperation: jest.fn(
-      <T>(
-        operation: string,
-        fn: () => Promise<T>,
-
-        _metadata?: Record<string, unknown>
-      ): Promise<T> => fn()
-    ),
-  };
-
   beforeEach(async () => {
     mockAuthService = {
       login: jest.fn(),
@@ -46,6 +31,17 @@ describe('AuthController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ThrottlerModule.forRoot([
+          {
+            ttl: 3600,
+            limit: 3,
+          },
+        ]),
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
+      ],
       controllers: [AuthController],
       providers: [
         {
@@ -68,10 +64,7 @@ describe('AuthController', () => {
             validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
           },
         },
-        {
-          provide: LoggerService,
-          useValue: mockLoggerService,
-        },
+        Logger,
       ],
     })
       .overrideGuard(JwtAuthGuard)
