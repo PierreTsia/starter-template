@@ -37,7 +37,7 @@ export const AuthPage = () => {
       <div className="space-y-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-            {error instanceof Error ? error.message : t('common.error')}
+            {error.message || t('common.error')}
           </div>
         )}
         {isLogin ? (
