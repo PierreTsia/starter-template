@@ -14,7 +14,7 @@ export const ConfirmEmailErrorPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { resendConfirmation } = useAuth();
+  const { resendConfirmation, isLoading } = useAuth();
   const error = location.state?.error;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -64,9 +64,10 @@ export const ConfirmEmailErrorPage = () => {
       </Card>
 
       <ResendConfirmationEmailDialog
-        open={isDialogOpen}
+        open={isDialogOpen || isLoading}
         onOpenChange={setIsDialogOpen}
         onSubmit={handleResend}
+        isLoading={isLoading}
       />
     </div>
   );

@@ -34,12 +34,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
     PrismaModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 3600,
-        limit: 3,
-      },
-    ]),
+    ThrottlerModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AuthController],

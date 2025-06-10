@@ -19,12 +19,14 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 3600, // 1 hour
-        limit: 3,
-      },
-    ]),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 3600,
+          limit: 3,
+        },
+      ],
+    }),
     PrismaModule,
     UsersModule,
     AuthModule,

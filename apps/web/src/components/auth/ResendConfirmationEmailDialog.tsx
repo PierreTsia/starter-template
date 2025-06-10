@@ -25,12 +25,14 @@ interface ResendConfirmationEmailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (email: string) => void;
+  isLoading: boolean;
 }
 
 export const ResendConfirmationEmailDialog = ({
   open,
   onOpenChange,
   onSubmit,
+  isLoading,
 }: ResendConfirmationEmailDialogProps) => {
   const { t } = useTranslation();
   const form = useForm<ResendConfirmationFormData>({
@@ -66,8 +68,12 @@ export const ResendConfirmationEmailDialog = ({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting || isLoading}
+            >
+              {form.formState.isSubmitting || isLoading
                 ? t('common.loading')
                 : t('auth.confirmEmail.resend.submit')}
             </Button>
