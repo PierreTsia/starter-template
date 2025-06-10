@@ -8,6 +8,7 @@ export const EmailConfirmationPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email');
+  const isResend = searchParams.get('resend') === 'true';
   const { t } = useTranslation();
 
   return (
@@ -18,7 +19,9 @@ export const EmailConfirmationPage = () => {
           <CardDescription>
             {email ? (
               <>
-                {t('auth.checkEmail.description')}
+                {isResend
+                  ? t('auth.checkEmail.descriptionResend')
+                  : t('auth.checkEmail.description')}
                 <b className="font-bold text-green-500">{email}</b>
               </>
             ) : (

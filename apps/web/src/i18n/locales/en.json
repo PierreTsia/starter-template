@@ -43,11 +43,13 @@
     "namePlaceholder": "John Doe",
     "checkEmail": {
       "title": "Check your email",
-      "description": "We've sent a confirmation link to ",
-      "descriptionNoEmail": "We've sent you a confirmation link to verify your email address.",
-      "instructions": "Please check your inbox and click the link to confirm your email address. If you don't see the email, check your spam folder.",
+      "description": "We have sent a confirmation link to ",
+      "descriptionResend": "If your email is registered, you will receive a new confirmation link at ",
+      "descriptionNoEmail": "Please check your email for a confirmation link",
+      "instructions": "Click the link in the email to confirm your account",
       "backToLogin": "Back to Login",
-      "afterConfirmation": "Once you've confirmed your email, you'll be able to log in to your account."
+      "afterConfirmation": "After confirming your email, you can log in to your account",
+      "resendTitle": "Resend confirmation email"
     },
     "confirmEmail": {
       "confirming": "Confirming your email...",
@@ -56,6 +58,19 @@
         "description": "Your email has been successfully confirmed",
         "goToLogin": "Go to Login",
         "canLogin": "You can now log in to your account"
+      },
+      "error": {
+        "title": "Confirmation Failed",
+        "description": "We were unable to confirm your email",
+        "message": "The confirmation link may have expired or is invalid",
+        "tryAgain": "Try Registering Again",
+        "hint": "You can create a new account with your email",
+        "resendConfirmation": "Request New Confirmation Link",
+        "resendHint": "We can send you a new confirmation link to verify your email"
+      },
+      "resend": {
+        "title": "Resend confirmation email",
+        "submit": "Send new confirmation link"
       }
     },
     "forgotPassword": {

@@ -86,7 +86,7 @@
 
 - [x] Add token expiration check in confirmation endpoint
 - [x] Create resend confirmation endpoint with rate limiting
-- [ ] Implement CRON job for cleanup
+- [x] Implement CRON job for cleanup
 - [x] Add proper error handling and messages
 - [x] Write unit tests for new functionality
 
@@ -107,7 +107,7 @@
 
 - [x] Test rate limiting locally
 - [x] Test token expiration
-- [ ] Test CRON job locally
+- [x] Test CRON job locally
 - [x] Verify email delivery in development
 
 ## Implementation Details
@@ -124,10 +124,10 @@
   - EMAIL_ALREADY_CONFIRMED
 - Updated JWT strategy and tests
 - Added ResendConfirmationDto
+- CRON job for cleanup of expired unconfirmed accounts
 
 ### Pending Items
 
-- CRON job for cleanup of expired unconfirmed accounts
 - Frontend implementation for resend confirmation
 - Frontend error handling for expired tokens
 - Frontend loading states

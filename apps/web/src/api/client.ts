@@ -1,3 +1,5 @@
+import { isApiError } from './errors';
+
 import { getCurrentLocale } from '@/i18n/languageDetector';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -89,16 +91,25 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
     }
 
     if (!res.ok) {
-      let errorMsg = 'Unknown error';
+      let errorData;
       try {
-        const error = await res.json();
-        if (error.errors && Array.isArray(error.errors)) {
-          errorMsg = error.errors.join('\n');
-        } else if (error.message) {
-          errorMsg = error.message;
-        }
+        errorData = await res.json();
       } catch (e) {
         console.error(e);
+        throw new Error('Unknown error');
+      }
+
+      // If it's an API error, throw it as-is
+      if (isApiError(errorData)) {
+        throw errorData;
+      }
+
+      // Otherwise, fallback to string error
+      let errorMsg = 'Unknown error';
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        errorMsg = errorData.errors.join('\n');
+      } else if (errorData.message) {
+        errorMsg = errorData.message;
       }
       throw new Error(errorMsg);
     }

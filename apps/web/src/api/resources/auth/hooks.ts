@@ -54,8 +54,11 @@ export const useAuth = () => {
       toast.success('Email confirmed successfully');
       navigate('/confirm-email/success', { replace: true });
     },
-    onError: () => {
-      navigate('/confirm-email/error', { replace: true });
+    onError: (e) => {
+      navigate('/confirm-email/error', {
+        replace: true,
+        state: { error: e },
+      });
     },
   });
 
@@ -76,6 +79,15 @@ export const useAuth = () => {
     },
   });
 
+  const resendConfirmationMutation = useMutation({
+    mutationFn: (email: string) => authApi.resendConfirmation(email),
+    onSuccess: (_data, variables) => {
+      navigate(`/email-confirmation?email=${encodeURIComponent(variables)}&resend=true`, {
+        replace: true,
+      });
+    },
+  });
+
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
@@ -93,12 +105,14 @@ export const useAuth = () => {
     confirmEmailMutation.reset();
     forgotPasswordMutation.reset();
     resetPasswordMutation.reset();
+    resendConfirmationMutation.reset();
   };
 
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
     confirmEmail: confirmEmailMutation.mutate,
+    resendConfirmation: resendConfirmationMutation.mutate,
     forgotPassword: forgotPasswordMutation.mutate,
     resetPassword: resetPasswordMutation.mutate,
     logout: logoutMutation.mutate,
@@ -106,6 +120,7 @@ export const useAuth = () => {
       loginMutation.isPending ||
       registerMutation.isPending ||
       confirmEmailMutation.isPending ||
+      resendConfirmationMutation.isPending ||
       forgotPasswordMutation.isPending ||
       resetPasswordMutation.isPending ||
       logoutMutation.isPending,
@@ -113,6 +128,7 @@ export const useAuth = () => {
       loginMutation.error ||
       registerMutation.error ||
       confirmEmailMutation.error ||
+      resendConfirmationMutation.error ||
       forgotPasswordMutation.error ||
       resetPasswordMutation.error ||
       logoutMutation.error,

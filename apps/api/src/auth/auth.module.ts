@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 import { EmailModule } from '../email/email.module';
 import { LoggerModule } from '../logger/logger.module';
@@ -21,7 +19,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     UsersModule,
     PassportModule,
     LoggerModule,
-    ConfigModule,
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -34,13 +31,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
     PrismaModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 3600,
-        limit: 3,
-      },
-    ]),
-    ScheduleModule.forRoot(),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RefreshTokenService, CleanupService],
