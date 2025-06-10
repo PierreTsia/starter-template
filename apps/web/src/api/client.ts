@@ -1,3 +1,5 @@
+import { isApiError } from './errors';
+
 import { getCurrentLocale } from '@/i18n/languageDetector';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -10,17 +12,6 @@ let refreshSubscribers: ((token: string) => void)[] = [];
 const onRefreshComplete = (token: string) => {
   refreshSubscribers.forEach((cb) => cb(token));
   refreshSubscribers = [];
-};
-
-const isApiError = (error: unknown): error is { code: string; message: string; status: number } => {
-  return (
-    error !== null &&
-    typeof error === 'object' &&
-    'code' in error &&
-    'message' in error &&
-    'status' in error &&
-    typeof (error as { code: string }).code === 'string'
-  );
 };
 
 export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
