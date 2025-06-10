@@ -1,6 +1,3 @@
-import { isApiError } from './errors';
-import { authApi } from './resources/auth/api';
-
 import { getCurrentLocale } from '@/i18n/languageDetector';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +10,17 @@ let refreshSubscribers: ((token: string) => void)[] = [];
 const onRefreshComplete = (token: string) => {
   refreshSubscribers.forEach((cb) => cb(token));
   refreshSubscribers = [];
+};
+
+const isApiError = (error: unknown): error is { code: string; message: string; status: number } => {
+  return (
+    error !== null &&
+    typeof error === 'object' &&
+    'code' in error &&
+    'message' in error &&
+    'status' in error &&
+    typeof (error as { code: string }).code === 'string'
+  );
 };
 
 export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -51,7 +59,23 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
       isRefreshing = true;
 
       try {
-        const newAccessToken = await authApi.refreshToken();
+        const refreshRes = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+            'Accept-Language': locale,
+          },
+        });
+
+        if (!refreshRes.ok) {
+          throw new Error('Failed to refresh token');
+        }
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          await refreshRes.json();
+        localStorage.setItem(AUTH_TOKEN_KEY, newAccessToken);
+        localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+
         // Retry the original request with the new token
         headers['Authorization'] = `Bearer ${newAccessToken}`;
         const retryRes = await fetch(`${API_URL}${endpoint}`, {
@@ -68,6 +92,9 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
         return retryRes.json();
       } catch (error) {
         isRefreshing = false;
+        // Clear tokens on refresh failure
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
         throw error;
       }
     }
@@ -81,12 +108,12 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
         throw new Error('Unknown error');
       }
 
-      // If we have a proper API error structure, throw it as is
+      // If it's an API error, throw it as-is
       if (isApiError(errorData)) {
         throw errorData;
       }
 
-      // Otherwise, format the error message
+      // Otherwise, fallback to string error
       let errorMsg = 'Unknown error';
       if (errorData.errors && Array.isArray(errorData.errors)) {
         errorMsg = errorData.errors.join('\n');
@@ -98,6 +125,11 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
 
     return res.json();
   } catch (error) {
+    if (error instanceof Error && error.message === 'Failed to refresh token') {
+      // Clear tokens on refresh failure
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+    }
     throw error;
   }
 }
