@@ -12,6 +12,7 @@ interface CreateUserData {
   name?: string;
   isEmailConfirmed?: boolean;
   emailConfirmationToken?: string | null;
+  emailConfirmationExpires?: Date | null;
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
 }
@@ -22,6 +23,7 @@ interface UpdateUserData {
   name?: string;
   isEmailConfirmed?: boolean;
   emailConfirmationToken?: string | null;
+  emailConfirmationExpires?: Date | null;
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
 }
@@ -32,11 +34,12 @@ const userSelect = {
   name: true,
   createdAt: true,
   updatedAt: true,
-  isEmailConfirmed: true,
   emailConfirmationToken: true,
-  passwordResetToken: true,
+  emailConfirmationExpires: true,
+  isEmailConfirmed: true,
   passwordResetExpires: true,
-};
+  passwordResetToken: true,
+} as const;
 type SafeUser = Omit<User, 'password'>;
 
 @Injectable()
