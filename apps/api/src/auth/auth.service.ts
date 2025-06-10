@@ -199,7 +199,8 @@ export class AuthService {
           throw new NotFoundException('Invalid confirmation token');
         }
 
-        if (user.emailConfirmationExpires && user.emailConfirmationExpires < new Date()) {
+        const currentDate = new Date();
+        if (user.emailConfirmationExpires && user.emailConfirmationExpires < currentDate) {
           throw new UnauthorizedException(ErrorCodes.AUTH.CONFIRMATION_TOKEN_EXPIRED);
         }
 
