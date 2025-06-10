@@ -379,4 +379,52 @@ describe('AuthService', () => {
       );
     });
   });
+
+  describe('resendConfirmation', () => {
+    it('should return generic message if email not found', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(null);
+
+      const result = await service.resendConfirmation('nonexistent@example.com');
+
+      expect(result).toEqual({
+        message: 'If your email is registered, you will receive a new confirmation link',
+      });
+      expect(mockEmailService.sendConfirmationEmail).not.toHaveBeenCalled();
+    });
+
+    it('should throw if email is already confirmed', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce({
+        ...mockUser,
+        isEmailConfirmed: true,
+      });
+
+      await expect(service.resendConfirmation('test@example.com')).rejects.toThrow(
+        new ConflictException(ErrorCodes.AUTH.EMAIL_ALREADY_CONFIRMED)
+      );
+      expect(mockEmailService.sendConfirmationEmail).not.toHaveBeenCalled();
+    });
+
+    it('should resend confirmation email and update token', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      mockUsersService.update.mockResolvedValueOnce({
+        ...mockUser,
+        emailConfirmationToken: 'new-token',
+        emailConfirmationExpires: expect.any(Date) as Date,
+      });
+
+      const result = await service.resendConfirmation('test@example.com');
+
+      expect(result).toEqual({
+        message: 'If your email is registered, you will receive a new confirmation link',
+      });
+      expect(mockUsersService.update).toHaveBeenCalledWith(mockUser.id, {
+        emailConfirmationToken: expect.any(String) as string,
+        emailConfirmationExpires: expect.any(Date) as Date,
+      });
+      expect(mockEmailService.sendConfirmationEmail).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.any(String)
+      );
+    });
+  });
 });

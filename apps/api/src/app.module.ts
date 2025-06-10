@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,7 +15,23 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, HealthModule, LoggerModule, EmailModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 3600, // 1 hour
+        limit: 3,
+      },
+    ]),
+    PrismaModule,
+    UsersModule,
+    AuthModule,
+    HealthModule,
+    LoggerModule,
+    EmailModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

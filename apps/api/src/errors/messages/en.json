@@ -6,7 +6,8 @@
     "INVALID_TOKEN": "Invalid token",
     "RATE_LIMIT_EXCEEDED": "Too many attempts. Please try again later",
     "EMAIL_ALREADY_EXISTS": "This email address is already registered",
-    "CONFIRMATION_TOKEN_EXPIRED": "Your confirmation link has expired. Please request a new one"
+    "CONFIRMATION_TOKEN_EXPIRED": "Your confirmation link has expired. Please request a new one",
+    "EMAIL_ALREADY_CONFIRMED": "This email address is already confirmed"
   },
   "VALIDATION": {
     "FAILED": "Validation failed",

@@ -263,4 +263,30 @@ export class AuthService {
       { token }
     );
   }
+
+  async resendConfirmation(email: string) {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      // Don't reveal if email exists or not
+      return { message: 'If your email is registered, you will receive a new confirmation link' };
+    }
+
+    if (user.isEmailConfirmed) {
+      throw new ConflictException(ErrorCodes.AUTH.EMAIL_ALREADY_CONFIRMED);
+    }
+
+    const confirmationToken = crypto.randomBytes(32).toString('hex');
+    const confirmationExpires = new Date();
+    confirmationExpires.setDate(confirmationExpires.getDate() + 7); // 7 days from now
+
+    await this.usersService.update(user.id, {
+      emailConfirmationToken: confirmationToken,
+      emailConfirmationExpires: confirmationExpires,
+    });
+
+    await this.emailService.sendConfirmationEmail(email, confirmationToken);
+
+    return { message: 'If your email is registered, you will receive a new confirmation link' };
+  }
 }

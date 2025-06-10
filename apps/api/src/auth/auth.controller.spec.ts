@@ -1,6 +1,7 @@
 import { INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ThrottlerModule } from '@nestjs/throttler';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -46,6 +47,14 @@ describe('AuthController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ThrottlerModule.forRoot([
+          {
+            ttl: 3600,
+            limit: 3,
+          },
+        ]),
+      ],
       controllers: [AuthController],
       providers: [
         {
