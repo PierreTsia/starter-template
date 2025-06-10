@@ -78,17 +78,17 @@
 
 ### Database Changes
 
-- [ ] Add `emailConfirmationExpires` field to User model
-- [ ] Create migration for the new field
-- [ ] Update Prisma schema
+- [x] Add `emailConfirmationExpires` field to User model
+- [x] Create migration for the new field
+- [x] Update Prisma schema
 
 ### Backend Implementation
 
-- [ ] Add token expiration check in confirmation endpoint
+- [x] Add token expiration check in confirmation endpoint
 - [ ] Create resend confirmation endpoint with rate limiting
 - [ ] Implement CRON job for cleanup
-- [ ] Add proper error handling and messages
-- [ ] Write unit tests for new functionality
+- [x] Add proper error handling and messages
+- [x] Write unit tests for new functionality
 
 ### Frontend Implementation
 
@@ -106,6 +106,6 @@
 ### Testing
 
 - [ ] Test rate limiting locally
-- [ ] Test token expiration
+- [x] Test token expiration
 - [ ] Test CRON job locally
 - [ ] Verify email delivery in development
