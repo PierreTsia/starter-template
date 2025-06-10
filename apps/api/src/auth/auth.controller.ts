@@ -17,10 +17,8 @@ import {
   VALIDATION_ERROR_RESPONSES,
   createApiResponse,
 } from '../common/swagger/schemas';
-import { LoggerService } from '../logger/logger.service';
 
 import { AuthService } from './auth.service';
-import { CleanupService } from './cleanup.service';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
@@ -32,11 +30,7 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly logger: LoggerService,
-    private readonly cleanupService: CleanupService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({

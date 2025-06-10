@@ -1,6 +1,6 @@
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { CleanupService } from './cleanup.service';
@@ -8,7 +8,7 @@ import { CleanupService } from './cleanup.service';
 describe('CleanupService', () => {
   let service: CleanupService;
   let prismaService: PrismaService;
-  let logger: Logger;
+  let loggerService: LoggerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,10 +23,10 @@ describe('CleanupService', () => {
           },
         },
         {
-          provide: Logger,
+          provide: LoggerService,
           useValue: {
-            log: jest.fn(),
-            error: jest.fn(),
+            logWithMetadata: jest.fn(),
+            errorWithMetadata: jest.fn(),
           },
         },
       ],
@@ -34,7 +34,7 @@ describe('CleanupService', () => {
 
     service = module.get<CleanupService>(CleanupService);
     prismaService = module.get<PrismaService>(PrismaService);
-    logger = module.get<Logger>(Logger);
+    loggerService = module.get<LoggerService>(LoggerService);
   });
 
   it('should be defined', () => {
@@ -56,10 +56,12 @@ describe('CleanupService', () => {
           },
         },
       });
-      expect(logger.log).toHaveBeenCalledWith(
+      expect(loggerService.logWithMetadata).toHaveBeenCalledWith(
         'Starting cleanup of expired unconfirmed accounts...'
       );
-      expect(logger.log).toHaveBeenCalledWith('Cleaned up 2 expired unconfirmed accounts');
+      expect(loggerService.logWithMetadata).toHaveBeenCalledWith(
+        'Cleaned up 2 expired unconfirmed accounts'
+      );
     });
 
     it('should handle errors gracefully', async () => {
@@ -67,7 +69,10 @@ describe('CleanupService', () => {
       jest.spyOn(prismaService.user, 'deleteMany').mockRejectedValue(error);
 
       await expect(service.cleanupExpiredUnconfirmedAccounts()).resolves.not.toThrow();
-      expect(logger.error).toHaveBeenCalledWith('Error during cleanup of expired accounts:', error);
+      expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'Error during cleanup of expired accounts',
+        error
+      );
     });
   });
 });

@@ -7,12 +7,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { CleanupService } from './cleanup.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenService } from './refresh-token.service';
@@ -21,23 +19,6 @@ describe('AuthController', () => {
   let app: INestApplication;
   let controller: AuthController;
   let mockAuthService: Partial<AuthService>;
-
-  const mockLoggerService = {
-    log: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-    warnWithMetadata: jest.fn(),
-
-    logOperation: jest.fn(
-      <T>(
-        operation: string,
-        fn: () => Promise<T>,
-
-        _metadata?: Record<string, unknown>
-      ): Promise<T> => fn()
-    ),
-  };
 
   beforeEach(async () => {
     mockAuthService = {
@@ -81,16 +62,6 @@ describe('AuthController', () => {
           provide: RefreshTokenService,
           useValue: {
             validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
-          },
-        },
-        {
-          provide: LoggerService,
-          useValue: mockLoggerService,
-        },
-        {
-          provide: CleanupService,
-          useValue: {
-            cleanupExpiredUnconfirmedAccounts: jest.fn(),
           },
         },
         Logger,
