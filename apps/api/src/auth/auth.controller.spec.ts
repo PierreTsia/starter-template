@@ -1,4 +1,6 @@
 import { INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -10,6 +12,7 @@ import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { CleanupService } from './cleanup.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenService } from './refresh-token.service';
@@ -54,6 +57,9 @@ describe('AuthController', () => {
             limit: 3,
           },
         ]),
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
       ],
       controllers: [AuthController],
       providers: [
@@ -81,6 +87,13 @@ describe('AuthController', () => {
           provide: LoggerService,
           useValue: mockLoggerService,
         },
+        {
+          provide: CleanupService,
+          useValue: {
+            cleanupExpiredUnconfirmedAccounts: jest.fn(),
+          },
+        },
+        Logger,
       ],
     })
       .overrideGuard(JwtAuthGuard)

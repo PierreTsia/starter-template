@@ -85,7 +85,7 @@
 ### Backend Implementation
 
 - [x] Add token expiration check in confirmation endpoint
-- [ ] Create resend confirmation endpoint with rate limiting
+- [x] Create resend confirmation endpoint with rate limiting
 - [ ] Implement CRON job for cleanup
 - [x] Add proper error handling and messages
 - [x] Write unit tests for new functionality
@@ -99,13 +99,36 @@
 
 ### Documentation
 
-- [ ] Update API documentation with new endpoints
-- [ ] Document rate limiting rules
-- [ ] Update environment variables documentation
+- [x] Update API documentation with new endpoints
+- [x] Document rate limiting rules
+- [x] Update environment variables documentation
 
 ### Testing
 
-- [ ] Test rate limiting locally
+- [x] Test rate limiting locally
 - [x] Test token expiration
 - [ ] Test CRON job locally
-- [ ] Verify email delivery in development
+- [x] Verify email delivery in development
+
+## Implementation Details
+
+### Backend Changes
+
+- Added `@nestjs/throttler` package for rate limiting
+- Added `emailConfirmationExpires` column to users table
+- Updated User model with expiration field
+- Added ConfigModule and ThrottlerModule to app.module.ts
+- Implemented resend confirmation endpoint with rate limiting
+- Added error codes and messages for:
+  - CONFIRMATION_TOKEN_EXPIRED
+  - EMAIL_ALREADY_CONFIRMED
+- Updated JWT strategy and tests
+- Added ResendConfirmationDto
+
+### Pending Items
+
+- CRON job for cleanup of expired unconfirmed accounts
+- Frontend implementation for resend confirmation
+- Frontend error handling for expired tokens
+- Frontend loading states
+- Frontend expiration countdown timer
