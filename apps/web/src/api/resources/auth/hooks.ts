@@ -55,7 +55,6 @@ export const useAuth = () => {
       navigate('/confirm-email/success', { replace: true });
     },
     onError: (e) => {
-      console.log(e);
       navigate('/confirm-email/error', {
         replace: true,
         state: { error: e },
