@@ -69,19 +69,34 @@
     "namePlaceholder": "John Doe",
     "checkEmail": {
       "title": "Vérifiez votre email",
+      "resendTitle": "Renvoyer l'email de confirmation",
       "description": "Nous avons envoyé un lien de confirmation à ",
-      "descriptionNoEmail": "Nous vous avons envoyé un lien de confirmation pour vérifier votre adresse email.",
-      "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour confirmer votre adresse email. Si vous ne voyez pas l'email, vérifiez votre dossier spam.",
+      "descriptionResend": "Si votre email est enregistré, vous recevrez un nouveau lien de confirmation à ",
+      "descriptionNoEmail": "Veuillez vérifier votre email pour le lien de confirmation",
+      "instructions": "Cliquez sur le lien dans l'email pour confirmer votre compte",
       "backToLogin": "Retour à la connexion",
-      "afterConfirmation": "Une fois que vous aurez confirmé votre email, vous pourrez vous connecter à votre compte."
+      "afterConfirmation": "Après avoir confirmé votre email, vous pourrez vous connecter à votre compte"
     },
     "confirmEmail": {
       "confirming": "Confirmation de votre email...",
       "success": {
-        "title": "Email confirmé !",
+        "title": "Email Confirmé !",
         "description": "Votre email a été confirmé avec succès",
-        "goToLogin": "Aller à la connexion",
+        "goToLogin": "Aller à la Connexion",
         "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
+      },
+      "error": {
+        "title": "Échec de la Confirmation",
+        "description": "Nous n'avons pas pu confirmer votre email",
+        "message": "Le lien de confirmation a peut-être expiré ou est invalide",
+        "tryAgain": "Réessayer l'Inscription",
+        "hint": "Vous pouvez créer un nouveau compte avec votre email",
+        "resendConfirmation": "Demander un Nouveau Lien de Confirmation",
+        "resendHint": "Nous pouvons vous envoyer un nouveau lien pour vérifier votre email"
+      },
+      "resend": {
+        "title": "Renvoyer l'email de confirmation",
+        "submit": "Envoyer un nouveau lien de confirmation"
       }
     }
   },

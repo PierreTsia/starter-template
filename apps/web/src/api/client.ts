@@ -1,3 +1,6 @@
+import { isApiError } from './errors';
+import { authApi } from './resources/auth/api';
+
 import { getCurrentLocale } from '@/i18n/languageDetector';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -48,23 +51,7 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
       isRefreshing = true;
 
       try {
-        const refreshRes = await fetch(`${API_URL}/api/v1/auth/refresh`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-            'Accept-Language': locale,
-          },
-        });
-
-        if (!refreshRes.ok) {
-          throw new Error('Failed to refresh token');
-        }
-
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          await refreshRes.json();
-        localStorage.setItem(AUTH_TOKEN_KEY, newAccessToken);
-        localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
-
+        const newAccessToken = await authApi.refreshToken();
         // Retry the original request with the new token
         headers['Authorization'] = `Bearer ${newAccessToken}`;
         const retryRes = await fetch(`${API_URL}${endpoint}`, {
@@ -81,35 +68,36 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
         return retryRes.json();
       } catch (error) {
         isRefreshing = false;
-        // Clear tokens on refresh failure
-        localStorage.removeItem(AUTH_TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
         throw error;
       }
     }
 
     if (!res.ok) {
-      let errorMsg = 'Unknown error';
+      let errorData;
       try {
-        const error = await res.json();
-        if (error.errors && Array.isArray(error.errors)) {
-          errorMsg = error.errors.join('\n');
-        } else if (error.message) {
-          errorMsg = error.message;
-        }
+        errorData = await res.json();
       } catch (e) {
         console.error(e);
+        throw new Error('Unknown error');
+      }
+
+      // If we have a proper API error structure, throw it as is
+      if (isApiError(errorData)) {
+        throw errorData;
+      }
+
+      // Otherwise, format the error message
+      let errorMsg = 'Unknown error';
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        errorMsg = errorData.errors.join('\n');
+      } else if (errorData.message) {
+        errorMsg = errorData.message;
       }
       throw new Error(errorMsg);
     }
 
     return res.json();
   } catch (error) {
-    if (error instanceof Error && error.message === 'Failed to refresh token') {
-      // Clear tokens on refresh failure
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
-    }
     throw error;
   }
 }
