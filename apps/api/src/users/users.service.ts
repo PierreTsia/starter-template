@@ -39,6 +39,7 @@ const userSelect = {
   isEmailConfirmed: true,
   passwordResetExpires: true,
   passwordResetToken: true,
+  avatarUrl: true,
 } as const;
 type SafeUser = Omit<User, 'password'>;
 
