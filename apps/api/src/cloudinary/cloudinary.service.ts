@@ -1,13 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
 
+import { LoggerService } from '../logger/logger.service';
+
+import { CloudinaryException } from './cloudinary.exception';
+
 @Injectable()
 export class CloudinaryService {
-  private readonly logger = new Logger(CloudinaryService.name);
   private readonly folder: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: LoggerService
+  ) {
     cloudinary.config({
       cloud_name: this.configService.get('CLOUDINARY_CLOUD_NAME'),
       api_key: this.configService.get('CLOUDINARY_API_KEY'),
@@ -31,9 +37,15 @@ export class CloudinaryService {
         version: result.version,
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      this.logger.error(`Failed to upload image: ${errorMessage}`);
-      throw error;
+      this.logger.errorWithMetadata(
+        'Failed to upload image',
+        error instanceof Error ? error : new Error('Unknown error'),
+        {
+          path: file.path,
+          folder: this.folder,
+        }
+      );
+      throw CloudinaryException.uploadFailed();
     }
   }
 
@@ -41,9 +53,15 @@ export class CloudinaryService {
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      this.logger.error(`Failed to delete image: ${errorMessage}`);
-      throw error;
+      this.logger.errorWithMetadata(
+        'Failed to delete image',
+        error instanceof Error ? error : new Error('Unknown error'),
+        {
+          publicId,
+          folder: this.folder,
+        }
+      );
+      throw CloudinaryException.deleteFailed();
     }
   }
 }

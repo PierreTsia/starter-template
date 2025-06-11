@@ -32,5 +32,10 @@
   },
   "SYSTEM": {
     "UNKNOWN_ERROR": "An unexpected error occurred"
+  },
+  "CLOUDINARY": {
+    "UPLOAD_FAILED": "Failed to upload image. Please try again",
+    "DELETE_FAILED": "Failed to delete image. Please try again",
+    "INVALID_FILE": "Invalid file format. Please upload a valid image"
   }
 }
