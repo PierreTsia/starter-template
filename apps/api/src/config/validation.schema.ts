@@ -18,5 +18,5 @@ export const validationSchema = Joi.object({
   CLOUDINARY_CLOUD_NAME: Joi.string().required(),
   CLOUDINARY_API_KEY: Joi.string().required(),
   CLOUDINARY_API_SECRET: Joi.string().required(),
-  PROJECT_NAME: Joi.string().required(),
+  PROJECT_NAME: Joi.string().required().default('starter-template'),
 }).unknown(true);
