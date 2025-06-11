@@ -24,8 +24,44 @@ export class CloudinaryService {
       this.configService.get('NODE_ENV') === 'production' ? 'prod/avatars' : 'dev/avatars';
   }
 
-  async uploadImage(file: Express.Multer.File) {
+  async uploadImage(file: Express.Multer.File, acceptLanguage?: string) {
     try {
+      // Validate file type
+      const supportedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!supportedMimeTypes.includes(file.mimetype)) {
+        this.logger.errorWithMetadata(
+          'Invalid file type for upload',
+          new Error(`Unsupported mimetype: ${file.mimetype}`),
+          {
+            path: file.path,
+            mimetype: file.mimetype,
+          }
+        );
+        throw CloudinaryException.invalidFile(acceptLanguage);
+      }
+
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        this.logger.errorWithMetadata(
+          'File too large for upload',
+          new Error(`File size: ${file.size} bytes`),
+          {
+            path: file.path,
+            size: file.size,
+          }
+        );
+        throw CloudinaryException.invalidFile(acceptLanguage);
+      }
+
+      // Validate file content (basic check)
+      if (!file.buffer && !file.path) {
+        this.logger.errorWithMetadata('Invalid file content', new Error('No file content found'), {
+          path: file.path,
+        });
+        throw CloudinaryException.invalidFile(acceptLanguage);
+      }
+
       const result = await cloudinary.uploader.upload(file.path, {
         folder: this.folder,
         resource_type: 'auto',
@@ -36,32 +72,24 @@ export class CloudinaryService {
         publicId: result.public_id,
         version: result.version,
       };
-    } catch (error: unknown) {
-      this.logger.errorWithMetadata(
-        'Failed to upload image',
-        error instanceof Error ? error : new Error('Unknown error'),
-        {
-          path: file.path,
-          folder: this.folder,
-        }
-      );
-      throw CloudinaryException.uploadFailed();
+    } catch (error) {
+      this.logger.errorWithMetadata('Failed to upload image', error, {
+        path: file.path,
+        folder: this.folder,
+      });
+      throw CloudinaryException.uploadFailed(acceptLanguage);
     }
   }
 
-  async deleteImage(publicId: string) {
+  async deleteImage(publicId: string, acceptLanguage?: string) {
     try {
       await cloudinary.uploader.destroy(publicId);
-    } catch (error: unknown) {
-      this.logger.errorWithMetadata(
-        'Failed to delete image',
-        error instanceof Error ? error : new Error('Unknown error'),
-        {
-          publicId,
-          folder: this.folder,
-        }
-      );
-      throw CloudinaryException.deleteFailed();
+    } catch (error) {
+      this.logger.errorWithMetadata('Failed to delete image', error, {
+        publicId,
+        folder: this.folder,
+      });
+      throw CloudinaryException.deleteFailed(acceptLanguage);
     }
   }
 }

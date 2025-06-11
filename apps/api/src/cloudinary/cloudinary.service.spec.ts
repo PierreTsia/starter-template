@@ -92,6 +92,9 @@ describe('CloudinaryService', () => {
   describe('uploadImage', () => {
     const mockFile = {
       path: '/tmp/test-image.jpg',
+      mimetype: 'image/jpeg',
+      size: 1024 * 1024, // 1MB
+      buffer: Buffer.from('fake-image-data'),
     } as Express.Multer.File;
 
     const mockUploadResult = {
@@ -114,6 +117,40 @@ describe('CloudinaryService', () => {
         folder: 'dev/avatars',
         resource_type: 'auto',
       });
+    });
+
+    it('should throw CloudinaryException on invalid file type', async () => {
+      const invalidFile = {
+        ...mockFile,
+        mimetype: 'application/pdf',
+      } as Express.Multer.File;
+
+      await expect(service.uploadImage(invalidFile)).rejects.toThrow(CloudinaryException);
+      expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'Invalid file type for upload',
+        expect.any(Error),
+        {
+          path: invalidFile.path,
+          mimetype: invalidFile.mimetype,
+        }
+      );
+    });
+
+    it('should throw CloudinaryException on file too large', async () => {
+      const largeFile = {
+        ...mockFile,
+        size: 10 * 1024 * 1024, // 10MB
+      } as Express.Multer.File;
+
+      await expect(service.uploadImage(largeFile)).rejects.toThrow(CloudinaryException);
+      expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'File too large for upload',
+        expect.any(Error),
+        {
+          path: largeFile.path,
+          size: largeFile.size,
+        }
+      );
     });
 
     it('should throw CloudinaryException on upload failure', async () => {
