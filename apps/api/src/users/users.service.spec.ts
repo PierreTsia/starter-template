@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { UserException } from './exceptions/user.exception';
@@ -34,6 +36,17 @@ describe('UsersService', () => {
     },
   };
 
+  const mockLoggerService = {
+    logOperation: jest
+      .fn()
+      .mockImplementation((name: string, operation: () => Promise<unknown>) => operation()),
+  };
+
+  const mockCloudinaryService = {
+    uploadImage: jest.fn(),
+    deleteImage: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -41,6 +54,14 @@ describe('UsersService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
+        {
+          provide: CloudinaryService,
+          useValue: mockCloudinaryService,
         },
       ],
     }).compile();

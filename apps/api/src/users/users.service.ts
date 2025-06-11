@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { UserException } from './exceptions/user.exception';
@@ -45,7 +47,11 @@ type SafeUser = Omit<User, 'password'>;
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cloudinaryService: CloudinaryService
+  ) {}
 
   async findAll(): Promise<SafeUser[]> {
     return this.prisma.user.findMany({ select: userSelect });
@@ -134,5 +140,37 @@ export class UsersService {
         },
       },
     });
+  }
+
+  async uploadAvatar(
+    userId: string,
+    file: Express.Multer.File,
+    acceptLanguage?: string
+  ): Promise<SafeUser> {
+    return this.logger.logOperation(
+      'uploadAvatar',
+      async () => {
+        // Upload to Cloudinary
+        const uploadResult = await this.cloudinaryService.uploadImage(file, acceptLanguage);
+
+        try {
+          // Update user's avatar URL
+          return await this.prisma.user.update({
+            where: { id: userId },
+            data: { avatarUrl: uploadResult.url },
+            select: userSelect,
+          });
+        } catch (error: unknown) {
+          if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw UserException.notFound(userId, acceptLanguage);
+          }
+          throw error;
+        }
+      },
+      {
+        userId,
+        file: { originalname: file.originalname, mimetype: file.mimetype, size: file.size },
+      }
+    );
   }
 }
