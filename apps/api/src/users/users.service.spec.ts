@@ -303,7 +303,7 @@ describe('UsersService', () => {
       const result = await service.uploadAvatar('1', mockFile, 'en');
 
       expect(result).toEqual(mockUser);
-      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
       expect(mockPrismaService.user.update).toHaveBeenCalledWith({
         where: { id: '1' },
         data: { avatarUrl: mockUploadResult.url },
