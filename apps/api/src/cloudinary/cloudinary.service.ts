@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
@@ -83,26 +85,23 @@ export class CloudinaryService {
         throw error;
       }
 
-      // Check if it's a Cloudinary validation error
-      const errorMessage = error instanceof Error ? error.message : '';
-      if (
-        errorMessage.includes('Invalid image file') ||
-        errorMessage.includes('File type not supported') ||
-        errorMessage.includes('Invalid resource type')
-      ) {
-        this.logger.errorWithMetadata('Invalid file type for Cloudinary', error as Error, {
-          path: file.path,
-          mimetype: file.mimetype,
-        });
-        throw CloudinaryException.invalidFile(acceptLanguage);
-      }
-
       // For any other error, log and throw generic error
       this.logger.errorWithMetadata('Failed to upload image', error as Error, {
         path: file.path,
         folder: this.folder,
       });
       throw CloudinaryException.uploadFailed(acceptLanguage);
+    } finally {
+      // Clean up the temporary file
+      if (file.path) {
+        fs.unlink(file.path, (err) => {
+          if (err) {
+            this.logger.errorWithMetadata('Failed to delete temporary file', err, {
+              filePath: file.path,
+            });
+          }
+        });
+      }
     }
   }
 
