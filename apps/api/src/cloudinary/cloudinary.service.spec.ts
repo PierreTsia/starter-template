@@ -104,10 +104,12 @@ describe('CloudinaryService', () => {
       version: '1234567890',
     };
 
+    const mockUserId = '123';
+
     it('should upload image successfully', async () => {
       (cloudinary.uploader.upload as jest.Mock).mockResolvedValue(mockUploadResult);
 
-      const result = await service.uploadImage(mockFile);
+      const result = await service.uploadImage(mockFile, mockUserId);
 
       expect(result).toEqual({
         url: mockUploadResult.secure_url,
@@ -115,7 +117,9 @@ describe('CloudinaryService', () => {
         version: mockUploadResult.version,
       });
       expect(cloudinary.uploader.upload).toHaveBeenCalledWith(mockFile.path, {
-        folder: 'test-project/dev/avatars',
+        public_id: expect.stringMatching(
+          /^test-project\/dev\/avatars\/123\/avatar\.\d{13}$/
+        ) as string,
         resource_type: 'auto',
       });
     });
@@ -126,7 +130,9 @@ describe('CloudinaryService', () => {
         mimetype: 'application/pdf',
       } as Express.Multer.File;
 
-      await expect(service.uploadImage(invalidFile)).rejects.toThrow(CloudinaryException);
+      await expect(service.uploadImage(invalidFile, mockUserId)).rejects.toThrow(
+        CloudinaryException
+      );
       expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
         'Invalid file type for upload',
         expect.any(Error),
@@ -143,7 +149,7 @@ describe('CloudinaryService', () => {
         size: 10 * 1024 * 1024, // 10MB
       } as Express.Multer.File;
 
-      await expect(service.uploadImage(largeFile)).rejects.toThrow(CloudinaryException);
+      await expect(service.uploadImage(largeFile, mockUserId)).rejects.toThrow(CloudinaryException);
       expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
         'File too large for upload',
         expect.any(Error),
@@ -158,7 +164,7 @@ describe('CloudinaryService', () => {
       const error = new Error('Upload failed');
       (cloudinary.uploader.upload as jest.Mock).mockRejectedValue(error);
 
-      await expect(service.uploadImage(mockFile)).rejects.toThrow(CloudinaryException);
+      await expect(service.uploadImage(mockFile, mockUserId)).rejects.toThrow(CloudinaryException);
       expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
         'Failed to upload image',
         error,

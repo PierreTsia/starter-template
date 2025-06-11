@@ -318,7 +318,7 @@ describe('UsersService', () => {
       );
 
       await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(UserException);
-      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
     });
 
     it('should throw error when Cloudinary upload fails', async () => {
@@ -326,7 +326,7 @@ describe('UsersService', () => {
       mockCloudinaryService.uploadImage.mockRejectedValue(error);
 
       await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(error);
-      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
       expect(mockPrismaService.user.update).not.toHaveBeenCalled();
     });
   });
