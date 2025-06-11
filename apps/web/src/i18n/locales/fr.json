@@ -176,5 +176,15 @@
       "settings": "Paramètres",
       "contact": "Contact"
     }
+  },
+  "about": {
+    "title": "À propos de ce template",
+    "description": "Un template monorepo minimal mais prêt pour la production pour des applications TypeScript full-stack. Conçu pour être cloné et étendu pour de nouveaux projets, avec un accent sur l'expérience développeur et les bonnes pratiques.",
+    "ctaTitle": "Prêt à démarrer votre prochain projet ?",
+    "ctaDescription": "Ce template fournit tout ce dont vous avez besoin pour créer une application web moderne : authentification, intégration de base de données, structure API et une belle interface utilisateur.",
+    "ctaButton": "Commencer",
+    "techStackTitle": "Construit avec des technologies modernes",
+    "featuresTitle": "Fonctionnalités clés",
+    "featuresDescription": "Tout ce dont vous avez besoin pour construire une application prête pour la production, avec un accent sur l'expérience développeur et les bonnes pratiques."
   }
 }

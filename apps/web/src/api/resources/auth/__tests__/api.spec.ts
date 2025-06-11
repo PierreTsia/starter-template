@@ -155,4 +155,60 @@ describe('authApi', () => {
       expect(result).toEqual(mockResponse);
     });
   });
+
+  describe('resendConfirmation', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockResponse = { message: 'Confirmation email resent' };
+      mocks.apiFetch.mockResolvedValueOnce(mockResponse);
+
+      const result = await authApi.resendConfirmation('test@example.com');
+
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/auth/resend-confirmation', {
+        method: 'POST',
+        body: JSON.stringify({ email: 'test@example.com' }),
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('refreshToken', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should refresh token and update localStorage', async () => {
+      const mockResponse = { accessToken: 'new-access', refreshToken: 'new-refresh' };
+      mocks.apiFetch.mockResolvedValueOnce(mockResponse);
+      mocks.localStorage.getItem.mockReturnValueOnce('old-refresh');
+
+      const result = await authApi.refreshToken();
+
+      expect(mocks.localStorage.getItem).toHaveBeenCalledWith('refreshToken');
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/auth/refresh', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer old-refresh',
+        },
+      });
+      expect(mocks.localStorage.setItem).toHaveBeenCalledWith('token', 'new-access');
+      expect(mocks.localStorage.setItem).toHaveBeenCalledWith('refreshToken', 'new-refresh');
+      expect(result).toBe('new-access');
+    });
+
+    it('should throw error if no refresh token found', async () => {
+      mocks.localStorage.getItem.mockReturnValueOnce(null);
+
+      await expect(authApi.refreshToken()).rejects.toThrow('No refresh token found');
+      expect(mocks.apiFetch).not.toHaveBeenCalled();
+    });
+
+    it('should clear tokens and throw error on refresh failure', async () => {
+      mocks.localStorage.getItem.mockReturnValueOnce('old-refresh');
+      mocks.apiFetch.mockRejectedValueOnce(new Error('Refresh failed'));
+
+      await expect(authApi.refreshToken()).rejects.toThrow('Refresh failed');
+      expect(mocks.localStorage.removeItem).toHaveBeenCalledWith('token');
+      expect(mocks.localStorage.removeItem).toHaveBeenCalledWith('refreshToken');
+    });
+  });
 });

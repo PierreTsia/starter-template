@@ -10,6 +10,16 @@
     "tryAgain": "Try Again",
     "save": "Save"
   },
+  "about": {
+    "title": "About This Template",
+    "description": "A minimal but production-ready monorepo template for full-stack TypeScript applications. Designed to be cloned and extended for new projects, with a focus on developer experience and best practices.",
+    "ctaTitle": "Ready to Start Your Next Project?",
+    "ctaDescription": "This template provides everything you need to build a modern web application: authentication, database integration, API structure, and a beautiful UI.",
+    "ctaButton": "Get Started",
+    "techStackTitle": "Built with Modern Technologies",
+    "featuresTitle": "Key Features",
+    "featuresDescription": "Everything you need to build a production-ready application, with a focus on developer experience and best practices."
+  },
   "languages": {
     "en": "English",
     "fr": "French"

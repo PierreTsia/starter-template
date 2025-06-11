@@ -1,148 +1,113 @@
+import { Shield, Type, TestTube2, Rocket, Github } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Page } from '@/components/ui/page';
 import { PageTitle } from '@/components/ui/page-title';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 
-interface About3Props {
-  title?: string;
-  description?: string;
-  mainImage?: {
-    src: string;
-    alt: string;
-  };
-  secondaryImage?: {
-    src: string;
-    alt: string;
-  };
-  breakout?: {
-    src: string;
-    alt: string;
-    title?: string;
-    description?: string;
-    buttonText?: string;
-    buttonUrl?: string;
-  };
-  companiesTitle?: string;
-  companies?: Array<{
-    src: string;
-    alt: string;
-  }>;
-  achievementsTitle?: string;
-  achievementsDescription?: string;
-  achievements?: Array<{
-    label: string;
-    value: string;
-  }>;
-}
-
-const defaultCompanies = [
+const defaultTechStack = [
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-1.svg',
-    alt: 'Arc',
+    src: 'https://raw.githubusercontent.com/vitejs/vite/main/docs/public/logo.svg',
+    alt: 'Vite',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-2.svg',
-    alt: 'Descript',
+    src: 'https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg',
+    alt: 'React',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-3.svg',
-    alt: 'Mercury',
+    src: 'https://docs.nestjs.com/assets/logo-small.svg',
+    alt: 'NestJS',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-4.svg',
-    alt: 'Ramp',
+    src: 'https://raw.githubusercontent.com/prisma/presskit/main/Assets/Prisma-IndigoLogo.svg',
+    alt: 'Prisma',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-5.svg',
-    alt: 'Retool',
+    src: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
+    alt: 'Tailwind',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-6.svg',
-    alt: 'Watershed',
+    src: 'https://raw.githubusercontent.com/TanStack/query/main/media/repo-dark.png',
+    alt: 'TanStack Query',
   },
 ];
 
-const defaultAchievements = [
-  { label: 'Companies Supported', value: '300+' },
-  { label: 'Projects Finalized', value: '800+' },
-  { label: 'Happy Customers', value: '99%' },
-  { label: 'Recognized Awards', value: '10+' },
+const defaultFeatures = [
+  {
+    label: 'Authentication',
+    value: 'JWT with refresh token',
+    icon: Shield,
+  },
+  {
+    label: 'Type Safety',
+    value: '100% TypeScript',
+    icon: Type,
+  },
+  {
+    label: 'Testing',
+    value: 'Vitest + Jest',
+    icon: TestTube2,
+  },
+  {
+    label: 'Deployment',
+    value: 'Vercel + Render',
+    icon: Rocket,
+  },
 ];
 
-export const AboutPage = ({
-  title = 'About Us',
-  description = 'Shadcnblocks is a passionate team dedicated to creating innovative solutions that empower businesses to thrive in the digital age.',
-  mainImage = {
-    src: 'https://shadcnblocks.com/images/block/placeholder-1.svg',
-    alt: 'placeholder',
-  },
-  secondaryImage = {
-    src: 'https://shadcnblocks.com/images/block/placeholder-2.svg',
-    alt: 'placeholder',
-  },
-  breakout = {
-    src: 'https://shadcnblocks.com/images/block/block-1.svg',
-    alt: 'logo',
-    title: 'Hundreds of blocks at Shadcnblocks.com',
-    description:
-      'Providing businesses with effective tools to improve workflows, boost efficiency, and encourage growth.',
-    buttonText: 'Discover more',
-    buttonUrl: 'https://shadcnblocks.com',
-  },
-  companiesTitle = 'Valued by clients worldwide',
-  companies = defaultCompanies,
-  achievementsTitle = 'Our Achievements in Numbers',
-  achievementsDescription = 'Providing businesses with effective tools to improve workflows, boost efficiency, and encourage growth.',
-  achievements = defaultAchievements,
-}: About3Props = {}) => {
+export const AboutPage = () => {
+  const { t } = useTranslation();
   return (
     <Page>
-      <PageTitle title={title} description={description} />
+      <PageTitle title={t('about.title')} description={t('about.description')} />
       <div className="grid gap-7 lg:grid-cols-3">
         <img
-          src={mainImage.src}
-          alt={mainImage.alt}
+          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+          alt="tech workspace background"
           className="size-full max-h-[620px] rounded-xl object-cover lg:col-span-2"
         />
-        <div className="flex flex-col gap-7 md:flex-row lg:flex-col">
+        <div className="flex flex-col gap-7 md:flex-row lg:flex-col h-full lg:justify-end">
           <div className="flex flex-col justify-between gap-6 rounded-xl bg-muted p-7 md:w-1/2 lg:w-auto">
-            <img src={breakout.src} alt={breakout.alt} className="mr-auto h-12" />
             <div>
-              <p className="mb-2 text-lg font-semibold">{breakout.title}</p>
-              <p className="text-muted-foreground">{breakout.description}</p>
+              <p className="mb-2 text-lg font-semibold">{t('about.ctaTitle')}</p>
+              <p className="text-muted-foreground">{t('about.ctaDescription')}</p>
             </div>
-            <Button variant="outline" className="mr-auto" asChild>
-              <a href={breakout.buttonUrl} target="_blank">
-                {breakout.buttonText}
+            <Button variant="info" className="mr-auto flex items-center gap-2" asChild>
+              <a
+                href="https://github.com/PierreTsia/starter-template"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github className="h-4 w-4" aria-hidden="true" />
+                {t('about.ctaButton')}
               </a>
             </Button>
           </div>
-          <img
-            src={secondaryImage.src}
-            alt={secondaryImage.alt}
-            className="grow basis-0 rounded-xl object-cover md:w-1/2 lg:min-h-0 lg:w-auto"
-          />
         </div>
       </div>
       <div className="py-32">
-        <p className="text-center">{companiesTitle} </p>
+        <p className="text-center">{t('about.techStackTitle')}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-8">
-          {companies.map((company, idx) => (
-            <div className="flex items-center gap-3" key={company.src + idx}>
-              <img src={company.src} alt={company.alt} className="h-6 w-auto md:h-8" />
+          {defaultTechStack.map((tech, idx) => (
+            <div className="flex items-center gap-3" key={tech.src + idx}>
+              <img src={tech.src} alt={tech.alt} className="h-6 w-auto md:h-8" />
             </div>
           ))}
         </div>
       </div>
       <div className="relative overflow-hidden rounded-xl bg-muted p-10 md:p-16">
         <div className="flex flex-col gap-4 text-center md:text-left">
-          <h2 className="text-4xl font-semibold">{achievementsTitle}</h2>
-          <p className="max-w-xl text-muted-foreground">{achievementsDescription}</p>
+          <h2 className="text-4xl font-semibold">{t('about.featuresTitle')}</h2>
+          <p className="max-w-xl text-muted-foreground">{t('about.featuresDescription')}</p>
         </div>
         <div className="mt-10 flex flex-wrap justify-between gap-10 text-center">
-          {achievements.map((item, idx) => (
+          {defaultFeatures.map((item, idx) => (
             <div className="flex flex-col gap-4" key={item.label + idx}>
+              <div className="flex justify-center">
+                <item.icon className="h-6 w-6 text-indigo-500" />
+              </div>
               <p>{item.label}</p>
-              <span className="text-4xl font-semibold md:text-5xl">{item.value}</span>
+              <span className="text-2xl font-semibold">{item.value}</span>
             </div>
           ))}
         </div>
