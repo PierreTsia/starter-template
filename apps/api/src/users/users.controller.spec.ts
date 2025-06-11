@@ -18,6 +18,7 @@ interface User {
   name: string | null;
   createdAt: Date;
   updatedAt: Date;
+  avatarUrl: string;
 }
 
 describe('UsersController', () => {
@@ -30,6 +31,7 @@ describe('UsersController', () => {
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    uploadAvatar: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -102,6 +104,7 @@ describe('UsersController', () => {
           password: 'Test123!@#',
           createdAt: new Date(),
           updatedAt: new Date(),
+          avatarUrl: 'https://cloudinary.com/test.jpg',
         },
       ];
       mockUsersService.findAll.mockResolvedValue(mockUsers);
@@ -121,6 +124,7 @@ describe('UsersController', () => {
         password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
+        avatarUrl: 'https://cloudinary.com/test.jpg',
       };
       mockUsersService.findOne.mockResolvedValue(mockUser);
 
@@ -144,6 +148,7 @@ describe('UsersController', () => {
         password: createUserDto.password,
         createdAt: new Date(),
         updatedAt: new Date(),
+        avatarUrl: 'https://cloudinary.com/test.jpg',
       };
       mockUsersService.create.mockResolvedValue(mockUser);
 
@@ -176,6 +181,7 @@ describe('UsersController', () => {
         password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
+        avatarUrl: 'https://cloudinary.com/test.jpg',
       };
       mockUsersService.update.mockResolvedValue(mockUser);
 
@@ -194,11 +200,62 @@ describe('UsersController', () => {
         password: 'Test123!@#',
         createdAt: new Date(),
         updatedAt: new Date(),
+        avatarUrl: 'https://cloudinary.com/test.jpg',
       };
       mockUsersService.delete.mockResolvedValue(mockUser);
 
       await controller.delete('1', 'en');
       expect(mockUsersService.delete).toHaveBeenCalledWith('1', 'en');
+    });
+  });
+
+  describe('uploadAvatar', () => {
+    it('should upload avatar successfully', async () => {
+      const mockFile = {
+        fieldname: 'file',
+        originalname: 'test.jpg',
+        encoding: '7bit',
+        mimetype: 'image/jpeg',
+        buffer: Buffer.from('test'),
+        size: 1024,
+      } as Express.Multer.File;
+
+      const mockUser: User = {
+        id: '1',
+        email: 'test@test.com',
+        name: 'Test User',
+        password: 'Test123!@#',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        avatarUrl: 'https://cloudinary.com/test.jpg',
+      };
+
+      mockUsersService.uploadAvatar.mockResolvedValue(mockUser);
+
+      const result = await controller.uploadAvatar({ user: { id: '1' } } as any, 'en', mockFile);
+
+      expect(result).toEqual(mockUser);
+      expect(mockUsersService.uploadAvatar).toHaveBeenCalledWith('1', mockFile, 'en');
+    });
+
+    it('should handle file upload errors', async () => {
+      const mockFile = {
+        fieldname: 'file',
+        originalname: 'test.jpg',
+        encoding: '7bit',
+        mimetype: 'image/jpeg',
+        buffer: Buffer.from('test'),
+        size: 1024,
+      } as Express.Multer.File;
+
+      const error = new Error('Upload failed');
+      mockUsersService.uploadAvatar.mockRejectedValue(error);
+
+      await expect(
+        controller.uploadAvatar({ user: { id: '1' } } as any, 'en', mockFile)
+      ).rejects.toThrow(error);
+
+      expect(mockUsersService.uploadAvatar).toHaveBeenCalledWith('1', mockFile, 'en');
     });
   });
 });

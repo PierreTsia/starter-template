@@ -67,6 +67,7 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -261,6 +262,72 @@ describe('UsersService', () => {
 
       const result = await service.findByPasswordResetToken('expired-token');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('uploadAvatar', () => {
+    const mockFile = {
+      fieldname: 'file',
+      originalname: 'test.jpg',
+      encoding: '7bit',
+      mimetype: 'image/jpeg',
+      buffer: Buffer.from('test'),
+      size: 1024,
+      path: '/tmp/test.jpg',
+    } as Express.Multer.File;
+
+    const mockUploadResult = {
+      url: 'https://cloudinary.com/test.jpg',
+      publicId: 'test-id',
+      version: '123',
+    };
+
+    const mockUser = {
+      id: '1',
+      email: 'test@test.com',
+      name: 'Test User',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isEmailConfirmed: true,
+      emailConfirmationToken: null,
+      emailConfirmationExpires: null,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+      avatarUrl: 'https://cloudinary.com/test.jpg',
+    };
+
+    it('should upload avatar and update user successfully', async () => {
+      mockCloudinaryService.uploadImage.mockResolvedValue(mockUploadResult);
+      mockPrismaService.user.update.mockResolvedValue(mockUser);
+
+      const result = await service.uploadAvatar('1', mockFile, 'en');
+
+      expect(result).toEqual(mockUser);
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: { avatarUrl: mockUploadResult.url },
+        select: expect.any(Object) as Prisma.UserSelect,
+      });
+    });
+
+    it('should throw UserException when user not found', async () => {
+      mockCloudinaryService.uploadImage.mockResolvedValue(mockUploadResult);
+      mockPrismaService.user.update.mockRejectedValue(
+        new PrismaClientKnownRequestError('User not found', { code: 'P2025', clientVersion: '1.0' })
+      );
+
+      await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(UserException);
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+    });
+
+    it('should throw error when Cloudinary upload fails', async () => {
+      const error = new Error('Upload failed');
+      mockCloudinaryService.uploadImage.mockRejectedValue(error);
+
+      await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(error);
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, 'en');
+      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
     });
   });
 });
