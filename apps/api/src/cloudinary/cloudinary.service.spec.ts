@@ -20,43 +20,48 @@ jest.mock('cloudinary', () => ({
 describe('CloudinaryService', () => {
   let service: CloudinaryService;
   let loggerService: LoggerService;
+  let configService: ConfigService;
 
-  const mockConfigService = {
+  const createConfigService = (env: 'development' | 'production') => ({
     get: jest.fn((key: string): string | undefined => {
       const config: Record<string, string> = {
         CLOUDINARY_CLOUD_NAME: 'test-cloud',
         CLOUDINARY_API_KEY: 'test-key',
         CLOUDINARY_API_SECRET: 'test-secret',
-        NODE_ENV: 'development',
+        NODE_ENV: env,
       };
       return config[key];
     }),
-  };
+  });
 
-  const mockLoggerService = {
-    errorWithMetadata: jest.fn(),
-  };
-
-  beforeEach(async () => {
+  const createTestingModule = async (env: 'development' | 'production' = 'development') => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudinaryService,
         {
           provide: ConfigService,
-          useValue: mockConfigService,
+          useValue: createConfigService(env),
         },
         {
           provide: LoggerService,
-          useValue: mockLoggerService,
+          useValue: { errorWithMetadata: jest.fn() },
         },
       ],
     }).compile();
 
-    service = module.get<CloudinaryService>(CloudinaryService);
-    loggerService = module.get<LoggerService>(LoggerService);
+    return {
+      service: module.get<CloudinaryService>(CloudinaryService),
+      loggerService: module.get<LoggerService>(LoggerService),
+      configService: module.get<ConfigService>(ConfigService),
+    };
+  };
 
-    // Clear all mocks before each test
+  beforeEach(async () => {
     jest.clearAllMocks();
+    const module = await createTestingModule();
+    service = module.service;
+    loggerService = module.loggerService;
+    configService = module.configService;
   });
 
   it('should be defined', () => {
@@ -64,9 +69,8 @@ describe('CloudinaryService', () => {
   });
 
   describe('constructor', () => {
-    it('should configure cloudinary with correct credentials', () => {
-      // Re-initialize service to trigger constructor
-      new CloudinaryService(mockConfigService as unknown as ConfigService, loggerService);
+    it('should configure cloudinary with correct credentials', async () => {
+      await createTestingModule();
       expect(cloudinary.config).toHaveBeenCalledWith({
         cloud_name: 'test-cloud',
         api_key: 'test-key',
@@ -74,42 +78,14 @@ describe('CloudinaryService', () => {
       });
     });
 
-    it('should set dev folder in development environment', () => {
-      // Re-initialize service to trigger constructor
-      new CloudinaryService(mockConfigService as unknown as ConfigService, loggerService);
-      expect(mockConfigService.get).toHaveBeenCalledWith('NODE_ENV');
+    it('should set dev folder in development environment', async () => {
+      await createTestingModule();
+      expect(configService.get).toHaveBeenCalledWith('NODE_ENV');
     });
 
     it('should set prod folder in production environment', async () => {
-      const prodConfig = {
-        ...mockConfigService,
-        get: jest.fn((key: string): string | undefined => {
-          const config: Record<string, string> = {
-            CLOUDINARY_CLOUD_NAME: 'test-cloud',
-            CLOUDINARY_API_KEY: 'test-key',
-            CLOUDINARY_API_SECRET: 'test-secret',
-            NODE_ENV: 'production',
-          };
-          return config[key];
-        }),
-      };
-
-      const prodModule: TestingModule = await Test.createTestingModule({
-        providers: [
-          CloudinaryService,
-          {
-            provide: ConfigService,
-            useValue: prodConfig,
-          },
-          {
-            provide: LoggerService,
-            useValue: mockLoggerService,
-          },
-        ],
-      }).compile();
-
-      const prodService = prodModule.get<CloudinaryService>(CloudinaryService);
-      expect(prodService).toBeDefined();
+      await createTestingModule('production');
+      expect(configService.get).toHaveBeenCalledWith('NODE_ENV');
     });
   });
 
@@ -123,19 +99,6 @@ describe('CloudinaryService', () => {
       public_id: 'dev/avatars/test-image',
       version: '1234567890',
     };
-
-    beforeEach(() => {
-      // Reset NODE_ENV to development for these tests
-      mockConfigService.get.mockImplementation((key: string): string | undefined => {
-        const config: Record<string, string> = {
-          CLOUDINARY_CLOUD_NAME: 'test-cloud',
-          CLOUDINARY_API_KEY: 'test-key',
-          CLOUDINARY_API_SECRET: 'test-secret',
-          NODE_ENV: 'development',
-        };
-        return config[key];
-      });
-    });
 
     it('should upload image successfully', async () => {
       (cloudinary.uploader.upload as jest.Mock).mockResolvedValue(mockUploadResult);
@@ -171,19 +134,6 @@ describe('CloudinaryService', () => {
 
   describe('deleteImage', () => {
     const mockPublicId = 'dev/avatars/test-image';
-
-    beforeEach(() => {
-      // Reset NODE_ENV to development for these tests
-      mockConfigService.get.mockImplementation((key: string): string | undefined => {
-        const config: Record<string, string> = {
-          CLOUDINARY_CLOUD_NAME: 'test-cloud',
-          CLOUDINARY_API_KEY: 'test-key',
-          CLOUDINARY_API_SECRET: 'test-secret',
-          NODE_ENV: 'development',
-        };
-        return config[key];
-      });
-    });
 
     it('should delete image successfully', async () => {
       (cloudinary.uploader.destroy as jest.Mock).mockResolvedValue({ result: 'ok' });
