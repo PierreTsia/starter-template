@@ -1,3 +1,5 @@
+import { Shield, Type, TestTube2, Rocket, Github } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Page } from '@/components/ui/page';
 import { PageTitle } from '@/components/ui/page-title';
@@ -21,78 +23,92 @@ interface About3Props {
     buttonText?: string;
     buttonUrl?: string;
   };
-  companiesTitle?: string;
-  companies?: Array<{
+  techStackTitle?: string;
+  techStack?: Array<{
     src: string;
     alt: string;
   }>;
-  achievementsTitle?: string;
-  achievementsDescription?: string;
-  achievements?: Array<{
+  featuresTitle?: string;
+  featuresDescription?: string;
+  features?: Array<{
     label: string;
     value: string;
+    icon: React.ComponentType<{ className?: string }>;
   }>;
 }
 
-const defaultCompanies = [
+const defaultTechStack = [
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-1.svg',
-    alt: 'Arc',
+    src: 'https://raw.githubusercontent.com/vitejs/vite/main/docs/public/logo.svg',
+    alt: 'Vite',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-2.svg',
-    alt: 'Descript',
+    src: 'https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg',
+    alt: 'React',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-3.svg',
-    alt: 'Mercury',
+    src: 'https://docs.nestjs.com/assets/logo-small.svg',
+    alt: 'NestJS',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-4.svg',
-    alt: 'Ramp',
+    src: 'https://raw.githubusercontent.com/prisma/presskit/main/Assets/Prisma-IndigoLogo.svg',
+    alt: 'Prisma',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-5.svg',
-    alt: 'Retool',
+    src: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
+    alt: 'Tailwind',
   },
   {
-    src: 'https://shadcnblocks.com/images/block/logos/company/fictional-company-logo-6.svg',
-    alt: 'Watershed',
+    src: 'https://raw.githubusercontent.com/TanStack/query/main/media/repo-dark.png',
+    alt: 'TanStack Query',
   },
 ];
 
-const defaultAchievements = [
-  { label: 'Companies Supported', value: '300+' },
-  { label: 'Projects Finalized', value: '800+' },
-  { label: 'Happy Customers', value: '99%' },
-  { label: 'Recognized Awards', value: '10+' },
+const defaultFeatures = [
+  {
+    label: 'Authentication',
+    value: 'JWT with refresh token',
+    icon: Shield,
+  },
+  {
+    label: 'Type Safety',
+    value: '100% TypeScript',
+    icon: Type,
+  },
+  {
+    label: 'Testing',
+    value: 'Vitest + Jest',
+    icon: TestTube2,
+  },
+  {
+    label: 'Deployment',
+    value: 'Vercel + Render',
+    icon: Rocket,
+  },
 ];
 
 export const AboutPage = ({
-  title = 'About Us',
-  description = 'Shadcnblocks is a passionate team dedicated to creating innovative solutions that empower businesses to thrive in the digital age.',
+  title = 'About This Template',
+  description = 'A minimal but production-ready monorepo template for full-stack TypeScript applications. Designed to be cloned and extended for new projects, with a focus on developer experience and best practices.',
   mainImage = {
-    src: 'https://shadcnblocks.com/images/block/placeholder-1.svg',
-    alt: 'placeholder',
+    src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c', // Tech workspace, monitors, code
+    alt: 'tech workspace background',
   },
-  secondaryImage = {
-    src: 'https://shadcnblocks.com/images/block/placeholder-2.svg',
-    alt: 'placeholder',
-  },
+
   breakout = {
     src: 'https://shadcnblocks.com/images/block/block-1.svg',
     alt: 'logo',
-    title: 'Hundreds of blocks at Shadcnblocks.com',
+    title: 'Ready to Start Your Next Project?',
     description:
-      'Providing businesses with effective tools to improve workflows, boost efficiency, and encourage growth.',
-    buttonText: 'Discover more',
-    buttonUrl: 'https://shadcnblocks.com',
+      'This template provides everything you need to build a modern web application: authentication, database integration, API structure, and a beautiful UI.',
+    buttonText: 'Get Started',
+    buttonUrl: 'https://github.com/PierreTsia/starter-template',
   },
-  companiesTitle = 'Valued by clients worldwide',
-  companies = defaultCompanies,
-  achievementsTitle = 'Our Achievements in Numbers',
-  achievementsDescription = 'Providing businesses with effective tools to improve workflows, boost efficiency, and encourage growth.',
-  achievements = defaultAchievements,
+  techStackTitle = 'Built with Modern Technologies',
+  techStack = defaultTechStack,
+  featuresTitle = 'Key Features',
+  featuresDescription = 'Everything you need to build a production-ready application, with a focus on developer experience and best practices.',
+  features = defaultFeatures,
 }: About3Props = {}) => {
   return (
     <Page>
@@ -103,46 +119,44 @@ export const AboutPage = ({
           alt={mainImage.alt}
           className="size-full max-h-[620px] rounded-xl object-cover lg:col-span-2"
         />
-        <div className="flex flex-col gap-7 md:flex-row lg:flex-col">
+        <div className="flex flex-col gap-7 md:flex-row lg:flex-col h-full lg:justify-end">
           <div className="flex flex-col justify-between gap-6 rounded-xl bg-muted p-7 md:w-1/2 lg:w-auto">
-            <img src={breakout.src} alt={breakout.alt} className="mr-auto h-12" />
             <div>
               <p className="mb-2 text-lg font-semibold">{breakout.title}</p>
               <p className="text-muted-foreground">{breakout.description}</p>
             </div>
-            <Button variant="outline" className="mr-auto" asChild>
-              <a href={breakout.buttonUrl} target="_blank">
+            <Button variant="info" className="mr-auto flex items-center gap-2" asChild>
+              <a href={breakout.buttonUrl} target="_blank" rel="noopener noreferrer">
+                <Github className="h-4 w-4" aria-hidden="true" />
                 {breakout.buttonText}
               </a>
             </Button>
           </div>
-          <img
-            src={secondaryImage.src}
-            alt={secondaryImage.alt}
-            className="grow basis-0 rounded-xl object-cover md:w-1/2 lg:min-h-0 lg:w-auto"
-          />
         </div>
       </div>
       <div className="py-32">
-        <p className="text-center">{companiesTitle} </p>
+        <p className="text-center">{techStackTitle}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-8">
-          {companies.map((company, idx) => (
-            <div className="flex items-center gap-3" key={company.src + idx}>
-              <img src={company.src} alt={company.alt} className="h-6 w-auto md:h-8" />
+          {techStack.map((tech, idx) => (
+            <div className="flex items-center gap-3" key={tech.src + idx}>
+              <img src={tech.src} alt={tech.alt} className="h-6 w-auto md:h-8" />
             </div>
           ))}
         </div>
       </div>
       <div className="relative overflow-hidden rounded-xl bg-muted p-10 md:p-16">
         <div className="flex flex-col gap-4 text-center md:text-left">
-          <h2 className="text-4xl font-semibold">{achievementsTitle}</h2>
-          <p className="max-w-xl text-muted-foreground">{achievementsDescription}</p>
+          <h2 className="text-4xl font-semibold">{featuresTitle}</h2>
+          <p className="max-w-xl text-muted-foreground">{featuresDescription}</p>
         </div>
         <div className="mt-10 flex flex-wrap justify-between gap-10 text-center">
-          {achievements.map((item, idx) => (
+          {features.map((item, idx) => (
             <div className="flex flex-col gap-4" key={item.label + idx}>
+              <div className="flex justify-center">
+                <item.icon className="h-6 w-6 text-indigo-500" />
+              </div>
               <p>{item.label}</p>
-              <span className="text-4xl font-semibold md:text-5xl">{item.value}</span>
+              <span className="text-2xl font-semibold">{item.value}</span>
             </div>
           ))}
         </div>
