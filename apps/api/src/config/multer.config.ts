@@ -17,17 +17,6 @@ export const multerConfig = {
       callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
     },
   }),
-  fileFilter: (
-    req: Request,
-    file: Express.Multer.File,
-    callback: (error: Error | null, acceptFile: boolean) => void
-  ) => {
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      return callback(new Error('Only image files are allowed!'), false);
-    }
-    callback(null, true);
-  },
   limits: {
     fileSize: MAX_FILE_SIZE,
   },

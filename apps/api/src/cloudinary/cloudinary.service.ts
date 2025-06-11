@@ -77,8 +77,28 @@ export class CloudinaryService {
         publicId: result.public_id,
         version: result.version,
       };
-    } catch (error) {
-      this.logger.errorWithMetadata('Failed to upload image', error, {
+    } catch (error: unknown) {
+      // If it's already a CloudinaryException, rethrow it
+      if (error instanceof CloudinaryException) {
+        throw error;
+      }
+
+      // Check if it's a Cloudinary validation error
+      const errorMessage = error instanceof Error ? error.message : '';
+      if (
+        errorMessage.includes('Invalid image file') ||
+        errorMessage.includes('File type not supported') ||
+        errorMessage.includes('Invalid resource type')
+      ) {
+        this.logger.errorWithMetadata('Invalid file type for Cloudinary', error as Error, {
+          path: file.path,
+          mimetype: file.mimetype,
+        });
+        throw CloudinaryException.invalidFile(acceptLanguage);
+      }
+
+      // For any other error, log and throw generic error
+      this.logger.errorWithMetadata('Failed to upload image', error as Error, {
         path: file.path,
         folder: this.folder,
       });
@@ -89,8 +109,8 @@ export class CloudinaryService {
   async deleteImage(publicId: string, acceptLanguage?: string) {
     try {
       await cloudinary.uploader.destroy(publicId);
-    } catch (error) {
-      this.logger.errorWithMetadata('Failed to delete image', error, {
+    } catch (error: unknown) {
+      this.logger.errorWithMetadata('Failed to delete image', error as Error, {
         publicId,
         folder: this.folder,
       });
