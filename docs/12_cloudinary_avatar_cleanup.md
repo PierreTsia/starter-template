@@ -21,15 +21,18 @@ Implement a hybrid approach combining:
 
 #### Implementation
 
-- Format: `{userId}/avatar.{timestamp}`
-- Example: `63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749655562832.jpg`
+- [x] Format: `{userId}/avatar.{timestamp}`
+- [x] Example: `63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749655562832`
+- [x] No file extension in public_id (handled by Cloudinary)
+- [x] Timestamp in milliseconds for versioning
+- [x] User ID in path for ownership
 
 #### Benefits
 
-- Clear ownership of files
-- Easy to track and debug
-- No need for additional storage
-- Versioning through timestamps
+- [x] Clear ownership of files
+- [x] Easy to track and debug
+- [x] No need for additional storage
+- [x] Versioning through timestamps
 
 ### 2. Immediate Cleanup
 
@@ -63,9 +66,9 @@ Implement a hybrid approach combining:
 
 ### Phase 1: File Naming
 
-- [ ] Update CloudinaryService to use deterministic naming
-- [ ] Add timestamp to file names
-- [ ] Update tests to verify naming convention
+- [x] Update CloudinaryService to use deterministic naming
+- [x] Add timestamp to file names
+- [x] Update tests to verify naming convention
 
 ### Phase 2: Immediate Cleanup
 
@@ -85,7 +88,7 @@ Implement a hybrid approach combining:
 
 ### Functional Requirements
 
-- [ ] New avatars use deterministic naming
+- [x] New avatars use deterministic naming
 - [ ] Old avatars are deleted after successful upload
 - [ ] CRON job runs weekly and cleans orphaned files
 - [ ] All operations are logged
@@ -93,11 +96,11 @@ Implement a hybrid approach combining:
 
 ### Technical Requirements
 
-- [ ] No additional database tables needed
-- [ ] Minimal impact on upload performance
+- [x] No additional database tables needed
+- [x] Minimal impact on upload performance
 - [ ] Proper error handling and logging
-- [ ] Tests for all new functionality
-- [ ] Documentation updated
+- [x] Tests for all new functionality
+- [x] Documentation updated
 
 ### Monitoring Requirements
 
@@ -110,9 +113,9 @@ Implement a hybrid approach combining:
 
 ### Upload Failures
 
-- [ ] Clean up temporary file
-- [ ] Log error with context
-- [ ] Return appropriate error to user
+- [x] Clean up temporary file
+- [x] Log error with context
+- [x] Return appropriate error to user
 
 ### Deletion Failures
 
@@ -130,7 +133,7 @@ Implement a hybrid approach combining:
 
 ### Unit Tests
 
-- [ ] File naming convention
+- [x] File naming convention
 - [ ] publicId extraction
 - [ ] Cleanup operations
 - [ ] Error handling
@@ -149,10 +152,10 @@ Implement a hybrid approach combining:
 
 ## Rollout Strategy
 
-1. Deploy file naming changes
-2. Deploy immediate cleanup
-3. Deploy CRON job
-4. Monitor and adjust
+1. [x] Deploy file naming changes
+2. [ ] Deploy immediate cleanup
+3. [ ] Deploy CRON job
+4. [ ] Monitor and adjust
 
 ## Success Metrics
 

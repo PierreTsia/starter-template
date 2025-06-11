@@ -23,6 +23,7 @@ import {
   USER_ERROR_RESPONSES,
   VALIDATION_ERROR_RESPONSES,
   createApiResponse,
+  FILE_ERROR_RESPONSES,
 } from '../common/swagger/schemas';
 import { multerConfig } from '../config/multer.config';
 import { LoggerService } from '../logger/logger.service';
@@ -210,6 +211,9 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Avatar uploaded successfully',
   })
+  @createApiResponse(FILE_ERROR_RESPONSES.INVALID_FILE_TYPE)
+  @createApiResponse(FILE_ERROR_RESPONSES.FILE_TOO_LARGE)
+  @createApiResponse(FILE_ERROR_RESPONSES.UPLOAD_FAILED)
   @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
   @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
   @Post('avatar')
