@@ -9,6 +9,7 @@ import { CloudinaryException } from './cloudinary.exception';
 @Injectable()
 export class CloudinaryService {
   private readonly folder: string;
+  private projectName: string;
 
   constructor(
     private readonly configService: ConfigService,
@@ -20,8 +21,12 @@ export class CloudinaryService {
       api_secret: this.configService.get('CLOUDINARY_API_SECRET'),
     });
 
+    this.projectName = this.configService.get('PROJECT_NAME') || 'default';
+
     this.folder =
-      this.configService.get('NODE_ENV') === 'production' ? 'prod/avatars' : 'dev/avatars';
+      this.configService.get('NODE_ENV') === 'production'
+        ? `${this.projectName}/prod/avatars`
+        : `${this.projectName}/dev/avatars`;
   }
 
   async uploadImage(file: Express.Multer.File, acceptLanguage?: string) {

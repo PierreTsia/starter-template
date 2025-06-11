@@ -29,6 +29,7 @@ describe('CloudinaryService', () => {
         CLOUDINARY_API_KEY: 'test-key',
         CLOUDINARY_API_SECRET: 'test-secret',
         NODE_ENV: env,
+        PROJECT_NAME: 'test-project',
       };
       return config[key];
     }),
@@ -99,7 +100,7 @@ describe('CloudinaryService', () => {
 
     const mockUploadResult = {
       secure_url: 'https://cloudinary.com/test-image.jpg',
-      public_id: 'dev/avatars/test-image',
+      public_id: 'test-project/dev/avatars/test-image',
       version: '1234567890',
     };
 
@@ -114,7 +115,7 @@ describe('CloudinaryService', () => {
         version: mockUploadResult.version,
       });
       expect(cloudinary.uploader.upload).toHaveBeenCalledWith(mockFile.path, {
-        folder: 'dev/avatars',
+        folder: 'test-project/dev/avatars',
         resource_type: 'auto',
       });
     });
@@ -163,14 +164,14 @@ describe('CloudinaryService', () => {
         error,
         {
           path: mockFile.path,
-          folder: 'dev/avatars',
+          folder: 'test-project/dev/avatars',
         }
       );
     });
   });
 
   describe('deleteImage', () => {
-    const mockPublicId = 'dev/avatars/test-image';
+    const mockPublicId = 'test-project/dev/avatars/test-image';
 
     it('should delete image successfully', async () => {
       (cloudinary.uploader.destroy as jest.Mock).mockResolvedValue({ result: 'ok' });
@@ -190,7 +191,7 @@ describe('CloudinaryService', () => {
         error,
         {
           publicId: mockPublicId,
-          folder: 'dev/avatars',
+          folder: 'test-project/dev/avatars',
         }
       );
     });
