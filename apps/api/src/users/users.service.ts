@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -165,6 +167,17 @@ export class UsersService {
             throw UserException.notFound(userId, acceptLanguage);
           }
           throw error;
+        } finally {
+          // Clean up the temporary file
+          if (file.path) {
+            fs.unlink(file.path, (err) => {
+              if (err) {
+                this.logger.errorWithMetadata('Failed to delete temporary file', err, {
+                  filePath: file.path,
+                });
+              }
+            });
+          }
         }
       },
       {
