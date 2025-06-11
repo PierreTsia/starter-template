@@ -16,6 +16,7 @@ vi.mock('../api', () => ({
     forgotPassword: vi.fn(),
     resetPassword: vi.fn(),
     confirmEmail: vi.fn(),
+    resendConfirmation: vi.fn(),
   },
 }));
 
@@ -287,6 +288,48 @@ describe('Auth Hooks', () => {
         state: { error },
       });
     });
+
+    it('successfully resends confirmation email', async () => {
+      vi.mocked(authApi.resendConfirmation).mockResolvedValueOnce({
+        message: 'Confirmation email resent',
+      });
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.resendConfirmation('test@example.com');
+      });
+
+      expect(authApi.resendConfirmation).toHaveBeenCalledWith('test@example.com');
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/email-confirmation?email=test%40example.com&resend=true',
+        {
+          replace: true,
+        }
+      );
+    });
+
+    it('handles resend confirmation error', async () => {
+      const error = new Error('Email not found');
+      vi.mocked(authApi.resendConfirmation).mockRejectedValueOnce(error);
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        try {
+          await result.current.resendConfirmation('nonexistent@example.com');
+        } catch (e) {
+          expect(e).toBe(error);
+        }
+      });
+
+      expect(authApi.resendConfirmation).toHaveBeenCalledWith('nonexistent@example.com');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
   });
 
   describe('useMe', () => {
@@ -326,6 +369,46 @@ describe('Auth Hooks', () => {
       });
 
       expect(authApi.me).toHaveBeenCalled();
+    });
+  });
+
+  describe('logout', () => {
+    it('successfully logs out and cleans up', async () => {
+      vi.mocked(authApi.logout).mockResolvedValueOnce({ message: 'Logged out successfully' });
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.logout();
+      });
+
+      expect(authApi.logout).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true });
+      expect(localStorage.removeItem).toHaveBeenCalledWith('token');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('refreshToken');
+    });
+
+    it('handles logout error', async () => {
+      const error = new Error('Logout failed');
+      vi.mocked(authApi.logout).mockRejectedValueOnce(error);
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        try {
+          await result.current.logout();
+        } catch (e) {
+          expect(e).toBe(error);
+        }
+      });
+
+      expect(authApi.logout).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(localStorage.removeItem).not.toHaveBeenCalled();
     });
   });
 });
