@@ -31,7 +31,7 @@ export class CloudinaryService {
         : `${this.projectName}/dev/avatars`;
   }
 
-  async uploadImage(file: Express.Multer.File, acceptLanguage?: string) {
+  async uploadImage(file: Express.Multer.File, userId: string, acceptLanguage?: string) {
     try {
       // Validate file type
       const supportedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -69,8 +69,11 @@ export class CloudinaryService {
         throw CloudinaryException.invalidFile(acceptLanguage);
       }
 
+      const timestamp = Date.now();
+      const publicId = `${this.folder}/${userId}/avatar.${timestamp}`;
+
       const result = await cloudinary.uploader.upload(file.path, {
-        folder: this.folder,
+        public_id: publicId,
         resource_type: 'auto',
       });
 

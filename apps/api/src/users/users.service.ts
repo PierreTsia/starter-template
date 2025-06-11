@@ -151,7 +151,7 @@ export class UsersService {
       'uploadAvatar',
       async () => {
         // Upload to Cloudinary
-        const uploadResult = await this.cloudinaryService.uploadImage(file, acceptLanguage);
+        const uploadResult = await this.cloudinaryService.uploadImage(file, userId, acceptLanguage);
 
         try {
           // Update user's avatar URL
