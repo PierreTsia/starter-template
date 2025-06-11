@@ -1,8 +1,8 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 
+import { UserException } from '../../users/exceptions/user.exception';
 import { UsersService } from '../../users/users.service';
 
 import { JwtStrategy } from './jwt.strategy';
@@ -11,33 +11,29 @@ type SafeUser = Omit<User, 'password'>;
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
-  let mockUsersService: jest.Mocked<UsersService>;
+  let usersService: UsersService;
 
   beforeEach(async () => {
-    mockUsersService = {
-      findOne: jest.fn(),
-    } as unknown as jest.Mocked<UsersService>;
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JwtStrategy,
         {
           provide: UsersService,
-          useValue: mockUsersService,
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockImplementation((key: string, defaultValue?: string) => {
-              if (key === 'JWT_SECRET') return 'test-secret';
-              return defaultValue;
-            }),
+            get: jest.fn().mockReturnValue('test-secret'),
           },
         },
       ],
     }).compile();
 
     strategy = module.get<JwtStrategy>(JwtStrategy);
+    usersService = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -45,7 +41,7 @@ describe('JwtStrategy', () => {
   });
 
   describe('validate', () => {
-    it('should return user when valid payload is provided', async () => {
+    it('should return user if found', async () => {
       const mockUser: SafeUser = {
         id: '1',
         email: 'test@example.com',
@@ -57,23 +53,25 @@ describe('JwtStrategy', () => {
         emailConfirmationExpires: null,
         passwordResetToken: null,
         passwordResetExpires: null,
+        avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
       };
       const payload = { sub: '123', email: 'test@example.com' };
 
-      mockUsersService.findOne.mockResolvedValue(mockUser);
+      jest.spyOn(usersService, 'findOne').mockResolvedValue(mockUser);
 
       const result = await strategy.validate(payload);
+
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.findOne).toHaveBeenCalledWith('123');
+      expect(usersService.findOne).toHaveBeenCalledWith(payload.sub);
     });
 
-    it('should throw UnauthorizedException when user is not found', async () => {
+    it('should throw UserException if user not found', async () => {
       const payload = { sub: '123', email: 'test@example.com' };
 
-      mockUsersService.findOne.mockResolvedValue(null as unknown as SafeUser);
+      jest.spyOn(usersService, 'findOne').mockRejectedValue(UserException.notFound(payload.sub));
 
-      await expect(strategy.validate(payload)).rejects.toThrow(UnauthorizedException);
-      expect(mockUsersService.findOne).toHaveBeenCalledWith('123');
+      await expect(strategy.validate(payload)).rejects.toThrow(UserException);
+      expect(usersService.findOne).toHaveBeenCalledWith(payload.sub);
     });
   });
 });

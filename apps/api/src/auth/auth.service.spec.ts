@@ -38,6 +38,7 @@ const mockUser = {
   emailConfirmationExpires: SEVEN_DAYS_FROM_NOW,
   passwordResetToken: null,
   passwordResetExpires: null,
+  avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
 };
 
 const confirmedMockUser = {
@@ -150,18 +151,8 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(confirmedMockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
       const result = await service.validateUser('test@example.com', 'password123');
-      expect(result).toEqual({
-        id: confirmedMockUser.id,
-        email: confirmedMockUser.email,
-        name: confirmedMockUser.name,
-        createdAt: confirmedMockUser.createdAt,
-        updatedAt: confirmedMockUser.updatedAt,
-        isEmailConfirmed: confirmedMockUser.isEmailConfirmed,
-        emailConfirmationToken: confirmedMockUser.emailConfirmationToken,
-        emailConfirmationExpires: confirmedMockUser.emailConfirmationExpires,
-        passwordResetToken: confirmedMockUser.passwordResetToken,
-        passwordResetExpires: confirmedMockUser.passwordResetExpires,
-      });
+      const { password: _password, ...userWithoutPassword } = confirmedMockUser;
+      expect(result).toEqual(userWithoutPassword);
     });
 
     it('should return null when credentials are invalid', async () => {
@@ -200,19 +191,9 @@ describe('AuthService', () => {
         password: 'password123',
       });
 
+      const { password: _password, ...userWithoutPassword } = confirmedMockUser;
       expect(result).toEqual({
-        user: {
-          id: confirmedMockUser.id,
-          email: confirmedMockUser.email,
-          name: confirmedMockUser.name,
-          createdAt: confirmedMockUser.createdAt,
-          updatedAt: confirmedMockUser.updatedAt,
-          isEmailConfirmed: confirmedMockUser.isEmailConfirmed,
-          emailConfirmationToken: confirmedMockUser.emailConfirmationToken,
-          emailConfirmationExpires: confirmedMockUser.emailConfirmationExpires,
-          passwordResetToken: confirmedMockUser.passwordResetToken,
-          passwordResetExpires: confirmedMockUser.passwordResetExpires,
-        },
+        user: userWithoutPassword,
         accessToken: 'mocked-jwt-token',
         refreshToken: 'mocked-refresh-token',
       });
