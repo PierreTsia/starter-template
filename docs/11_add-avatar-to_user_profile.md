@@ -222,21 +222,22 @@ CLOUDINARY_UPLOAD_PRESET=your_preset
 
 #### Cloudinary Integration
 
-- [ ] Install Cloudinary SDK
+- [x] Install Cloudinary SDK
   ```bash
   pnpm add cloudinary
   ```
-- [ ] Set up environment variables
+- [x] Set up environment variables
   ```env
   CLOUDINARY_CLOUD_NAME=your_cloud_name
   CLOUDINARY_API_KEY=your_api_key
   CLOUDINARY_API_SECRET=your_api_secret
   ```
-- [ ] Create Cloudinary service
-  - [ ] Implement upload function with environment-based folder
-  - [ ] Implement delete function
-  - [ ] Add error handling
-  - [ ] Add logging
+- [x] Create Cloudinary service
+  - [x] Implement upload function with environment-based folder
+  - [x] Implement delete function
+  - [x] Add error handling
+  - [x] Add logging
+  - [x] test service
 
 #### Database & Models
 
