@@ -371,3 +371,118 @@ export const SYSTEM_ERROR_RESPONSES = {
     },
   },
 };
+
+export const FILE_ERROR_RESPONSES = {
+  INVALID_FILE_TYPE: {
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid file type',
+    schema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          example: 'FILE.INVALID_TYPE',
+          description: 'Error code for translation',
+        },
+        message: {
+          type: 'string',
+          example: 'Invalid file type. Only JPEG, PNG and GIF are allowed',
+          description: 'Translated error message',
+        },
+        status: {
+          type: 'number',
+          example: 400,
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              example: 'en',
+            },
+          },
+        },
+      },
+    },
+  },
+  FILE_TOO_LARGE: {
+    status: HttpStatus.BAD_REQUEST,
+    description: 'File size exceeds limit',
+    schema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          example: 'FILE.TOO_LARGE',
+          description: 'Error code for translation',
+        },
+        message: {
+          type: 'string',
+          example: 'File too large. Maximum size is 5MB',
+          description: 'Translated error message',
+        },
+        status: {
+          type: 'number',
+          example: 400,
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              example: 'en',
+            },
+          },
+        },
+      },
+    },
+  },
+  UPLOAD_FAILED: {
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Failed to upload file',
+    schema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          example: 'FILE.UPLOAD_FAILED',
+          description: 'Error code for translation',
+        },
+        message: {
+          type: 'string',
+          example: 'Failed to upload image',
+          description: 'Translated error message',
+        },
+        status: {
+          type: 'number',
+          example: 500,
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              example: 'en',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const HEALTH_RESPONSES = {
+  OK: {
+    status: HttpStatus.OK,
+    description: 'API is healthy',
+    schema: {
+      type: 'object',
+      properties: {
+        status: {
+          type: 'string',
+          example: 'ok',
+        },
+      },
+    },
+  },
+};

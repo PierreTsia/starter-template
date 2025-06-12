@@ -38,7 +38,6 @@
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "name": "Name",
-
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "switchToRegister": "Create an account",
@@ -80,6 +79,7 @@
       },
       "resend": {
         "title": "Resend confirmation email",
+        "description": "We'll send you a new confirmation link to verify your email address",
         "submit": "Send new confirmation link"
       }
     },
@@ -112,7 +112,24 @@
     }
   },
   "profile": {
-    "memberSince": "Member Since"
+    "memberSince": "Member Since",
+    "avatar": {
+      "upload": {
+        "title": "Upload New Avatar",
+        "description": "Upload your new avatar here",
+        "button": "Upload Avatar",
+        "uploading": "Uploading...",
+        "dragAndDrop": "Drag and drop your image here, or click to select",
+        "supportedFormats": "Supported formats: JPEG, PNG, GIF",
+        "maxSize": "Maximum file size: 5MB",
+        "preview": "Preview",
+        "success": "Avatar uploaded successfully",
+        "error": {
+          "tooLarge": "File is too large. Maximum size is 5MB",
+          "failed": "Failed to upload avatar. Please try again"
+        }
+      }
+    }
   },
   "validation": {
     "required": "This field is required",

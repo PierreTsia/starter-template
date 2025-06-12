@@ -7,6 +7,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { validationSchema } from './config/validation.schema';
@@ -40,6 +41,7 @@ import { UsersModule } from './users/users.module';
     HealthModule,
     LoggerModule,
     EmailModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [

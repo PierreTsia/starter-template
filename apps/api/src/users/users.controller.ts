@@ -11,7 +11,10 @@ import {
   UseGuards,
   Request,
   Headers,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -20,12 +23,18 @@ import {
   USER_ERROR_RESPONSES,
   VALIDATION_ERROR_RESPONSES,
   createApiResponse,
+  FILE_ERROR_RESPONSES,
 } from '../common/swagger/schemas';
+import { multerConfig } from '../config/multer.config';
 import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+
+interface RequestWithUser extends Request {
+  user: User;
+}
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -195,5 +204,25 @@ export class UsersController {
       },
       { userId: id }
     );
+  }
+
+  @ApiOperation({ summary: 'Upload user avatar' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Avatar uploaded successfully',
+  })
+  @createApiResponse(FILE_ERROR_RESPONSES.INVALID_FILE_TYPE)
+  @createApiResponse(FILE_ERROR_RESPONSES.FILE_TOO_LARGE)
+  @createApiResponse(FILE_ERROR_RESPONSES.UPLOAD_FAILED)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(USER_ERROR_RESPONSES.FORBIDDEN)
+  @Post('avatar')
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadAvatar(
+    @Request() req: RequestWithUser,
+    @Headers('accept-language') acceptLanguage: string,
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<Partial<User>> {
+    return this.usersService.uploadAvatar(req.user.id, file, acceptLanguage);
   }
 }

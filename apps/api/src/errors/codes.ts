@@ -33,6 +33,11 @@ export const ErrorCodes = {
   SYSTEM: {
     UNKNOWN_ERROR: 'SYSTEM.UNKNOWN_ERROR',
   },
+  CLOUDINARY: {
+    UPLOAD_FAILED: 'CLOUDINARY.UPLOAD_FAILED',
+    DELETE_FAILED: 'CLOUDINARY.DELETE_FAILED',
+    INVALID_FILE: 'CLOUDINARY.INVALID_FILE',
+  },
 } as const;
 
 type ErrorCodeValues = {

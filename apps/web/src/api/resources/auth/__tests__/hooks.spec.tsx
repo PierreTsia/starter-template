@@ -58,6 +58,7 @@ describe('Auth Hooks', () => {
         email: 'test@example.com',
         name: 'Test User',
         createdAt: new Date().toISOString(),
+        avatarUrl: 'https://example.com/avatar.png',
       };
 
       vi.mocked(authApi.login).mockResolvedValueOnce({
@@ -115,6 +116,7 @@ describe('Auth Hooks', () => {
         email: 'test@example.com',
         name: 'Test User',
         createdAt: new Date().toISOString(),
+        avatarUrl: 'https://example.com/avatar.png',
       };
 
       vi.mocked(authApi.register).mockResolvedValueOnce({
@@ -339,6 +341,7 @@ describe('Auth Hooks', () => {
         email: 'test@example.com',
         name: 'Test User',
         createdAt: new Date().toISOString(),
+        avatarUrl: 'https://example.com/avatar.png',
       };
 
       vi.mocked(authApi.me).mockResolvedValueOnce(mockUser);

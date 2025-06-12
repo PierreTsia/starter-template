@@ -32,5 +32,10 @@
   },
   "SYSTEM": {
     "UNKNOWN_ERROR": "Une erreur inattendue s'est produite"
+  },
+  "CLOUDINARY": {
+    "UPLOAD_FAILED": "Échec du téléchargement de l'image. Veuillez réessayer",
+    "DELETE_FAILED": "Échec de la suppression de l'image. Veuillez réessayer",
+    "INVALID_FILE": "Format de fichier invalide. Veuillez télécharger une image valide"
   }
 }
