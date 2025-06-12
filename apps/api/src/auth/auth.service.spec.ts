@@ -343,6 +343,25 @@ describe('AuthService', () => {
       );
     });
 
+    it('should handle refresh token with Bearer prefix', async () => {
+      mockRefreshTokenService.validateRefreshToken.mockResolvedValueOnce({ userId: mockUser.id });
+      mockUsersService.findOne.mockResolvedValueOnce(mockUser);
+
+      const result = await service.refreshTokens('Bearer valid-refresh-token');
+
+      expect(result).toEqual({
+        user: mockUser,
+        accessToken: 'mocked-jwt-token',
+        refreshToken: 'mocked-refresh-token',
+      });
+      expect(mockRefreshTokenService.validateRefreshToken).toHaveBeenCalledWith(
+        'valid-refresh-token'
+      );
+      expect(mockRefreshTokenService.revokeRefreshToken).toHaveBeenCalledWith(
+        'Bearer valid-refresh-token'
+      );
+    });
+
     it('should throw UnauthorizedException when refresh token is invalid', async () => {
       mockRefreshTokenService.validateRefreshToken.mockResolvedValueOnce(null);
 
