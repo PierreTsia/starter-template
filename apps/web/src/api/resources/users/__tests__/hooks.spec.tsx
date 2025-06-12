@@ -64,7 +64,7 @@ describe('useUser', () => {
       const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
       const mockError = new Error('Upload failed');
 
-      (uploadAvatar as jest.Mock).mockRejectedValueOnce(mockError);
+      (uploadAvatar as Mock).mockRejectedValueOnce(mockError);
 
       const { result } = renderHook(() => useUser(), { wrapper });
 
