@@ -202,4 +202,67 @@ describe('CloudinaryService', () => {
       );
     });
   });
+
+  describe('extractPublicIdFromUrl', () => {
+    it('should extract publicId from valid Cloudinary URLs', () => {
+      const testCases = [
+        {
+          url: 'https://res.cloudinary.com/test-project/image/upload/v1749660169/test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.jpg',
+          expected:
+            'test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.jpg',
+        },
+        {
+          url: 'https://res.cloudinary.com/test-project/image/upload/v1749660169/test-project/prod/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.png',
+          expected:
+            'test-project/prod/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.png',
+        },
+        {
+          url: 'https://res.cloudinary.com/test-project/image/upload/v1749660169/test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.webp',
+          expected:
+            'test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.webp',
+        },
+      ];
+
+      testCases.forEach(({ url, expected }) => {
+        const result = service.extractPublicIdFromUrl(url);
+        expect(result).toBe(expected);
+      });
+    });
+
+    it('should return null for invalid URLs', () => {
+      const invalidUrls = [
+        'https://example.com/image.jpg',
+        'not-a-url',
+        'https://res.cloudinary.com/test-project/image/upload/v1749660169/invalid/path',
+        'https://res.cloudinary.com/test-project/image/upload/v1749660169/test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.txt',
+      ];
+
+      invalidUrls.forEach((url) => {
+        const result = service.extractPublicIdFromUrl(url);
+        expect(result).toBeNull();
+      });
+    });
+
+    it('should handle malformed URLs gracefully', () => {
+      const url =
+        'https://res.cloudinary.com/test-project/image/upload/v1749660169/test-project/dev/avatars/63e61cb7-61bb-4128-a426-93f0fd06bdd8/avatar.1749660168567.jpg';
+
+      // Mock String.prototype.match to throw
+      const originalMatch = String.prototype.match;
+      String.prototype.match = jest.fn().mockImplementationOnce(() => {
+        throw new Error('Regex failed');
+      });
+
+      const result = service.extractPublicIdFromUrl(url);
+      expect(result).toBeNull();
+      expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'Failed to extract publicId from URL',
+        expect.any(Error),
+        { url }
+      );
+
+      // Restore original match method
+      String.prototype.match = originalMatch;
+    });
+  });
 });
