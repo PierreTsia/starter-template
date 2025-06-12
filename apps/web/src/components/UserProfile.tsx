@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useMe } from '@/api/resources/auth/hooks';
+import { useUser } from '@/api/resources/users/hooks';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -45,7 +46,7 @@ const UploadNewAvatar = ({
   const { t } = useTranslation();
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
+  const { uploadAvatar } = useUser();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -67,6 +68,7 @@ const UploadNewAvatar = ({
     if (!file) return;
     // TODO: Implement upload
     console.log('Uploading file:', file);
+    uploadAvatar(file);
   };
 
   return (

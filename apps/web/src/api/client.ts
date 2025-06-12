@@ -20,9 +20,14 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
   const locale = getCurrentLocale();
 
   const baseHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     'Accept-Language': locale,
   };
+
+  // Only set Content-Type to application/json if not explicitly set and not FormData
+  if (!options?.headers && !(options?.body instanceof FormData)) {
+    baseHeaders['Content-Type'] = 'application/json';
+  }
+
   const customHeaders = options?.headers
     ? Object.fromEntries(Object.entries(options.headers).map(([k, v]) => [k, String(v)]))
     : {};
