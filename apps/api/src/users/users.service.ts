@@ -150,16 +150,54 @@ export class UsersService {
     return this.logger.logOperation(
       'uploadAvatar',
       async () => {
-        // Upload to Cloudinary
+        // Get current user to check for existing avatar
+        const currentUser = await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { avatarUrl: true },
+        });
+
+        if (!currentUser) {
+          throw UserException.notFound(userId, acceptLanguage);
+        }
+
+        // Upload new avatar
         const uploadResult = await this.cloudinaryService.uploadImage(file, userId, acceptLanguage);
 
         try {
           // Update user's avatar URL
-          return await this.prisma.user.update({
+          const updatedUser = await this.prisma.user.update({
             where: { id: userId },
             data: { avatarUrl: uploadResult.url },
             select: userSelect,
           });
+
+          // Clean up old avatar if it exists and is a Cloudinary URL
+          if (currentUser.avatarUrl) {
+            const oldPublicId = this.cloudinaryService.extractPublicIdFromUrl(
+              currentUser.avatarUrl
+            );
+            if (oldPublicId) {
+              try {
+                await this.cloudinaryService.deleteImage(oldPublicId);
+              } catch (error) {
+                // Log error but don't fail the operation
+                this.logger.errorWithMetadata('Failed to delete old avatar', error as Error, {
+                  userId,
+                  oldPublicId,
+                  oldUrl: currentUser.avatarUrl,
+                  error: error instanceof Error ? error.message : String(error),
+                });
+              }
+            } else {
+              // Not a Cloudinary URL (probably default avatar), no need to delete
+              this.logger.logWithMetadata('Skipping cleanup of non-Cloudinary avatar', {
+                userId,
+                avatarUrl: currentUser.avatarUrl,
+              });
+            }
+          }
+
+          return updatedUser;
         } catch (error: unknown) {
           if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
             throw UserException.notFound(userId, acceptLanguage);

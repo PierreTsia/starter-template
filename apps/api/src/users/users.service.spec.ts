@@ -39,12 +39,17 @@ describe('UsersService', () => {
   const mockLoggerService = {
     logOperation: jest
       .fn()
-      .mockImplementation((name: string, operation: () => Promise<unknown>) => operation()),
+      .mockImplementation(
+        (_operation: string, callback: () => Promise<unknown>, _metadata?: unknown) => callback()
+      ),
+    logWithMetadata: jest.fn(),
+    errorWithMetadata: jest.fn(),
   };
 
   const mockCloudinaryService = {
     uploadImage: jest.fn(),
     deleteImage: jest.fn(),
+    extractPublicIdFromUrl: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -276,49 +281,49 @@ describe('UsersService', () => {
       path: '/tmp/test.jpg',
     } as Express.Multer.File;
 
-    const mockUploadResult = {
-      url: 'https://cloudinary.com/test.jpg',
-      publicId: 'test-id',
-      version: '123',
-    };
-
     const mockUser = {
       id: '1',
-      email: 'test@test.com',
-      name: 'Test User',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isEmailConfirmed: true,
-      emailConfirmationToken: null,
-      emailConfirmationExpires: null,
-      passwordResetToken: null,
-      passwordResetExpires: null,
-      avatarUrl: 'https://cloudinary.com/test.jpg',
+      email: 'test@example.com',
+      avatarUrl: 'https://res.cloudinary.com/test-project/image/upload/v1/1/avatar.1234567890.jpg',
     };
 
-    it('should upload avatar and update user successfully', async () => {
+    const mockUploadResult = {
+      url: 'https://res.cloudinary.com/test-project/image/upload/v1/1/avatar.1234567890.jpg',
+      publicId: '1/avatar.1234567890',
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockCloudinaryService.uploadImage.mockResolvedValue(mockUploadResult);
       mockPrismaService.user.update.mockResolvedValue(mockUser);
+      mockCloudinaryService.extractPublicIdFromUrl.mockImplementation((url: string) => {
+        if (url === mockUser.avatarUrl) {
+          return '1/avatar.1234567890';
+        }
+        return null;
+      });
+    });
 
+    it('should upload avatar and update user successfully', async () => {
       const result = await service.uploadAvatar('1', mockFile, 'en');
 
       expect(result).toEqual(mockUser);
       expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
       expect(mockPrismaService.user.update).toHaveBeenCalledWith({
-        where: { id: '1' },
+        where: { id: mockUser.id },
         data: { avatarUrl: mockUploadResult.url },
         select: expect.any(Object) as Prisma.UserSelect,
       });
+      expect(mockCloudinaryService.deleteImage).toHaveBeenCalledWith('1/avatar.1234567890');
     });
 
     it('should throw UserException when user not found', async () => {
-      mockCloudinaryService.uploadImage.mockResolvedValue(mockUploadResult);
-      mockPrismaService.user.update.mockRejectedValue(
-        new PrismaClientKnownRequestError('User not found', { code: 'P2025', clientVersion: '1.0' })
-      );
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(UserException);
-      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
+      expect(mockCloudinaryService.uploadImage).not.toHaveBeenCalled();
+      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
     });
 
     it('should throw error when Cloudinary upload fails', async () => {
@@ -326,8 +331,30 @@ describe('UsersService', () => {
       mockCloudinaryService.uploadImage.mockRejectedValue(error);
 
       await expect(service.uploadAvatar('1', mockFile, 'en')).rejects.toThrow(error);
-      expect(mockCloudinaryService.uploadImage).toHaveBeenCalledWith(mockFile, mockUser.id, 'en');
       expect(mockPrismaService.user.update).not.toHaveBeenCalled();
+    });
+
+    it('should handle non-Cloudinary avatar URLs gracefully', async () => {
+      const userWithDefaultAvatar = {
+        ...mockUser,
+        avatarUrl: 'https://default-avatar.com/avatar.png',
+      };
+      mockPrismaService.user.findUnique.mockResolvedValue(userWithDefaultAvatar);
+
+      const result = await service.uploadAvatar('1', mockFile, 'en');
+
+      expect(result).toEqual(mockUser);
+      expect(mockCloudinaryService.deleteImage).not.toHaveBeenCalled();
+    });
+
+    it('should continue even if old avatar deletion fails', async () => {
+      mockCloudinaryService.deleteImage.mockRejectedValue(new Error('Delete failed'));
+
+      const result = await service.uploadAvatar('1', mockFile, 'en');
+
+      expect(result).toEqual(mockUser);
+      expect(mockCloudinaryService.deleteImage).toHaveBeenCalled();
+      expect(mockPrismaService.user.update).toHaveBeenCalled();
     });
   });
 });

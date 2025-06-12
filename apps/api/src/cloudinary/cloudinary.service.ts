@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
+import { extractPublicId } from 'cloudinary-build-url';
 
 import { LoggerService } from '../logger/logger.service';
 
@@ -70,7 +71,7 @@ export class CloudinaryService {
       }
 
       const timestamp = Date.now();
-      const publicId = `${this.folder}/${userId}/avatar.${timestamp}`;
+      const publicId = `${this.folder}/${userId}/avatar-${timestamp}`;
 
       const result = await cloudinary.uploader.upload(file.path, {
         public_id: publicId,
@@ -108,15 +109,26 @@ export class CloudinaryService {
     }
   }
 
-  async deleteImage(publicId: string, acceptLanguage?: string) {
+  async deleteImage(publicId: string, acceptLanguage?: string): Promise<void> {
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (error: unknown) {
-      this.logger.errorWithMetadata('Failed to delete image', error as Error, {
+      this.logger.errorWithMetadata('Failed to delete image from Cloudinary', error as Error, {
         publicId,
         folder: this.folder,
       });
       throw CloudinaryException.deleteFailed(acceptLanguage);
+    }
+  }
+
+  extractPublicIdFromUrl(url: string): string | null {
+    try {
+      return extractPublicId(url);
+    } catch (error: unknown) {
+      this.logger.errorWithMetadata('Failed to extract publicId from URL', error as Error, {
+        url,
+      });
+      return null;
     }
   }
 }
