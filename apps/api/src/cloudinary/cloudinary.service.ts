@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
+import { extractPublicId } from 'cloudinary-build-url';
 
 import { LoggerService } from '../logger/logger.service';
 
@@ -12,11 +13,6 @@ import { CloudinaryException } from './cloudinary.exception';
 export class CloudinaryService {
   private readonly folder: string;
   private projectName: string;
-
-  // Regex to extract publicId from Cloudinary URL
-  // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/project/env/avatars/userId/avatar.timestamp.ext
-  private readonly CLOUDINARY_PUBLIC_ID_REGEX =
-    /\/v\d+\/([^/]+\/[^/]+\/avatars\/[^/]+\/avatar\.[^/]+\.(?:jpg|jpeg|png|gif|webp))$/;
 
   constructor(
     private readonly configService: ConfigService,
@@ -75,7 +71,7 @@ export class CloudinaryService {
       }
 
       const timestamp = Date.now();
-      const publicId = `${this.folder}/${userId}/avatar.${timestamp}`;
+      const publicId = `${this.folder}/${userId}/avatar-${timestamp}`;
 
       const result = await cloudinary.uploader.upload(file.path, {
         public_id: publicId,
@@ -127,10 +123,8 @@ export class CloudinaryService {
 
   extractPublicIdFromUrl(url: string): string | null {
     try {
-      const matches = url.match(this.CLOUDINARY_PUBLIC_ID_REGEX);
-
-      return matches ? matches[1] : null;
-    } catch (error) {
+      return extractPublicId(url);
+    } catch (error: unknown) {
       this.logger.errorWithMetadata('Failed to extract publicId from URL', error as Error, {
         url,
       });
