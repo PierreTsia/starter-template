@@ -81,7 +81,6 @@
       "confirming": "Confirmation de votre email...",
       "success": {
         "title": "Email Confirmé !",
-
         "description": "Votre email a été confirmé avec succès",
         "goToLogin": "Aller à la Connexion",
         "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
@@ -97,6 +96,7 @@
       },
       "resend": {
         "title": "Renvoyer l'email de confirmation",
+        "description": "Nous vous enverrons un nouveau lien de confirmation pour vérifier votre adresse email",
         "submit": "Envoyer un nouveau lien de confirmation"
       }
     }

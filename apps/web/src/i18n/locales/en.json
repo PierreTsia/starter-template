@@ -79,6 +79,7 @@
       },
       "resend": {
         "title": "Resend confirmation email",
+        "description": "We'll send you a new confirmation link to verify your email address",
         "submit": "Send new confirmation link"
       }
     },
