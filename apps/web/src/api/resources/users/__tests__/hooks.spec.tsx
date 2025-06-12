@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, vi, expect, it, beforeEach } from 'vitest';
+import { describe, vi, expect, it, beforeEach, Mock } from 'vitest';
 
 import { uploadAvatar } from '../api';
 import { useUser } from '../hooks';
@@ -44,7 +44,7 @@ describe('useUser', () => {
         createdAt: '2024-01-01T00:00:00.000Z',
       };
 
-      (uploadAvatar as jest.Mock).mockResolvedValueOnce(mockResponse);
+      (uploadAvatar as Mock).mockResolvedValueOnce(mockResponse);
 
       const { result } = renderHook(() => useUser(), { wrapper });
 
