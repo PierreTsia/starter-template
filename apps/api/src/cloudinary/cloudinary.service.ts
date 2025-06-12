@@ -14,9 +14,9 @@ export class CloudinaryService {
   private projectName: string;
 
   // Regex to extract publicId from Cloudinary URL
-  // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/project-name/env/avatars/userId/avatar.timestamp.ext
+  // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/project/env/avatars/userId/avatar.timestamp.ext
   private readonly CLOUDINARY_PUBLIC_ID_REGEX =
-    /\/v\d+\/([^/]+\/[^/]+\/avatars\/[^/]+\/[^/]+\.(?:jpg|jpeg|png|gif|webp))$/;
+    /\/v\d+\/([^/]+\/[^/]+\/avatars\/[^/]+\/avatar\.[^/]+\.(?:jpg|jpeg|png|gif|webp))$/;
 
   constructor(
     private readonly configService: ConfigService,
@@ -117,7 +117,7 @@ export class CloudinaryService {
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (error: unknown) {
-      this.logger.errorWithMetadata('Failed to delete image', error as Error, {
+      this.logger.errorWithMetadata('Failed to delete image from Cloudinary', error as Error, {
         publicId,
         folder: this.folder,
       });
@@ -128,6 +128,7 @@ export class CloudinaryService {
   extractPublicIdFromUrl(url: string): string | null {
     try {
       const matches = url.match(this.CLOUDINARY_PUBLIC_ID_REGEX);
+
       return matches ? matches[1] : null;
     } catch (error) {
       this.logger.errorWithMetadata('Failed to extract publicId from URL', error as Error, {

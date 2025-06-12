@@ -193,7 +193,7 @@ describe('CloudinaryService', () => {
 
       await expect(service.deleteImage(mockPublicId)).rejects.toThrow(CloudinaryException);
       expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
-        'Failed to delete image',
+        'Failed to delete image from Cloudinary',
         error,
         {
           publicId: mockPublicId,

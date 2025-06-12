@@ -184,6 +184,8 @@ export class UsersService {
                 this.logger.errorWithMetadata('Failed to delete old avatar', error as Error, {
                   userId,
                   oldPublicId,
+                  oldUrl: currentUser.avatarUrl,
+                  error: error instanceof Error ? error.message : String(error),
                 });
               }
             } else {
