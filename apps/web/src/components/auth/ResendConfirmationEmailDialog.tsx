@@ -3,7 +3,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -52,6 +58,7 @@ export const ResendConfirmationEmailDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('auth.confirmEmail.resend.title')}</DialogTitle>
+          <DialogDescription>{t('auth.confirmEmail.resend.description')}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">

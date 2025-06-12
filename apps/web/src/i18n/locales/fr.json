@@ -81,6 +81,7 @@
       "confirming": "Confirmation de votre email...",
       "success": {
         "title": "Email Confirmé !",
+
         "description": "Votre email a été confirmé avec succès",
         "goToLogin": "Aller à la Connexion",
         "canLogin": "Vous pouvez maintenant vous connecter à votre compte"
@@ -101,7 +102,18 @@
     }
   },
   "profile": {
-    "memberSince": "Membre depuis"
+    "memberSince": "Membre depuis",
+    "avatar": {
+      "upload": {
+        "title": "Télécharger un nouvel avatar",
+        "description": "Téléchargez votre nouvel avatar ici",
+        "button": "Télécharger l'avatar",
+        "dragAndDrop": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
+        "supportedFormats": "Formats supportés : JPEG, PNG, GIF",
+        "maxSize": "Taille maximale : 5MB",
+        "preview": "Aperçu"
+      }
+    }
   },
   "validation": {
     "required": "Ce champ est requis",

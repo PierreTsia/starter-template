@@ -1,4 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Pencil } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -6,6 +8,14 @@ import { z } from 'zod';
 import { useMe } from '@/api/resources/auth/hooks';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -21,11 +31,90 @@ const profileSchema = z.object({
   displayName: z.string().min(2, 'validation.nameTooShort'),
 });
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 type ProfileFormData = z.infer<typeof profileSchema>;
+
+const UploadNewAvatar = ({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => {
+  const { t } = useTranslation();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      // Check file size (5MB)
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        // TODO: Show error toast
+        return;
+      }
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const handleUpload = () => {
+    if (!file) return;
+    // TODO: Implement upload
+    console.log('Uploading file:', file);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('profile.avatar.upload.title')}</DialogTitle>
+          <DialogDescription>{t('profile.avatar.upload.description')}</DialogDescription>
+        </DialogHeader>
+        <div className="py-4 w-full">
+          <div className="grid w-full items-center gap-4">
+            {preview && (
+              <div className="flex justify-center">
+                <Avatar className="size-32">
+                  <AvatarImage src={preview} />
+                  <AvatarFallback>{t('profile.avatar.upload.preview')}</AvatarFallback>
+                </Avatar>
+              </div>
+            )}
+            <Input
+              id="avatar"
+              type="file"
+              accept="image/jpeg,image/png,image/gif"
+              className="cursor-pointer w-full"
+              onChange={handleFileChange}
+            />
+            <p className="text-sm text-muted-foreground w-full">
+              {t('profile.avatar.upload.supportedFormats')}
+            </p>
+            <p className="text-sm text-muted-foreground w-full">
+              {t('profile.avatar.upload.maxSize')}
+            </p>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleUpload} disabled={!file} className="w-full">
+            {t('profile.avatar.upload.button')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const UserProfile = () => {
   const { t, formatDate } = useTranslation();
   const { data: me } = useMe();
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -49,10 +138,18 @@ export const UserProfile = () => {
   return (
     <div>
       <div className="flex items-center gap-4 mb-4">
-        <Avatar className="size-16">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
+        <div className="relative group">
+          <Avatar className="size-16">
+            <AvatarImage src={me?.avatarUrl} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <button
+            className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => setIsUploadOpen(true)}
+          >
+            <Pencil className="size-6 text-white" />
+          </button>
+        </div>
         <div>
           <h3 className="text-lg font-semibold leading-tight">{me?.name}</h3>
           <p className="text-sm text-muted-foreground mt-1">{me?.email}</p>
@@ -92,6 +189,7 @@ export const UserProfile = () => {
           </div>
         </form>
       </Form>
+      <UploadNewAvatar open={isUploadOpen} onOpenChange={setIsUploadOpen} />
     </div>
   );
 };

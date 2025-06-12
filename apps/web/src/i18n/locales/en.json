@@ -38,7 +38,6 @@
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "name": "Name",
-
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "switchToRegister": "Create an account",
@@ -112,7 +111,18 @@
     }
   },
   "profile": {
-    "memberSince": "Member Since"
+    "memberSince": "Member Since",
+    "avatar": {
+      "upload": {
+        "title": "Upload New Avatar",
+        "description": "Upload your new avatar here",
+        "button": "Upload Avatar",
+        "dragAndDrop": "Drag and drop your image here, or click to select",
+        "supportedFormats": "Supported formats: JPEG, PNG, GIF",
+        "maxSize": "Maximum file size: 5MB",
+        "preview": "Preview"
+      }
+    }
   },
   "validation": {
     "required": "This field is required",
