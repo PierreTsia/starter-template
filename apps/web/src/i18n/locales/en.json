@@ -118,10 +118,16 @@
         "title": "Upload New Avatar",
         "description": "Upload your new avatar here",
         "button": "Upload Avatar",
+        "uploading": "Uploading...",
         "dragAndDrop": "Drag and drop your image here, or click to select",
         "supportedFormats": "Supported formats: JPEG, PNG, GIF",
         "maxSize": "Maximum file size: 5MB",
-        "preview": "Preview"
+        "preview": "Preview",
+        "success": "Avatar uploaded successfully",
+        "error": {
+          "tooLarge": "File is too large. Maximum size is 5MB",
+          "failed": "Failed to upload avatar. Please try again"
+        }
       }
     }
   },

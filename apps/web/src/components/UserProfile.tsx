@@ -46,13 +46,15 @@ const UploadNewAvatar = ({
   const { t } = useTranslation();
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const { uploadAvatar } = useUser();
+  const { uploadAvatar, isUploading } = useUser();
+  const { refetch: refetchMe } = useMe();
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       // Check file size (5MB)
       if (selectedFile.size > MAX_FILE_SIZE) {
-        // TODO: Show error toast
+        toast.error(t('profile.avatar.upload.error.tooLarge'));
         return;
       }
       setFile(selectedFile);
@@ -64,11 +66,17 @@ const UploadNewAvatar = ({
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
-    // TODO: Implement upload
-    console.log('Uploading file:', file);
-    uploadAvatar(file);
+    try {
+      await uploadAvatar(file);
+      toast.success(t('profile.avatar.upload.success'));
+      await refetchMe(); // Refetch user data to update avatar
+      onOpenChange(false); // Close modal only on success
+    } catch (error) {
+      console.error(error);
+      toast.error(t('profile.avatar.upload.error.failed'));
+    }
   };
 
   return (
@@ -94,6 +102,7 @@ const UploadNewAvatar = ({
               accept="image/jpeg,image/png,image/gif"
               className="cursor-pointer w-full"
               onChange={handleFileChange}
+              disabled={isUploading}
             />
             <p className="text-sm text-muted-foreground w-full">
               {t('profile.avatar.upload.supportedFormats')}
@@ -104,8 +113,8 @@ const UploadNewAvatar = ({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleUpload} disabled={!file} className="w-full">
-            {t('profile.avatar.upload.button')}
+          <Button onClick={handleUpload} disabled={!file || isUploading} className="w-full">
+            {isUploading ? t('profile.avatar.upload.uploading') : t('profile.avatar.upload.button')}
           </Button>
         </DialogFooter>
       </DialogContent>

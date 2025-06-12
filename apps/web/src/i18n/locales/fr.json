@@ -108,10 +108,16 @@
         "title": "Télécharger un nouvel avatar",
         "description": "Téléchargez votre nouvel avatar ici",
         "button": "Télécharger l'avatar",
+        "uploading": "Téléchargement en cours...",
         "dragAndDrop": "Glissez et déposez votre image ici, ou cliquez pour sélectionner",
         "supportedFormats": "Formats supportés : JPEG, PNG, GIF",
-        "maxSize": "Taille maximale : 5MB",
-        "preview": "Aperçu"
+        "maxSize": "Taille maximale du fichier : 5MB",
+        "preview": "Aperçu",
+        "success": "Avatar téléchargé avec succès",
+        "error": {
+          "tooLarge": "Le fichier est trop volumineux. Taille maximale : 5MB",
+          "failed": "Échec du téléchargement de l'avatar. Veuillez réessayer"
+        }
       }
     }
   },

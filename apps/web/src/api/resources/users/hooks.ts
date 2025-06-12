@@ -14,6 +14,7 @@ export const useUser = () => {
   });
 
   return {
-    uploadAvatar: uploadAvatarMutation.mutate,
+    uploadAvatar: uploadAvatarMutation.mutateAsync,
+    isUploading: uploadAvatarMutation.isPending,
   };
 };
