@@ -19,12 +19,10 @@ jest.mock('cloudinary', () => ({
 }));
 
 // Mock cloudinary-build-url
-jest.mock('cloudinary-build-url', () => {
-  return {
-    __esModule: true,
-    extractPublicId: jest.fn(),
-  };
-});
+const mockExtractPublicId = jest.fn<string | null, [string]>();
+jest.mock('cloudinary-build-url', () => ({
+  extractPublicId: (url: string): string | null => mockExtractPublicId(url),
+}));
 
 describe('CloudinaryService', () => {
   let service: CloudinaryService;
@@ -72,6 +70,14 @@ describe('CloudinaryService', () => {
     service = module.service;
     loggerService = module.loggerService;
     configService = module.configService;
+
+    // Mock extractPublicId implementation
+    mockExtractPublicId.mockImplementation((url: string) => {
+      if (url.includes('cloudinary.com')) {
+        return 'test-image';
+      }
+      throw new Error('Invalid URL');
+    });
   });
 
   it('should be defined', () => {
@@ -208,6 +214,25 @@ describe('CloudinaryService', () => {
           publicId: mockPublicId,
           folder: 'test-project/dev/avatars',
         }
+      );
+    });
+  });
+
+  describe('extractPublicIdFromUrl', () => {
+    it('should return public ID when URL is valid', () => {
+      const url = 'https://res.cloudinary.com/test-cloud/image/upload/v1234567890/test-image.jpg';
+      const result = service.extractPublicIdFromUrl(url);
+      expect(result).toBe('test-image');
+    });
+
+    it('should return null and log error when URL is invalid', () => {
+      const url = 'invalid-url';
+      const result = service.extractPublicIdFromUrl(url);
+      expect(result).toBeNull();
+      expect(loggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'Failed to extract publicId from URL',
+        expect.any(Error),
+        { url }
       );
     });
   });
