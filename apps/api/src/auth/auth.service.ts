@@ -148,7 +148,10 @@ export class AuthService {
 
   async refreshTokens(refreshToken: string) {
     return this.logger.logOperation('Token refresh', async () => {
-      const payload = await this.refreshTokenService.validateRefreshToken(refreshToken);
+      // Strip 'Bearer ' prefix if present
+      const cleanToken = refreshToken.replace(/^Bearer\s+/i, '');
+
+      const payload = await this.refreshTokenService.validateRefreshToken(cleanToken);
       if (!payload) {
         throw new UnauthorizedException('Invalid refresh token');
       }
