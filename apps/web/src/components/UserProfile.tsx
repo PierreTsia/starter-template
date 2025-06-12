@@ -90,7 +90,7 @@ const UploadNewAvatar = ({
           <div className="grid w-full items-center gap-4">
             {preview && (
               <div className="flex justify-center">
-                <Avatar className="size-32">
+                <Avatar className="size-32" data-testid="user-avatar">
                   <AvatarImage src={preview} />
                   <AvatarFallback>{t('profile.avatar.upload.preview')}</AvatarFallback>
                 </Avatar>
@@ -99,6 +99,7 @@ const UploadNewAvatar = ({
             <Input
               id="avatar"
               type="file"
+              data-testid="avatar-input"
               accept="image/jpeg,image/png,image/gif"
               className="cursor-pointer w-full"
               onChange={handleFileChange}
@@ -155,6 +156,7 @@ export const UserProfile = () => {
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <button
+            data-testid="edit-avatar"
             className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => setIsUploadOpen(true)}
           >
