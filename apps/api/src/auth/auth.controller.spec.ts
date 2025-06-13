@@ -5,7 +5,7 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -79,6 +79,19 @@ describe('AuthController', () => {
         return true;
       },
     };
+
+    // Mock ConfigService for Google OAuth
+    const mockConfigService = {
+      get: jest.fn((key: string): string | undefined => {
+        const config: Record<string, string> = {
+          GOOGLE_CLIENT_ID: 'mock-client-id',
+          GOOGLE_CLIENT_SECRET: 'mock-client-secret',
+          GOOGLE_CALLBACK_URL: 'http://localhost:3000/auth/google/callback',
+        };
+        return config[key];
+      }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ThrottlerModule.forRoot([
@@ -113,6 +126,10 @@ describe('AuthController', () => {
             validateRefreshToken: jest.fn().mockResolvedValue({ userId: '1' }),
           },
         },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
         Logger,
         GoogleStrategy,
       ],
@@ -143,7 +160,9 @@ describe('AuthController', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
     jest.clearAllMocks();
     jest.resetAllMocks();
   });
