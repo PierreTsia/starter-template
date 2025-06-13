@@ -297,24 +297,19 @@ export class AuthService {
   }
 
   async updatePassword(
-    userId: string,
+    userEmail: string,
     updatePasswordDto: UpdatePasswordDto,
     acceptLanguage?: string
   ): Promise<{ message: string }> {
     try {
-      const user = await this.usersService.findOne(userId);
+      const user = await this.usersService.findByEmail(userEmail);
       if (!user) {
-        throw AuthException.userNotFound(acceptLanguage);
-      }
-
-      const userWithPassword = await this.usersService.findByEmail(user.email);
-      if (!userWithPassword) {
         throw AuthException.userNotFound(acceptLanguage);
       }
 
       const isPasswordValid = await bcrypt.compare(
         updatePasswordDto.currentPassword,
-        userWithPassword.password
+        user.password
       );
 
       if (!isPasswordValid) {
@@ -327,15 +322,15 @@ export class AuthService {
       }
 
       const hashedPassword = await bcrypt.hash(updatePasswordDto.newPassword, 10);
-      await this.usersService.update(userId, { password: hashedPassword });
+      await this.usersService.update(user.id, { password: hashedPassword });
 
       return { message: 'Password updated successfully' };
     } catch (error: unknown) {
       if (error instanceof Error) {
-        this.logger.errorWithMetadata(`Failed to update password for user ${userId}`, error);
+        this.logger.errorWithMetadata(`Failed to update password for user ${userEmail}`, error);
       } else {
         this.logger.errorWithMetadata(
-          `Failed to update password for user ${userId}: Unknown error`
+          `Failed to update password for user ${userEmail}: Unknown error`
         );
       }
       throw error;

@@ -10,7 +10,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { User } from '@prisma/client';
-import { Request } from 'express';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,14 +17,11 @@ import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { RequestWithUser } from './decorators/current-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { RefreshTokenService } from './refresh-token.service';
-
-interface RequestWithUser extends Request {
-  user: User;
-}
 
 interface ValidationErrorResponse {
   statusCode: number;
@@ -338,7 +334,11 @@ describe('AuthController', () => {
         .expect(200);
 
       expect(response.body).toEqual({ message: 'Password updated successfully' });
-      expect(mockAuthService.updatePassword).toHaveBeenCalledWith('1', updatePasswordDto, 'en');
+      expect(mockAuthService.updatePassword).toHaveBeenCalledWith(
+        mockUser.email,
+        updatePasswordDto,
+        'en'
+      );
     });
 
     it('should return 400 when current password is empty', async () => {

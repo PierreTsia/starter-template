@@ -17,7 +17,7 @@ export class ResetPasswordDto {
       'New password (minimum 8 characters, must contain uppercase, lowercase, number and special character)',
     example: 'NewStrongP@ssw0rd',
     minLength: 8,
-    pattern: PASSWORD_PATTERN.toString(),
+    pattern: PASSWORD_PATTERN.source,
   })
   @IsString()
   @MinLength(8)

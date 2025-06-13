@@ -159,6 +159,6 @@ export class AuthController {
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Headers('accept-language') acceptLanguage?: string
   ): Promise<{ message: string }> {
-    return this.authService.updatePassword(user.id, updatePasswordDto, acceptLanguage);
+    return this.authService.updatePassword(user.email, updatePasswordDto, acceptLanguage);
   }
 }
