@@ -1,11 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, vi, expect, it, beforeEach, Mock } from 'vitest';
 
 import { uploadAvatar, updateName } from '../api';
 import { useUser } from '../hooks';
+
+import { TestApp } from '@/test-utils';
 
 // Mock the API
 vi.mock('../api', () => ({
@@ -23,9 +24,9 @@ const queryClient = new QueryClient({
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+  <TestApp>
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  </MemoryRouter>
+  </TestApp>
 );
 
 describe('useUser', () => {
