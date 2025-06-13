@@ -211,4 +211,19 @@ describe('authApi', () => {
       expect(mocks.localStorage.removeItem).toHaveBeenCalledWith('refreshToken');
     });
   });
+
+  describe('updatePassword', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockResponse = { message: 'Password updated' };
+      mocks.apiFetch.mockResolvedValueOnce(mockResponse);
+
+      const result = await authApi.updatePassword('OldPassword!', 'NewPassword!');
+
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/auth/password', {
+        method: 'PUT',
+        body: JSON.stringify({ currentPassword: 'OldPassword!', newPassword: 'NewPassword!' }),
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
 });
