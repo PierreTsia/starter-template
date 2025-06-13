@@ -69,29 +69,29 @@ export class UpdatePasswordDto {
 
 ### Error Cases
 
-- [ ] Invalid password format
-- [ ] Current password incorrect
-- [ ] New password same as current password
-- [ ] Unauthorized access
-- [ ] User not found
+- [x] Invalid password format
+- [x] Current password incorrect
+- [x] New password same as current password
+- [x] Unauthorized access
+- [x] User not found
 
 ### Testing
 
-- [ ] DTO validation works
-- [ ] Password update works
-- [ ] Current password verification works
-- [ ] New password different check works
-- [ ] Error cases handled
-- [ ] Authorization works
-- [ ] Logging works
+- [x] DTO validation works
+- [x] Password update works
+- [x] Current password verification works
+- [x] New password different check works
+- [x] Error cases handled
+- [x] Authorization works
+- [x] Logging works
 
 ## Definition of Done
 
-- [ ] Endpoint implemented
-- [ ] DTO validation works
-- [ ] Password verification works
-- [ ] New password different check works
-- [ ] Error handling implemented
-- [ ] Tests written and passing
-- [ ] Swagger documentation updated
-- [ ] Logging implemented
+- [x] Endpoint implemented
+- [x] DTO validation works
+- [x] Password verification works
+- [x] New password different check works
+- [x] Error handling implemented
+- [x] Tests written and passing
+- [x] Swagger documentation updated
+- [x] Logging implemented
