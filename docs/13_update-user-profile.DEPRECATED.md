@@ -49,10 +49,6 @@ Implement secure user profile update functionality allowing users to modify thei
   - [ ] At least one number
   - [ ] At least one special character
   - [ ] Password confirmation match
-- [ ] Account deletion validation:
-  - [ ] Exact confirmation text match required
-  - [ ] Final confirmation dialog
-  - [ ] Clear warning about consequences
 
 ## Backend Implementation
 
@@ -63,21 +59,14 @@ Implement secure user profile update functionality allowing users to modify thei
   - [ ] Add middleware to check user ID matches
   - [ ] Log unauthorized attempts
 - [ ] Password security:
-  - [ ] Hash new passwords before storage
   - [ ] Verify current password before allowing changes
-  - [ ] Implement rate limiting for password attempts
-  - [ ] Add password history to prevent reuse
-- [ ] Account deletion security:
-  - [ ] Implement soft delete
-  - [ ] Add deletion audit log
-  - [ ] Implement deletion cooldown period
-  - [ ] Add rate limiting for deletion attempts
+  - [ ] Enforce password format requirements through DTO validation
 
 ### API Endpoints
 
-- [ ] Enhance existing PUT endpoint:
+- [ ] Add profile update endpoint:
   ```typescript
-  PUT /api/users/:id
+  PUT / api / users / profile;
   ```
   - [ ] Add authorization check
   - [ ] Add password validation
@@ -94,15 +83,6 @@ Implement secure user profile update functionality allowing users to modify thei
 
 ### Database Changes
 
-- [ ] Add password history table:
-  ```typescript
-  PasswordHistory {
-    id: string;
-    userId: string;
-    passwordHash: string;
-    createdAt: Date;
-  }
-  ```
 - [ ] Add user deletion tracking:
   ```typescript
   UserDeletion {
@@ -142,10 +122,7 @@ Implement secure user profile update functionality allowing users to modify thei
 - [ ] Profile update endpoint works
 - [ ] Authorization checks work
 - [ ] Password validation works
-- [ ] Password hashing works
 - [ ] Error handling is implemented
-- [ ] Rate limiting works
-- [ ] Password history works
 - [ ] Account deletion works
 - [ ] Cloudinary cleanup works
 - [ ] Deletion audit logging works
@@ -157,7 +134,6 @@ Implement secure user profile update functionality allowing users to modify thei
 - [ ] Authorization works
 - [ ] Validation works
 - [ ] Error handling works
-- [ ] Rate limiting works
 - [ ] Edge cases are handled
 - [ ] Account deletion works
 - [ ] Cloudinary cleanup works
@@ -255,8 +231,6 @@ interface UserProfileService {
 
   verifyPassword(userId: string, password: string): Promise<boolean>;
 
-  checkPasswordHistory(userId: string, password: string): Promise<boolean>;
-
   deleteAccount(userId: string): Promise<void>;
 }
 ```
@@ -279,10 +253,8 @@ interface UserProfileService {
 - [ ] Unauthorized access
 - [ ] Invalid input
 - [ ] Password validation failed
-- [ ] Rate limit exceeded
 - [ ] Database error
 - [ ] Cloudinary cleanup failed
-- [ ] Deletion cooldown active
 
 ## Implementation Battle Plan
 
@@ -290,8 +262,6 @@ interface UserProfileService {
 
 - [ ] Implement authorization middleware
 - [ ] Add password validation
-- [ ] Set up password history
-- [ ] Add rate limiting
 - [ ] Test security measures
 
 ### Phase 2: Frontend Forms
