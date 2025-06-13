@@ -19,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   USER_ERROR_RESPONSES,
@@ -34,10 +35,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateNameDto } from './dto/update-name.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-
-interface RequestWithUser extends Request {
-  user: User;
-}
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -222,11 +219,11 @@ export class UsersController {
   @Post('avatar')
   @UseInterceptors(FileInterceptor('file', multerConfig))
   async uploadAvatar(
-    @Request() req: RequestWithUser,
+    @CurrentUser() user: User,
     @Headers('accept-language') acceptLanguage: string,
     @UploadedFile() file: Express.Multer.File
   ): Promise<Partial<User>> {
-    return this.usersService.uploadAvatar(req.user.id, file, acceptLanguage);
+    return this.usersService.uploadAvatar(user.id, file, acceptLanguage);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -238,10 +235,10 @@ export class UsersController {
   @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
   @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_NAME)
   async updateName(
-    @Request() req: { user: User },
+    @CurrentUser() user: User,
     @Body() updateNameDto: UpdateNameDto,
     @Headers('accept-language') acceptLanguage?: string
   ) {
-    return this.usersService.updateName(req.user.id, updateNameDto, acceptLanguage);
+    return this.usersService.updateName(user.id, updateNameDto, acceptLanguage);
   }
 }
