@@ -176,23 +176,20 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
-    // req.user is set by GoogleStrategy.validate
     const user = req.user as { email: string; id: string };
     if (!user) {
-      // Redirect to frontend with error
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
       return res.redirect(`${frontendUrl}/auth/error?message=Google%20login%20failed`);
     }
 
-    // Generate tokens using your existing AuthService logic
-    // (If you want to use the same logic as your login, you may need to adapt this)
-    const tokens = await this.authService.generateJwt({
+    const tokens = await this.authService.generateTokens({
       email: user.email,
       id: user.id,
     });
 
-    // Redirect to frontend with tokens in query params
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    return res.redirect(`${frontendUrl}/auth/callback?access_token=${tokens}&provider=google`);
+    return res.redirect(
+      `${frontendUrl}/auth/callback?access_token=${tokens.accessToken}&refresh_token=${tokens.refreshToken}&provider=google`
+    );
   }
 }

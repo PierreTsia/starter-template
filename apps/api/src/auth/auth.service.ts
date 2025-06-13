@@ -195,6 +195,14 @@ export class AuthService {
     );
   }
 
+  async generateTokens(user: { email: string; id: string }) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync({ sub: user.id, email: user.email }),
+      this.refreshTokenService.generateRefreshToken(user.id),
+    ]);
+    return { accessToken, refreshToken };
+  }
+
   async confirmEmail(token: string) {
     return this.logger.logOperation(
       'Email confirmation',
