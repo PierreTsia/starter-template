@@ -12,3 +12,12 @@ export const uploadAvatar = async (file: File): Promise<User> => {
 
   return data;
 };
+
+export const updateName = async (name: string): Promise<User> => {
+  const { data } = await apiFetch<{ data: User }>('/api/v1/users/profile', {
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
+  });
+
+  return data;
+};

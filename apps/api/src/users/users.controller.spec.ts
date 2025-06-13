@@ -8,6 +8,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateNameDto } from './dto/update-name.dto';
+import { UserException } from './exceptions/user.exception';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -19,7 +21,27 @@ interface User {
   createdAt: Date;
   updatedAt: Date;
   avatarUrl: string;
+  emailConfirmationToken: string | null;
+  isEmailConfirmed: boolean;
+  passwordResetExpires: Date | null;
+  passwordResetToken: string | null;
+  emailConfirmationExpires: Date | null;
 }
+
+const mockUser: User = {
+  id: '1',
+  email: 'test@test.com',
+  name: 'Test User',
+  password: 'Test123!@#',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  avatarUrl: 'https://cloudinary.com/test.jpg',
+  emailConfirmationToken: null,
+  isEmailConfirmed: false,
+  passwordResetExpires: null,
+  passwordResetToken: null,
+  emailConfirmationExpires: null,
+};
 
 describe('UsersController', () => {
   let app: INestApplication<Express>;
@@ -32,6 +54,7 @@ describe('UsersController', () => {
     update: jest.fn(),
     delete: jest.fn(),
     uploadAvatar: jest.fn(),
+    updateName: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -96,36 +119,16 @@ describe('UsersController', () => {
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      const mockUsers: User[] = [
-        {
-          id: '1',
-          email: 'test@test.com',
-          name: 'Test User',
-          password: 'Test123!@#',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          avatarUrl: 'https://cloudinary.com/test.jpg',
-        },
-      ];
-      mockUsersService.findAll.mockResolvedValue(mockUsers);
+      mockUsersService.findAll.mockResolvedValue([mockUser]);
 
       const result = await controller.findAll();
-      expect(result).toEqual(mockUsers);
+      expect(result).toEqual([mockUser]);
       expect(mockUsersService.findAll).toHaveBeenCalled();
     });
   });
 
   describe('findOne', () => {
     it('should return a user by id', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'test@test.com',
-        name: 'Test User',
-        password: 'Test123!@#',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        avatarUrl: 'https://cloudinary.com/test.jpg',
-      };
       mockUsersService.findOne.mockResolvedValue(mockUser);
 
       const result = await controller.findOne('1', 'en');
@@ -141,19 +144,11 @@ describe('UsersController', () => {
         password: 'Test123!@#',
         name: 'New User',
       };
-      const mockUser: User = {
-        id: '1',
-        email: createUserDto.email,
-        name: createUserDto.name || null,
-        password: createUserDto.password,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        avatarUrl: 'https://cloudinary.com/test.jpg',
-      };
-      mockUsersService.create.mockResolvedValue(mockUser);
+      const createdUser = { ...mockUser, ...createUserDto };
+      mockUsersService.create.mockResolvedValue(createdUser);
 
       const result = await controller.create(createUserDto, 'en');
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(createdUser);
       expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto, 'en');
     });
 
@@ -174,34 +169,17 @@ describe('UsersController', () => {
   describe('update', () => {
     it('should update a user', async () => {
       const updateData = { name: 'Updated Name' };
-      const mockUser: User = {
-        id: '1',
-        email: 'test@test.com',
-        name: 'Updated Name',
-        password: 'Test123!@#',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        avatarUrl: 'https://cloudinary.com/test.jpg',
-      };
-      mockUsersService.update.mockResolvedValue(mockUser);
+      const updatedUser = { ...mockUser, ...updateData };
+      mockUsersService.update.mockResolvedValue(updatedUser);
 
       const result = await controller.update('1', updateData, 'en');
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(updatedUser);
       expect(mockUsersService.update).toHaveBeenCalledWith('1', updateData, 'en');
     });
   });
 
   describe('delete', () => {
     it('should delete a user', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'test@test.com',
-        name: 'Test User',
-        password: 'Test123!@#',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        avatarUrl: 'https://cloudinary.com/test.jpg',
-      };
       mockUsersService.delete.mockResolvedValue(mockUser);
 
       await controller.delete('1', 'en');
@@ -219,16 +197,6 @@ describe('UsersController', () => {
         buffer: Buffer.from('test'),
         size: 1024,
       } as Express.Multer.File;
-
-      const mockUser: User = {
-        id: '1',
-        email: 'test@test.com',
-        name: 'Test User',
-        password: 'Test123!@#',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        avatarUrl: 'https://cloudinary.com/test.jpg',
-      };
 
       mockUsersService.uploadAvatar.mockResolvedValue(mockUser);
 
@@ -256,6 +224,39 @@ describe('UsersController', () => {
       ).rejects.toThrow(error);
 
       expect(mockUsersService.uploadAvatar).toHaveBeenCalledWith('1', mockFile, 'en');
+    });
+  });
+
+  describe('updateName', () => {
+    it('should update a user name', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      const updatedUser = { ...mockUser, ...updateNameDto };
+      mockUsersService.updateName.mockResolvedValue(updatedUser);
+
+      const result = await controller.updateName({ user: mockUser }, updateNameDto, 'en');
+      expect(result).toEqual(updatedUser);
+      expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
+    });
+
+    it('should throw when user is not found', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      const error = UserException.notFound('1', 'en');
+      mockUsersService.updateName.mockRejectedValue(error);
+
+      await expect(controller.updateName({ user: mockUser }, updateNameDto, 'en')).rejects.toThrow(
+        error
+      );
+
+      expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
+    });
+
+    it('should throw BadRequestException for invalid name format', async () => {
+      const invalidNameDto = { name: 'Invalid@Name!' }; // Contains special characters
+
+      await request(app.getHttpServer()).patch('/users/profile').send(invalidNameDto).expect(400);
+
+      // Verify the service is not called
+      expect(mockUsersService.updateName).not.toHaveBeenCalled();
     });
   });
 });

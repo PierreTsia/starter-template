@@ -5,4 +5,5 @@ declare module 'class-validator' {
   export function IsString(): PropertyDecorator;
   export function MinLength(length: number): PropertyDecorator;
   export function Matches(pattern: RegExp, options?: { message?: string }): PropertyDecorator;
+  export function MaxLength(length: number): PropertyDecorator;
 }

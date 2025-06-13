@@ -165,6 +165,38 @@ export const VALIDATION_ERROR_RESPONSES = {
       },
     },
   },
+  INVALID_NAME: {
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid name format',
+    schema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          example: 'VALIDATION.INVALID_NAME',
+          description: 'Error code for translation',
+        },
+        message: {
+          type: 'string',
+          example: 'Name can only contain letters, numbers, spaces and hyphens (2-50 characters)',
+          description: 'Translated error message',
+        },
+        status: {
+          type: 'number',
+          example: 400,
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              example: 'en',
+            },
+          },
+        },
+      },
+    },
+  },
   PASSWORD_TOO_SHORT: {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid password format',
@@ -483,6 +515,23 @@ export const HEALTH_RESPONSES = {
           example: 'ok',
         },
       },
+    },
+  },
+};
+
+export const USER_PROFILE_RESPONSE = {
+  status: HttpStatus.OK,
+  description: 'User profile data',
+  schema: {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      name: { type: 'string' },
+      email: { type: 'string' },
+      avatarUrl: { type: 'string', nullable: true },
+      isEmailConfirmed: { type: 'boolean' },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
     },
   },
 };

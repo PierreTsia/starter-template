@@ -131,6 +131,8 @@
     "passwordRequiresSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
     "passwordsDontMatch": "Les mots de passe ne correspondent pas",
     "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+    "nameTooLong": "Le nom ne peut pas dépasser 50 caractères",
+    "nameInvalidFormat": "Le nom ne peut contenir que des lettres, des chiffres, des espaces et des tirets",
     "passwordRequirements": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial"
   },
   "settings": {
