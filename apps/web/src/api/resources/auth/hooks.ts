@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { authApi } from '@/api/resources/auth/api';
+import { useTranslation } from '@/i18n/hooks/useTranslation';
 import type { LoginFormData, RegisterDto } from '@/types/auth';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -10,6 +11,11 @@ const FIVE_MINUTES = 1000 * 60 * 5;
 
 const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY;
 const REFRESH_TOKEN_KEY = 'refreshToken';
+
+type UpdatePasswordFormData = {
+  currentPassword: string;
+  newPassword: string;
+};
 
 export const useMe = () =>
   useQuery({
@@ -21,6 +27,7 @@ export const useMe = () =>
   });
 
 export const useAuth = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -99,6 +106,17 @@ export const useAuth = () => {
     },
   });
 
+  const updatePasswordMutation = useMutation({
+    mutationFn: ({ currentPassword, newPassword }: UpdatePasswordFormData) =>
+      authApi.updatePassword(currentPassword, newPassword),
+    onSuccess: () => {
+      toast.success(t('settings.auth.password.success'));
+    },
+    onError: (e) => {
+      toast.error(e.message);
+    },
+  });
+
   const resetError = () => {
     loginMutation.reset();
     registerMutation.reset();
@@ -106,6 +124,7 @@ export const useAuth = () => {
     forgotPasswordMutation.reset();
     resetPasswordMutation.reset();
     resendConfirmationMutation.reset();
+    updatePasswordMutation.reset();
   };
 
   return {
@@ -116,6 +135,7 @@ export const useAuth = () => {
     forgotPassword: forgotPasswordMutation.mutate,
     resetPassword: resetPasswordMutation.mutate,
     logout: logoutMutation.mutate,
+    updatePassword: updatePasswordMutation.mutateAsync,
     isLoading:
       loginMutation.isPending ||
       registerMutation.isPending ||
@@ -123,7 +143,8 @@ export const useAuth = () => {
       resendConfirmationMutation.isPending ||
       forgotPasswordMutation.isPending ||
       resetPasswordMutation.isPending ||
-      logoutMutation.isPending,
+      logoutMutation.isPending ||
+      updatePasswordMutation.isPending,
     error:
       loginMutation.error ||
       registerMutation.error ||
@@ -131,7 +152,8 @@ export const useAuth = () => {
       resendConfirmationMutation.error ||
       forgotPasswordMutation.error ||
       resetPasswordMutation.error ||
-      logoutMutation.error,
+      logoutMutation.error ||
+      updatePasswordMutation.error,
     resetError,
   };
 };
