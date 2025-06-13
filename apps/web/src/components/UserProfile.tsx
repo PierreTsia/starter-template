@@ -29,7 +29,11 @@ import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 const profileSchema = z.object({
-  displayName: z.string().min(2, 'validation.nameTooShort'),
+  displayName: z
+    .string()
+    .min(2, 'validation.nameTooShort')
+    .max(50, 'validation.nameTooLong')
+    .regex(/^[a-zA-Z0-9\s-]+$/, 'validation.nameInvalidFormat'),
 });
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -125,8 +129,9 @@ const UploadNewAvatar = ({
 
 export const UserProfile = () => {
   const { t, formatDate } = useTranslation();
-  const { data: me } = useMe();
+  const { data: me, refetch: refetchMe } = useMe();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { updateName, isUpdatingName } = useUser();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -135,11 +140,11 @@ export const UserProfile = () => {
     },
   });
 
-  const { isDirty, isSubmitting } = form.formState;
+  const { isDirty, isSubmitting, isValid } = form.formState;
 
-  const onSubmit = (data: ProfileFormData) => {
-    // TODO: Wire up API call here
-    toast.success(`${t('settings.user.displayName')}: ${data.displayName}`);
+  const onSubmit = async (data: ProfileFormData) => {
+    await updateName(data.displayName);
+    await refetchMe();
   };
 
   const initials = me?.name
@@ -195,7 +200,11 @@ export const UserProfile = () => {
 
           <div className="flex justify-end h-10">
             {isDirty && (
-              <Button disabled={isSubmitting} type="submit" className="mt-2">
+              <Button
+                disabled={isSubmitting || isUpdatingName || !isValid}
+                type="submit"
+                className="mt-2"
+              >
                 {t('common.save')}
               </Button>
             )}

@@ -141,6 +141,8 @@
     "passwordRequiresSpecial": "Password must contain at least one special character",
     "passwordsDontMatch": "Passwords don't match",
     "nameTooShort": "Name must be at least 2 characters",
+    "nameTooLong": "Name cannot exceed 50 characters",
+    "nameInvalidFormat": "Name can only contain letters, numbers, spaces and hyphens",
     "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
   },
   "settings": {
