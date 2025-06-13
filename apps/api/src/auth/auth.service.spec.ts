@@ -455,6 +455,66 @@ describe('AuthService', () => {
       ).rejects.toThrow(AuthException.invalidCredentials());
     });
 
+    it('should throw AuthException if user is not found', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(null);
+
+      await expect(
+        service.updatePassword('nonexistent@email.com', {
+          currentPassword: 'password123',
+          newPassword: 'newPassword123',
+        })
+      ).rejects.toThrow(AuthException.userNotFound());
+    });
+
+    it('should throw AuthException if user is not found with localized message', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(null);
+
+      await expect(
+        service.updatePassword(
+          'nonexistent@email.com',
+          {
+            currentPassword: 'password123',
+            newPassword: 'newPassword123',
+          },
+          'fr'
+        )
+      ).rejects.toThrow(AuthException.userNotFound('fr'));
+    });
+
+    it('should handle bcrypt hash error gracefully', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+      (bcrypt.hash as jest.Mock).mockRejectedValueOnce(new Error('Hash failed'));
+
+      await expect(
+        service.updatePassword(mockUser.email, {
+          currentPassword: 'currentPassword123',
+          newPassword: 'newPassword123',
+        })
+      ).rejects.toThrow('Hash failed');
+
+      expect(mockLoggerService.errorWithMetadata).toHaveBeenCalledWith(
+        `Failed to update password for user ${mockUser.email}`,
+        expect.any(Error)
+      );
+    });
+
+    it('should handle unknown errors gracefully', async () => {
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      (bcrypt.compare as jest.Mock).mockRejectedValueOnce('Unknown error');
+
+      await expect(
+        service.updatePassword(mockUser.email, {
+          currentPassword: 'currentPassword123',
+          newPassword: 'newPassword123',
+        })
+      ).rejects.toBe('Unknown error');
+
+      expect(mockLoggerService.errorWithMetadata).toHaveBeenCalledWith(
+        `Failed to update password for user ${mockUser.email}: Unknown error`
+      );
+    });
+
     it('should update password successfully when new password is different', async () => {
       mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
