@@ -13,6 +13,7 @@ import {
   Headers,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
@@ -24,11 +25,13 @@ import {
   VALIDATION_ERROR_RESPONSES,
   createApiResponse,
   FILE_ERROR_RESPONSES,
+  USER_PROFILE_RESPONSE,
 } from '../common/swagger/schemas';
 import { multerConfig } from '../config/multer.config';
 import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateNameDto } from './dto/update-name.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -224,5 +227,21 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File
   ): Promise<Partial<User>> {
     return this.usersService.uploadAvatar(req.user.id, file, acceptLanguage);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user name' })
+  @ApiResponse(USER_PROFILE_RESPONSE)
+  @createApiResponse(USER_ERROR_RESPONSES.NOT_FOUND)
+  @createApiResponse(USER_ERROR_RESPONSES.UNAUTHORIZED)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.INVALID_NAME)
+  async updateName(
+    @Request() req: { user: User },
+    @Body() updateNameDto: UpdateNameDto,
+    @Headers('accept-language') acceptLanguage?: string
+  ) {
+    return this.usersService.updateName(req.user.id, updateNameDto, acceptLanguage);
   }
 }

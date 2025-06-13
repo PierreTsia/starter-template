@@ -6,6 +6,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { UpdateNameDto } from './dto/update-name.dto';
 import { UserException } from './exceptions/user.exception';
 
 interface CreateUserData {
@@ -49,8 +50,8 @@ type SafeUser = Omit<User, 'password'>;
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private logger: LoggerService,
-    private cloudinaryService: CloudinaryService
+    private readonly logger: LoggerService,
+    private readonly cloudinaryService: CloudinaryService
   ) {}
 
   async findAll(): Promise<SafeUser[]> {
@@ -208,6 +209,46 @@ export class UsersService {
       {
         userId,
         file: { originalname: file.originalname, mimetype: file.mimetype, size: file.size },
+      }
+    );
+  }
+
+  async updateName(
+    userId: string,
+    updateNameDto: UpdateNameDto,
+    acceptLanguage?: string
+  ): Promise<SafeUser> {
+    return this.logger.logOperation(
+      'updateName',
+      async () => {
+        try {
+          const user = await this.prisma.user.update({
+            where: { id: userId },
+            data: { name: updateNameDto.name },
+            select: userSelect,
+          });
+
+          if (!user) {
+            throw UserException.notFound(userId, acceptLanguage);
+          }
+
+          return user;
+        } catch (error: unknown) {
+          if (error instanceof PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+              throw UserException.notFound(userId, acceptLanguage);
+            }
+          }
+          this.logger.errorWithMetadata('Failed to update user name', error as Error, {
+            userId,
+            newName: updateNameDto.name,
+          });
+          throw error;
+        }
+      },
+      {
+        userId,
+        newName: updateNameDto.name,
       }
     );
   }
