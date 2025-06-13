@@ -6,6 +6,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { LoggerService } from '../logger/logger.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { UpdateNameDto } from './dto/update-name.dto';
 import { UserException } from './exceptions/user.exception';
 import { UsersService } from './users.service';
 
@@ -355,6 +356,57 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(mockCloudinaryService.deleteImage).toHaveBeenCalled();
       expect(mockPrismaService.user.update).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateName', () => {
+    it('should update a user name', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      const updatedUser = { ...mockUser, ...updateNameDto };
+      mockPrismaService.user.update.mockResolvedValue(updatedUser);
+
+      const result = await service.updateName('1', updateNameDto, 'en');
+      expect(result).toEqual(updatedUser);
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: { name: updateNameDto.name },
+        select: expect.any(Object) as Prisma.UserSelect,
+      });
+    });
+
+    it('should throw UserException if user not found', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      mockPrismaService.user.update.mockRejectedValue(
+        new PrismaClientKnownRequestError('Record not found', {
+          code: 'P2025',
+          clientVersion: '1.0.0',
+        })
+      );
+
+      await expect(service.updateName('1', updateNameDto, 'en')).rejects.toThrow(UserException);
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: { name: updateNameDto.name },
+        select: expect.any(Object) as Prisma.UserSelect,
+      });
+    });
+
+    it('should throw error if update fails', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      const error = new Error('Database error');
+      mockPrismaService.user.update.mockRejectedValue(error);
+
+      await expect(service.updateName('1', updateNameDto, 'en')).rejects.toThrow(error);
+      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+        where: { id: '1' },
+        data: { name: updateNameDto.name },
+        select: expect.any(Object) as Prisma.UserSelect,
+      });
+      expect(mockLoggerService.errorWithMetadata).toHaveBeenCalledWith(
+        'Failed to update user name',
+        error,
+        expect.any(Object)
+      );
     });
   });
 });
