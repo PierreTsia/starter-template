@@ -8,9 +8,11 @@ import {
   UseGuards,
   Get,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { User } from '@prisma/client';
 
 import {
   AUTH_ERROR_RESPONSES,
@@ -19,12 +21,15 @@ import {
 } from '../common/swagger/schemas';
 
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResendConfirmationDto } from './dto/resend-confirmation.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('Authentication')
@@ -136,5 +141,25 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   async resendConfirmation(@Body() dto: ResendConfirmationDto) {
     return this.authService.resendConfirmation(dto.email);
+  }
+
+  @ApiOperation({ summary: 'Update user password' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password successfully updated',
+  })
+  @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_CREDENTIALS)
+  @createApiResponse(VALIDATION_ERROR_RESPONSES.PASSWORD_TOO_SHORT)
+  @createApiResponse(AUTH_ERROR_RESPONSES.NEW_PASSWORD_SAME_AS_CURRENT)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Put('password')
+  @HttpCode(HttpStatus.OK)
+  async updatePassword(
+    @CurrentUser() user: User,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @Headers('accept-language') acceptLanguage?: string
+  ): Promise<{ message: string }> {
+    return this.authService.updatePassword(user.email, updatePasswordDto, acceptLanguage);
   }
 }

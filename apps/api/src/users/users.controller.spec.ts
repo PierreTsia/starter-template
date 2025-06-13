@@ -200,7 +200,7 @@ describe('UsersController', () => {
 
       mockUsersService.uploadAvatar.mockResolvedValue(mockUser);
 
-      const result = await controller.uploadAvatar({ user: { id: '1' } } as any, 'en', mockFile);
+      const result = await controller.uploadAvatar(mockUser, 'en', mockFile);
 
       expect(result).toEqual(mockUser);
       expect(mockUsersService.uploadAvatar).toHaveBeenCalledWith('1', mockFile, 'en');
@@ -219,9 +219,7 @@ describe('UsersController', () => {
       const error = new Error('Upload failed');
       mockUsersService.uploadAvatar.mockRejectedValue(error);
 
-      await expect(
-        controller.uploadAvatar({ user: { id: '1' } } as any, 'en', mockFile)
-      ).rejects.toThrow(error);
+      await expect(controller.uploadAvatar(mockUser, 'en', mockFile)).rejects.toThrow(error);
 
       expect(mockUsersService.uploadAvatar).toHaveBeenCalledWith('1', mockFile, 'en');
     });
@@ -233,7 +231,7 @@ describe('UsersController', () => {
       const updatedUser = { ...mockUser, ...updateNameDto };
       mockUsersService.updateName.mockResolvedValue(updatedUser);
 
-      const result = await controller.updateName({ user: mockUser }, updateNameDto, 'en');
+      const result = await controller.updateName(mockUser, updateNameDto, 'en');
       expect(result).toEqual(updatedUser);
       expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
     });
@@ -243,9 +241,7 @@ describe('UsersController', () => {
       const error = UserException.notFound('1', 'en');
       mockUsersService.updateName.mockRejectedValue(error);
 
-      await expect(controller.updateName({ user: mockUser }, updateNameDto, 'en')).rejects.toThrow(
-        error
-      );
+      await expect(controller.updateName(mockUser, updateNameDto, 'en')).rejects.toThrow(error);
 
       expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
     });

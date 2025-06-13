@@ -7,7 +7,9 @@
     "RATE_LIMIT_EXCEEDED": "Too many attempts. Please try again later",
     "EMAIL_ALREADY_EXISTS": "This email address is already registered",
     "CONFIRMATION_TOKEN_EXPIRED": "Your confirmation link has expired. Please request a new one",
-    "EMAIL_ALREADY_CONFIRMED": "This email address is already confirmed"
+    "EMAIL_ALREADY_CONFIRMED": "This email address is already confirmed",
+    "NEW_PASSWORD_SAME_AS_CURRENT": "New password must be different from current password",
+    "USER_NOT_FOUND": "User not found"
   },
   "VALIDATION": {
     "FAILED": "Validation failed",

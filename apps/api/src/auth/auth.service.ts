@@ -16,6 +16,8 @@ import { ErrorCodes } from '../errors/codes';
 import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { AuthException } from './exceptions/auth.exception';
 import { RefreshTokenService } from './refresh-token.service';
 
 type SafeUser = Omit<PrismaUser, 'password'>;
@@ -292,5 +294,46 @@ export class AuthService {
     await this.emailService.sendConfirmationEmail(email, confirmationToken);
 
     return { message: 'If your email is registered, you will receive a new confirmation link' };
+  }
+
+  async updatePassword(
+    userEmail: string,
+    updatePasswordDto: UpdatePasswordDto,
+    acceptLanguage?: string
+  ): Promise<{ message: string }> {
+    try {
+      const user = await this.usersService.findByEmail(userEmail);
+      if (!user) {
+        throw AuthException.userNotFound(acceptLanguage);
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        updatePasswordDto.currentPassword,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        throw AuthException.invalidCredentials(acceptLanguage);
+      }
+
+      // Check if new password is different from current password
+      if (updatePasswordDto.newPassword === updatePasswordDto.currentPassword) {
+        throw AuthException.newPasswordSameAsCurrent(acceptLanguage);
+      }
+
+      const hashedPassword = await bcrypt.hash(updatePasswordDto.newPassword, 10);
+      await this.usersService.update(user.id, { password: hashedPassword });
+
+      return { message: 'Password updated successfully' };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.errorWithMetadata(`Failed to update password for user ${userEmail}`, error);
+      } else {
+        this.logger.errorWithMetadata(
+          `Failed to update password for user ${userEmail}: Unknown error`
+        );
+      }
+      throw error;
+    }
   }
 }

@@ -62,32 +62,36 @@ export class UpdatePasswordDto {
 
 3. Add Service Method
    - Verify current password
+   - Check if new password is different from current password
    - Hash and update new password
    - Error handling
    - Logging
 
 ### Error Cases
 
-- [ ] Invalid password format
-- [ ] Current password incorrect
-- [ ] Unauthorized access
-- [ ] User not found
+- [x] Invalid password format
+- [x] Current password incorrect
+- [x] New password same as current password
+- [x] Unauthorized access
+- [x] User not found
 
 ### Testing
 
-- [ ] DTO validation works
-- [ ] Password update works
-- [ ] Current password verification works
-- [ ] Error cases handled
-- [ ] Authorization works
-- [ ] Logging works
+- [x] DTO validation works
+- [x] Password update works
+- [x] Current password verification works
+- [x] New password different check works
+- [x] Error cases handled
+- [x] Authorization works
+- [x] Logging works
 
 ## Definition of Done
 
-- [ ] Endpoint implemented
-- [ ] DTO validation works
-- [ ] Password verification works
-- [ ] Error handling implemented
-- [ ] Tests written and passing
-- [ ] Swagger documentation updated
-- [ ] Logging implemented
+- [x] Endpoint implemented
+- [x] DTO validation works
+- [x] Password verification works
+- [x] New password different check works
+- [x] Error handling implemented
+- [x] Tests written and passing
+- [x] Swagger documentation updated
+- [x] Logging implemented

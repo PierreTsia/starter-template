@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { toast } from 'sonner';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { authApi } from '../api';
 import { useAuth, useMe } from '../hooks';
+
+import { TestApp } from '@/test-utils';
 
 // Mock the authApi
 vi.mock('../api', () => ({
@@ -17,6 +19,14 @@ vi.mock('../api', () => ({
     resetPassword: vi.fn(),
     confirmEmail: vi.fn(),
     resendConfirmation: vi.fn(),
+    updatePassword: vi.fn(),
+  },
+}));
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -40,9 +50,9 @@ const createWrapper = () => {
     },
   });
   return ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+    <TestApp>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </MemoryRouter>
+    </TestApp>
   );
 };
 
@@ -331,6 +341,46 @@ describe('Auth Hooks', () => {
 
       expect(authApi.resendConfirmation).toHaveBeenCalledWith('nonexistent@example.com');
       expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('successfully updates password', async () => {
+      vi.mocked(authApi.updatePassword).mockResolvedValueOnce({ message: 'Password updated' });
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        await result.current.updatePassword({
+          currentPassword: 'OldPassword!',
+          newPassword: 'NewPassword!',
+        });
+      });
+
+      expect(authApi.updatePassword).toHaveBeenCalledWith('OldPassword!', 'NewPassword!');
+      expect(toast.success).toHaveBeenCalledWith('Password updated successfully');
+    });
+
+    it('handles update password error', async () => {
+      const error = new Error('Failed to update password');
+      vi.mocked(authApi.updatePassword).mockRejectedValueOnce(error);
+
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
+
+      await act(async () => {
+        try {
+          await result.current.updatePassword({
+            currentPassword: 'OldPassword!',
+            newPassword: 'NewPassword!',
+          });
+        } catch (e) {
+          expect(e).toBe(error);
+        }
+      });
+      expect(authApi.updatePassword).toHaveBeenCalledWith('OldPassword!', 'NewPassword!');
+      expect(toast.error).toHaveBeenCalledWith(error.message);
     });
   });
 

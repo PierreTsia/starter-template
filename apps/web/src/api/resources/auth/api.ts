@@ -34,6 +34,13 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify({ token, password }),
     }),
+
+  updatePassword: (currentPassword: string, newPassword: string) =>
+    apiFetch<{ message: string }>('/api/v1/auth/password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
+
   logout: () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
     if (!refreshToken) {

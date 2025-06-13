@@ -34,6 +34,38 @@ export const AUTH_ERROR_RESPONSES = {
       },
     },
   },
+  NEW_PASSWORD_SAME_AS_CURRENT: {
+    status: HttpStatus.BAD_REQUEST,
+    description: 'New password is same as current password',
+    schema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          example: 'AUTH.NEW_PASSWORD_SAME_AS_CURRENT',
+          description: 'Error code for translation',
+        },
+        message: {
+          type: 'string',
+          example: 'New password must be different from current password',
+          description: 'Translated error message',
+        },
+        status: {
+          type: 'number',
+          example: 400,
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              example: 'en',
+            },
+          },
+        },
+      },
+    },
+  },
   EMAIL_EXISTS: {
     status: HttpStatus.CONFLICT,
     description: 'Email already exists',
