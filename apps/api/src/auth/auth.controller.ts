@@ -173,6 +173,11 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   googleAuth() {
     // Passport handles the redirect, this method can be empty.
+    try {
+      // Passport handles the redirect
+    } catch (err) {
+      console.error('Google OAuth error:', err);
+    }
   }
 
   @ApiOperation({ summary: 'Google OAuth callback' })
@@ -180,18 +185,22 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
-    const user = req.user as { email: string; id: string };
+    const user = req.user as { email?: string; id?: string } | undefined;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
     if (!user) {
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
       return res.redirect(`${frontendUrl}/auth/error?message=Google%20login%20failed`);
     }
 
     const tokens = await this.authService.generateTokens({
-      email: user.email,
-      id: user.id,
+      email: user.email!,
+      id: user.id!,
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    if (!tokens || !tokens.accessToken || !tokens.refreshToken) {
+      return res.redirect(`${frontendUrl}/auth/error?message=Token%20generation%20failed`);
+    }
+
     return res.redirect(
       `${frontendUrl}/auth/callback?access_token=${tokens.accessToken}&refresh_token=${tokens.refreshToken}&provider=google`
     );

@@ -7,9 +7,11 @@ import {
 import { Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { User } from '@prisma/client';
+import { Request, NextFunction, Response } from 'express';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -22,6 +24,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { RefreshTokenService } from './refresh-token.service';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 interface ValidationErrorResponse {
   statusCode: number;
@@ -60,8 +63,22 @@ describe('AuthController', () => {
       refreshTokens: jest.fn(),
       logout: jest.fn(),
       updatePassword: jest.fn(),
+      generateTokens: jest.fn(),
     };
 
+    const mockGoogleGuard = {
+      canActivate: (context: ExecutionContext) => {
+        const req: Request = context.switchToHttp().getRequest();
+        if (req.path.endsWith('/auth/google')) {
+          const res = context.switchToHttp().getResponse<Response>();
+          res.redirect('https://accounts.google.com/o/oauth2/v2/auth?mock');
+          return false;
+        }
+        // For callback, allow controller to run
+        req.user = mockUser; // or undefined for the error test
+        return true;
+      },
+    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ThrottlerModule.forRoot([
@@ -97,6 +114,7 @@ describe('AuthController', () => {
           },
         },
         Logger,
+        GoogleStrategy,
       ],
     })
       .overrideGuard(JwtAuthGuard)
@@ -107,6 +125,8 @@ describe('AuthController', () => {
           return true;
         },
       })
+      .overrideGuard(AuthGuard('google'))
+      .useValue(mockGoogleGuard)
       .compile();
 
     app = module.createNestApplication();
@@ -393,6 +413,45 @@ describe('AuthController', () => {
       expect(errorResponse.message).toContain(
         'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
       );
+    }, 10000);
+  });
+  describe('/auth/google (GET)', () => {
+    it('should redirect to Google OAuth', async () => {
+      const response = await request(app.getHttpServer()).get('/auth/google').expect(302);
+
+      expect(response.header.location).toContain('accounts.google.com');
+    });
+  });
+
+  describe('/auth/google/callback (GET)', () => {
+    it('should redirect to frontend with tokens if user is present', async () => {
+      // Mock req.user and authService.generateTokens
+      const mockUser = { id: '1', email: 'test@test.com' };
+      const mockTokens = { accessToken: 'access', refreshToken: 'refresh' };
+      (mockAuthService.generateTokens as jest.Mock).mockResolvedValue(mockTokens);
+
+      // Simulate Passport setting req.user
+      app.use((req: Request, _res, next: NextFunction) => {
+        req.user = mockUser;
+        next();
+      });
+
+      const response = await request(app.getHttpServer()).get('/auth/google/callback').expect(302);
+
+      expect(response.header.location).toContain('access_token=access');
+      expect(response.header.location).toContain('refresh_token=refresh');
+    });
+
+    it('should redirect to frontend with error if user is missing', async () => {
+      // Simulate no user
+      app.use((req: Request, _res, next: NextFunction) => {
+        req.user = undefined;
+        next();
+      });
+
+      const response = await request(app.getHttpServer()).get('/auth/google/callback').expect(302);
+
+      expect(response.header.location).toContain('/auth/error');
     });
   });
 });
