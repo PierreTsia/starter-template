@@ -72,7 +72,7 @@ export class AuthService {
           return null;
         }
 
-        const isValid = await this.verifyPassword(password, user.password);
+        const isValid = user.password ? await this.verifyPassword(password, user.password) : false;
         if (!isValid) {
           this.logger.warnWithMetadata('Invalid password during validation', { email });
           return null;
@@ -307,10 +307,9 @@ export class AuthService {
         throw AuthException.userNotFound(acceptLanguage);
       }
 
-      const isPasswordValid = await bcrypt.compare(
-        updatePasswordDto.currentPassword,
-        user.password
-      );
+      const isPasswordValid = user.password
+        ? await bcrypt.compare(updatePasswordDto.currentPassword, user.password)
+        : false;
 
       if (!isPasswordValid) {
         throw AuthException.invalidCredentials(acceptLanguage);
@@ -335,5 +334,53 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async findOrCreateUser({
+    provider,
+    providerId,
+    email,
+    name,
+    avatarUrl,
+  }: {
+    provider: 'google';
+    providerId: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+  }): Promise<SafeUser> {
+    // Try to find by provider/providerId
+    let user = await this.usersService.findByProviderId(provider, providerId);
+    if (user) {
+      // Return user without password
+      return user;
+    }
+
+    // Try to find by email
+    user = await this.usersService.findByEmail(email);
+    if (user) {
+      // Update user with provider info if not already set
+      if (!user.provider || !user.providerId) {
+        user = await this.usersService.update(user.id, {
+          provider,
+          providerId,
+          avatarUrl,
+        });
+      }
+
+      return user;
+    }
+
+    // Create new user
+    user = await this.usersService.create({
+      email,
+      name,
+      provider,
+      providerId,
+      avatarUrl,
+      isEmailConfirmed: true, // Social auth emails are pre-verified
+    });
+
+    return user;
   }
 }

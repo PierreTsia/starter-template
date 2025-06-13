@@ -47,6 +47,8 @@ describe('AuthController', () => {
     passwordResetToken: null,
     emailConfirmationExpires: null,
     avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
+    provider: null,
+    providerId: null,
   };
 
   beforeEach(async () => {

@@ -26,6 +26,8 @@ interface User {
   passwordResetExpires: Date | null;
   passwordResetToken: string | null;
   emailConfirmationExpires: Date | null;
+  provider: string | null;
+  providerId: string | null;
 }
 
 const mockUser: User = {
@@ -41,6 +43,8 @@ const mockUser: User = {
   passwordResetExpires: null,
   passwordResetToken: null,
   emailConfirmationExpires: null,
+  provider: null,
+  providerId: null,
 };
 
 describe('UsersController', () => {

@@ -11,13 +11,16 @@ import { UserException } from './exceptions/user.exception';
 
 interface CreateUserData {
   email: string;
-  password: string;
+  password?: string;
   name?: string;
   isEmailConfirmed?: boolean;
   emailConfirmationToken?: string | null;
   emailConfirmationExpires?: Date | null;
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
+  provider?: string;
+  providerId?: string;
+  avatarUrl?: string;
 }
 
 interface UpdateUserData {
@@ -29,6 +32,9 @@ interface UpdateUserData {
   emailConfirmationExpires?: Date | null;
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
+  provider?: string;
+  providerId?: string;
+  avatarUrl?: string;
 }
 
 const userSelect = {
@@ -43,6 +49,8 @@ const userSelect = {
   passwordResetExpires: true,
   passwordResetToken: true,
   avatarUrl: true,
+  provider: true,
+  providerId: true,
 } as const;
 type SafeUser = Omit<User, 'password'>;
 
@@ -251,5 +259,15 @@ export class UsersService {
         newName: updateNameDto.name,
       }
     );
+  }
+
+  async findByProviderId(provider: string, providerId: string): Promise<SafeUser | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        provider,
+        providerId,
+      },
+      select: userSelect,
+    });
   }
 }

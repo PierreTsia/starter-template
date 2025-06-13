@@ -40,6 +40,8 @@ const mockUser = {
   passwordResetToken: null,
   passwordResetExpires: null,
   avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
+  provider: null,
+  providerId: null,
 };
 
 const confirmedMockUser = {
