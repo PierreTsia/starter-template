@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { useAuth } from '@/api/resources/auth/hooks';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -29,6 +31,7 @@ type PasswordUpdateFormData = z.infer<typeof passwordUpdateSchema>;
 
 export const AuthSettings = () => {
   const { t } = useTranslation();
+  const { updatePassword, isLoading } = useAuth();
   const form = useForm<PasswordUpdateFormData>({
     resolver: zodResolver(passwordUpdateSchema),
     defaultValues: {
@@ -38,11 +41,10 @@ export const AuthSettings = () => {
     },
   });
 
-  const { isDirty, isSubmitting, isValid } = form.formState;
+  const { isDirty, isSubmitting } = form.formState;
 
   const onSubmit = async (data: PasswordUpdateFormData) => {
-    // TODO: Implement password update
-    console.log(data);
+    await updatePassword(data);
   };
 
   return (
@@ -90,8 +92,15 @@ export const AuthSettings = () => {
           />
           <div className="flex justify-end h-10">
             {isDirty && (
-              <Button disabled={isSubmitting || !isValid} type="submit" className="mt-2">
-                {t('settings.auth.password.update')}
+              <Button disabled={isSubmitting || isLoading} type="submit" className="mt-2">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t('common.loading')}
+                  </>
+                ) : (
+                  t('settings.auth.password.update')
+                )}
               </Button>
             )}
           </div>
