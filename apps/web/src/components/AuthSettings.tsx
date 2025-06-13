@@ -44,7 +44,8 @@ export const AuthSettings = () => {
   const { isDirty, isSubmitting } = form.formState;
 
   const onSubmit = async (data: PasswordUpdateFormData) => {
-    await updatePassword(data);
+    const { confirmPassword: _, ...passwordData } = data;
+    await updatePassword(passwordData);
   };
 
   return (
@@ -58,7 +59,7 @@ export const AuthSettings = () => {
               <FormItem>
                 <FormLabel>{t('settings.auth.password.current')}</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} data-testid="current-password-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +72,7 @@ export const AuthSettings = () => {
               <FormItem>
                 <FormLabel>{t('settings.auth.password.new')}</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} data-testid="new-password-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +85,7 @@ export const AuthSettings = () => {
               <FormItem>
                 <FormLabel>{t('settings.auth.password.confirm')}</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} data-testid="confirm-password-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
