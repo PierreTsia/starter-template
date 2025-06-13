@@ -27,6 +27,12 @@ interface RequestWithUser extends Request {
   user: User;
 }
 
+interface ValidationErrorResponse {
+  statusCode: number;
+  message: string[];
+  error: string;
+}
+
 describe('AuthController', () => {
   let app: INestApplication;
   let controller: AuthController;
@@ -333,6 +339,58 @@ describe('AuthController', () => {
 
       expect(response.body).toEqual({ message: 'Password updated successfully' });
       expect(mockAuthService.updatePassword).toHaveBeenCalledWith('1', updatePasswordDto, 'en');
+    });
+
+    it('should return 400 when current password is empty', async () => {
+      const invalidDto = {
+        currentPassword: '',
+        newPassword: 'newPassword123!',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put('/auth/password')
+        .set('Authorization', 'Bearer valid-access-token')
+        .send(invalidDto)
+        .expect(400);
+
+      const errorResponse = response.body as ValidationErrorResponse;
+      expect(errorResponse.message).toContain('currentPassword should not be empty');
+    });
+
+    it('should return 400 when new password is too short', async () => {
+      const invalidDto = {
+        currentPassword: 'currentPassword123',
+        newPassword: 'short',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put('/auth/password')
+        .set('Authorization', 'Bearer valid-access-token')
+        .send(invalidDto)
+        .expect(400);
+
+      const errorResponse = response.body as ValidationErrorResponse;
+      expect(errorResponse.message).toContain(
+        'newPassword must be longer than or equal to 8 characters'
+      );
+    });
+
+    it('should return 400 when new password does not match pattern', async () => {
+      const invalidDto = {
+        currentPassword: 'currentPassword123',
+        newPassword: 'password123', // Missing uppercase and special char
+      };
+
+      const response = await request(app.getHttpServer())
+        .put('/auth/password')
+        .set('Authorization', 'Bearer valid-access-token')
+        .send(invalidDto)
+        .expect(400);
+
+      const errorResponse = response.body as ValidationErrorResponse;
+      expect(errorResponse.message).toContain(
+        'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
+      );
     });
   });
 });
