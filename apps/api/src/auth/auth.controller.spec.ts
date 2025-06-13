@@ -1,9 +1,16 @@
-import { INestApplication, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  UnauthorizedException,
+  ValidationPipe,
+  ExecutionContext,
+} from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { User } from '@prisma/client';
+import { Request } from 'express';
 import * as request from 'supertest';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -13,12 +20,32 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { RefreshTokenService } from './refresh-token.service';
+
+interface RequestWithUser extends Request {
+  user: User;
+}
 
 describe('AuthController', () => {
   let app: INestApplication;
   let controller: AuthController;
   let mockAuthService: Partial<AuthService>;
+
+  const mockUser: User = {
+    id: '1',
+    email: 'test@test.com',
+    name: 'Test User',
+    password: 'hashedPassword',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    emailConfirmationToken: null,
+    isEmailConfirmed: true,
+    passwordResetExpires: null,
+    passwordResetToken: null,
+    emailConfirmationExpires: null,
+    avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
+  };
 
   beforeEach(async () => {
     mockAuthService = {
@@ -28,6 +55,7 @@ describe('AuthController', () => {
       generateJwt: jest.fn(),
       refreshTokens: jest.fn(),
       logout: jest.fn(),
+      updatePassword: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -69,7 +97,11 @@ describe('AuthController', () => {
     })
       .overrideGuard(JwtAuthGuard)
       .useValue({
-        canActivate: () => true,
+        canActivate: (context: ExecutionContext) => {
+          const request = context.switchToHttp().getRequest<RequestWithUser>();
+          request.user = mockUser;
+          return true;
+        },
       })
       .compile();
 
@@ -278,6 +310,29 @@ describe('AuthController', () => {
         .post('/auth/logout')
         .set('Authorization', 'Bearer invalid-token')
         .expect(401);
+    });
+  });
+
+  describe('/auth/password (PUT)', () => {
+    it('should update password successfully', async () => {
+      const updatePasswordDto: UpdatePasswordDto = {
+        currentPassword: 'password123',
+        newPassword: 'newPassword123!',
+      };
+
+      (mockAuthService.updatePassword as jest.Mock).mockResolvedValue({
+        message: 'Password updated successfully',
+      });
+
+      const response = await request(app.getHttpServer())
+        .put('/auth/password')
+        .set('Authorization', 'Bearer valid-access-token')
+        .set('accept-language', 'en')
+        .send(updatePasswordDto)
+        .expect(200);
+
+      expect(response.body).toEqual({ message: 'Password updated successfully' });
+      expect(mockAuthService.updatePassword).toHaveBeenCalledWith('1', updatePasswordDto, 'en');
     });
   });
 });

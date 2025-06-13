@@ -7,7 +7,8 @@
     "RATE_LIMIT_EXCEEDED": "Trop de tentatives. Veuillez réessayer plus tard",
     "EMAIL_ALREADY_EXISTS": "Cette adresse email est déjà enregistrée",
     "CONFIRMATION_TOKEN_EXPIRED": "Votre lien de confirmation a expiré. Veuillez en demander un nouveau",
-    "EMAIL_ALREADY_CONFIRMED": "Cette adresse email est déjà confirmée"
+    "EMAIL_ALREADY_CONFIRMED": "Cette adresse email est déjà confirmée",
+    "NEW_PASSWORD_SAME_AS_CURRENT": "Le nouveau mot de passe doit être différent de l'ancien"
   },
   "VALIDATION": {
     "FAILED": "Échec de la validation",

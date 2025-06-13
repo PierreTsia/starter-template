@@ -155,12 +155,10 @@ export class AuthController {
   @Put('password')
   @HttpCode(HttpStatus.OK)
   async updatePassword(
-    @CurrentUser() _user: User,
-    @Body() _updatePasswordDto: UpdatePasswordDto,
-    @Headers('accept-language') _acceptLanguage?: string
+    @CurrentUser() user: User,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @Headers('accept-language') acceptLanguage?: string
   ): Promise<{ message: string }> {
-    console.log(_user);
-    // TODO: Implement password update logic
-    return Promise.resolve({ message: 'Password updated successfully' });
+    return this.authService.updatePassword(user.id, updatePasswordDto, acceptLanguage);
   }
 }
