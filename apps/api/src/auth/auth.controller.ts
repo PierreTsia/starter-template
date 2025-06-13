@@ -167,12 +167,16 @@ export class AuthController {
     return this.authService.updatePassword(user.email, updatePasswordDto, acceptLanguage);
   }
 
+  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  @ApiResponse({ status: HttpStatus.FOUND, description: 'Redirects to Google OAuth login page' })
   @Get('google')
   @UseGuards(AuthGuard('google'))
   googleAuth() {
     // Passport handles the redirect, this method can be empty.
   }
 
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  @ApiResponse({ status: 302, description: 'Redirects to frontend with tokens in query params' })
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
