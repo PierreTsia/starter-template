@@ -187,7 +187,7 @@ export class AuthService {
     });
   }
 
-  async generateJwt(user: SafeUser) {
+  async generateJwt(user: { email: string; id: string }) {
     return this.logger.logOperation(
       'JWT generation',
       () => this.jwtService.signAsync({ sub: user.id, email: user.email }),

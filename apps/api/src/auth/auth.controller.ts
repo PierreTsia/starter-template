@@ -9,10 +9,14 @@ import {
   Get,
   Query,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { User } from '@prisma/client';
+import { Response, Request } from 'express';
 
 import {
   AUTH_ERROR_RESPONSES,
@@ -161,5 +165,34 @@ export class AuthController {
     @Headers('accept-language') acceptLanguage?: string
   ): Promise<{ message: string }> {
     return this.authService.updatePassword(user.email, updatePasswordDto, acceptLanguage);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleAuth() {
+    // Passport handles the redirect, this method can be empty.
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    // req.user is set by GoogleStrategy.validate
+    const user = req.user as { email: string; id: string };
+    if (!user) {
+      // Redirect to frontend with error
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/auth/error?message=Google%20login%20failed`);
+    }
+
+    // Generate tokens using your existing AuthService logic
+    // (If you want to use the same logic as your login, you may need to adapt this)
+    const tokens = await this.authService.generateJwt({
+      email: user.email,
+      id: user.id,
+    });
+
+    // Redirect to frontend with tokens in query params
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    return res.redirect(`${frontendUrl}/auth/callback?access_token=${tokens}&provider=google`);
   }
 }
