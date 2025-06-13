@@ -1,6 +1,7 @@
 import { AppSettings } from './AppSettings';
 import { AuthSettings } from './AuthSettings';
 
+import { useMe } from '@/api/resources/auth/hooks';
 import { UserProfile } from '@/components/UserProfile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Page } from '@/components/ui/page';
@@ -9,6 +10,9 @@ import { useTranslation } from '@/i18n/hooks/useTranslation';
 
 export const SettingsPage = () => {
   const { t } = useTranslation();
+  const { data: user, refetch: refetchMe } = useMe();
+
+  const isGoogleUser = user?.provider === 'google';
 
   return (
     <Page>
@@ -20,19 +24,21 @@ export const SettingsPage = () => {
             <CardDescription>{t('settings.user.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <UserProfile data-testid="user-profile" />
+            {user && <UserProfile data-testid="user-profile" me={user} refetchMe={refetchMe} />}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('settings.auth.title')}</CardTitle>
-            <CardDescription>{t('settings.auth.description')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <AuthSettings />
-          </CardContent>
-        </Card>
+        {!isGoogleUser && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('settings.auth.title')}</CardTitle>
+              <CardDescription>{t('settings.auth.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <AuthSettings />
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>

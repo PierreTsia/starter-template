@@ -8,6 +8,8 @@ export const UserSchema = z.object({
   name: z.string(),
   createdAt: z.string(),
   avatarUrl: z.string(),
+  provider: z.string().nullable().optional(),
+  providerId: z.string().nullable().optional(),
 });
 
 export const LoginSchema = z.object({
