@@ -165,7 +165,13 @@
         "confirm": "Confirm New Password",
         "update": "Update Password",
         "success": "Password updated successfully",
-        "error": "Failed to update password"
+        "error": "Failed to update password",
+        "validation": {
+          "required": "Current password is required",
+          "minLength": "Password must be at least 8 characters",
+          "confirmRequired": "Please confirm your password",
+          "mismatch": "Passwords don't match"
+        }
       }
     },
     "app": {
