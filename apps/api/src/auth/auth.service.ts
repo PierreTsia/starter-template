@@ -322,12 +322,7 @@ export class AuthService {
       }
 
       // Check if new password is different from current password
-      const isNewPasswordSame = await bcrypt.compare(
-        updatePasswordDto.newPassword,
-        userWithPassword.password
-      );
-
-      if (isNewPasswordSame) {
+      if (updatePasswordDto.newPassword === updatePasswordDto.currentPassword) {
         throw AuthException.newPasswordSameAsCurrent(acceptLanguage);
       }
 

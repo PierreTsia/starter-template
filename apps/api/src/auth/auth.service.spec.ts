@@ -10,6 +10,7 @@ import { LoggerService } from '../logger/logger.service';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
+import { AuthException } from './exceptions/auth.exception';
 import { RefreshTokenService } from './refresh-token.service';
 
 jest.mock('bcrypt', () => ({
@@ -74,6 +75,7 @@ const mockLoggerService = {
   warn: jest.fn(),
   debug: jest.fn(),
   warnWithMetadata: jest.fn(),
+  errorWithMetadata: jest.fn(),
 
   logOperation: jest.fn(
     <T>(operation: string, fn: () => Promise<T>, _metadata?: Record<string, unknown>): Promise<T> =>
@@ -425,6 +427,52 @@ describe('AuthService', () => {
         'test@example.com',
         expect.any(String)
       );
+    });
+  });
+
+  describe('updatePassword', () => {
+    it('should throw AuthException if new password is same as current password', async () => {
+      mockUsersService.findOne.mockResolvedValueOnce(mockUser);
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+
+      await expect(
+        service.updatePassword(mockUser.id, {
+          currentPassword: 'password123',
+          newPassword: 'password123',
+        })
+      ).rejects.toThrow(AuthException.newPasswordSameAsCurrent());
+    });
+
+    it('should throw AuthException if current password is incorrect', async () => {
+      mockUsersService.findOne.mockResolvedValueOnce(mockUser);
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
+
+      await expect(
+        service.updatePassword(mockUser.id, {
+          currentPassword: 'wrongPassword123',
+          newPassword: 'newPassword123',
+        })
+      ).rejects.toThrow(AuthException.invalidCredentials());
+    });
+
+    it('should update password successfully when new password is different', async () => {
+      mockUsersService.findOne.mockResolvedValueOnce(mockUser);
+      mockUsersService.findByEmail.mockResolvedValueOnce(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+      (bcrypt.hash as jest.Mock).mockResolvedValueOnce('hashedNewPassword');
+      mockUsersService.update.mockResolvedValueOnce(mockUser);
+
+      const result = await service.updatePassword(mockUser.id, {
+        currentPassword: 'currentPassword123',
+        newPassword: 'newPassword123',
+      });
+
+      expect(result).toEqual({ message: 'Password updated successfully' });
+      expect(mockUsersService.update).toHaveBeenCalledWith(mockUser.id, {
+        password: 'hashedNewPassword',
+      });
     });
   });
 });
