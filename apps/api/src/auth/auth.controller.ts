@@ -150,6 +150,7 @@ export class AuthController {
   })
   @createApiResponse(AUTH_ERROR_RESPONSES.INVALID_CREDENTIALS)
   @createApiResponse(VALIDATION_ERROR_RESPONSES.PASSWORD_TOO_SHORT)
+  @createApiResponse(AUTH_ERROR_RESPONSES.NEW_PASSWORD_SAME_AS_CURRENT)
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Put('password')
