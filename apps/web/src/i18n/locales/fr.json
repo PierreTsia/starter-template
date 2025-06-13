@@ -99,6 +99,12 @@
         "description": "Nous vous enverrons un nouveau lien de confirmation pour vérifier votre adresse email",
         "submit": "Envoyer un nouveau lien de confirmation"
       }
+    },
+    "google": {
+      "authenticating": "Authentification avec Google...",
+      "redirecting": "Veuillez patienter, vous allez être redirigé sous peu.",
+      "success": "Authentifié avec Google",
+      "error": "Échec de l'authentification Google : {{error}}"
     }
   },
   "profile": {

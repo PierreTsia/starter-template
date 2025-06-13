@@ -2,8 +2,13 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { Page } from '../ui/page';
+
+import { useTranslation } from '@/i18n/hooks/useTranslation';
+
 export const AuthCallbackPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -13,8 +18,7 @@ export const AuthCallbackPage = () => {
     const provider = params.get('provider');
 
     if (error) {
-      // Optionally show a toast or error UI
-      toast.error(decodeURIComponent(error));
+      toast.error(t('auth.google.error', { error: decodeURIComponent(error) }));
       navigate('/login');
       return;
     }
@@ -24,18 +28,16 @@ export const AuthCallbackPage = () => {
       if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
       if (provider) localStorage.setItem('provider', provider);
 
-      // Clean up the URL (optional)
       window.history.replaceState({}, document.title, '/');
-
-      // Redirect to dashboard or home
       navigate('/');
+      toast.success(t('auth.google.success'));
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-      <h2>Authenticating with Google...</h2>
-      <p>Please wait, you will be redirected shortly.</p>
-    </div>
+    <Page>
+      <h2>{t('auth.google.authenticating')}</h2>
+      <p>{t('auth.google.redirecting')}</p>
+    </Page>
   );
 };
