@@ -147,7 +147,7 @@ describe('AuthController', () => {
     it('should create a new user and return user data with token cookie', async () => {
       const registerDto: RegisterDto = {
         email: 'new@test.com',
-        password: 'password123',
+        password: 'Password123!',
         name: 'New User',
       };
 
@@ -179,10 +179,38 @@ describe('AuthController', () => {
       expect(mockAuthService.register).toHaveBeenCalledWith(registerDto);
     });
 
+    it('should return 400 if password is too short', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email: 'new@test.com', password: 'pass123', name: 'New User' })
+        .expect(400);
+    });
+
+    it('should return 400 if password does not contain uppercase letter', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email: 'new@test.com', password: 'password123', name: 'New User' })
+        .expect(400);
+    });
+
     it('should return 400 if extra fields are sent in register', async () => {
       await request(app.getHttpServer())
         .post('/auth/register')
         .send({ email: 'new@example.com', password: 'Test123!@#', name: 'New User', extra: 'nope' })
+        .expect(400);
+    });
+
+    it('should return 400 if password does not contain a number', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email: 'new@test.com', password: 'Password!', name: 'New User' })
+        .expect(400);
+    });
+
+    it('should return 400 if password does not contain a special character', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email: 'new@test.com', password: 'Password123', name: 'New User' })
         .expect(400);
     });
   });
