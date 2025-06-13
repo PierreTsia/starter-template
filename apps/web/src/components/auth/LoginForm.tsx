@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
 import { loginSchema } from '@/lib/validations/auth';
 import type { LoginFormData } from '@/types/auth';
@@ -26,9 +27,10 @@ import type { LoginFormData } from '@/types/auth';
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => void;
   isLoading?: boolean;
+  children: React.ReactNode;
 }
 
-export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
+export const LoginForm = ({ onSubmit, isLoading = false, children }: LoginFormProps) => {
   const { t } = useTranslation();
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -74,7 +76,7 @@ export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
               )}
             />
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-y-4">
             <Button
               type="submit"
               className="w-full"
@@ -82,6 +84,12 @@ export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
             >
               {form.formState.isSubmitting || isLoading ? t('common.loading') : t('auth.login')}
             </Button>
+            <div className="flex items-center justify-center gap-x-2">
+              <Separator />
+              <p className="text-center text-sm text-gray-500">{t('auth.or')}</p>
+              <Separator />
+            </div>
+            {children}
           </CardFooter>
         </form>
       </Form>
