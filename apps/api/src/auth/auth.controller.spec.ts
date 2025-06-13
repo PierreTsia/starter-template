@@ -145,6 +145,7 @@ describe('AuthController', () => {
   afterEach(async () => {
     await app.close();
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
