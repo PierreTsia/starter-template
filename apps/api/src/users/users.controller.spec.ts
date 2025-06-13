@@ -9,6 +9,7 @@ import { LoggerService } from '../logger/logger.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateNameDto } from './dto/update-name.dto';
+import { UserException } from './exceptions/user.exception';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -235,6 +236,27 @@ describe('UsersController', () => {
       const result = await controller.updateName({ user: mockUser }, updateNameDto, 'en');
       expect(result).toEqual(updatedUser);
       expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
+    });
+
+    it('should throw when user is not found', async () => {
+      const updateNameDto: UpdateNameDto = { name: 'Updated Name' };
+      const error = UserException.notFound('1', 'en');
+      mockUsersService.updateName.mockRejectedValue(error);
+
+      await expect(controller.updateName({ user: mockUser }, updateNameDto, 'en')).rejects.toThrow(
+        error
+      );
+
+      expect(mockUsersService.updateName).toHaveBeenCalledWith('1', updateNameDto, 'en');
+    });
+
+    it('should throw BadRequestException for invalid name format', async () => {
+      const invalidNameDto = { name: 'Invalid@Name!' }; // Contains special characters
+
+      await request(app.getHttpServer()).patch('/users/profile').send(invalidNameDto).expect(400);
+
+      // Verify the service is not called
+      expect(mockUsersService.updateName).not.toHaveBeenCalled();
     });
   });
 });
