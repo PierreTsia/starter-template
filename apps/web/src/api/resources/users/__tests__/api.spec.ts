@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 
-import { uploadAvatar } from '../api';
+import { uploadAvatar, updateName } from '../api';
 
 // Create hoisted mocks
 const mocks = vi.hoisted(() => ({
@@ -79,6 +79,53 @@ describe('usersApi', () => {
       expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/users/avatar', {
         method: 'POST',
         body: expect.any(FormData),
+      });
+    });
+  });
+
+  describe('updateName', () => {
+    it('should call apiFetch with correct parameters', async () => {
+      const mockName = 'New Name';
+      const mockResponse = {
+        id: '1',
+        name: mockName,
+        email: 'test@example.com',
+        avatarUrl: 'https://example.com/avatar.jpg',
+        createdAt: '2024-01-01T00:00:00.000Z',
+      };
+      mocks.apiFetch.mockResolvedValueOnce({ data: mockResponse });
+
+      const result = await updateName(mockName);
+
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/users/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ name: mockName }),
+      });
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should handle API errors', async () => {
+      const mockName = 'New Name';
+      const mockError = new Error('Update failed');
+      mocks.apiFetch.mockRejectedValueOnce(mockError);
+
+      await expect(updateName(mockName)).rejects.toThrow('Update failed');
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/users/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ name: mockName }),
+      });
+    });
+
+    it('should handle validation errors', async () => {
+      const mockName = 'Invalid@Name!';
+      const mockError = new Error('Invalid name format');
+      mocks.apiFetch.mockRejectedValueOnce(mockError);
+
+      await expect(updateName(mockName)).rejects.toThrow('Invalid name format');
+      expect(mocks.apiFetch).toHaveBeenCalledWith('/api/v1/users/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ name: mockName }),
       });
     });
   });
