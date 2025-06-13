@@ -154,6 +154,20 @@
       "displayName": "Display Name",
       "email": "Email"
     },
+    "auth": {
+      "title": "Authentication Settings",
+      "description": "Manage your password and security preferences",
+      "password": {
+        "title": "Password",
+        "description": "Update your password to keep your account secure",
+        "current": "Current Password",
+        "new": "New Password",
+        "confirm": "Confirm New Password",
+        "update": "Update Password",
+        "success": "Password updated successfully",
+        "error": "Failed to update password"
+      }
+    },
     "app": {
       "title": "App Settings",
       "description": "Customize your application experience",

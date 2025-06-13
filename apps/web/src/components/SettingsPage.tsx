@@ -1,5 +1,6 @@
-import { LanguageSwitcherSelect } from '@/components/LanguageSwitcherSelect';
-import { ThemeSelect } from '@/components/ThemeSelect';
+import { AppSettings } from './AppSettings';
+import { AuthSettings } from './AuthSettings';
+
 import { UserProfile } from '@/components/UserProfile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Page } from '@/components/ui/page';
@@ -25,32 +26,21 @@ export const SettingsPage = () => {
 
         <Card>
           <CardHeader>
+            <CardTitle>{t('settings.auth.title')}</CardTitle>
+            <CardDescription>{t('settings.auth.description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <AuthSettings />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>{t('settings.app.title')}</CardTitle>
             <CardDescription>{t('settings.app.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">{t('settings.app.language.title')}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t('settings.app.language.description')}
-                </p>
-              </div>
-              <div className="w-full max-w-xs">
-                <LanguageSwitcherSelect />
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">{t('settings.app.theme.title')}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t('settings.app.theme.description')}
-                </p>
-              </div>
-              <div className="w-full max-w-xs">
-                <ThemeSelect data-testid="theme-select" />
-              </div>
-            </div>
+            <AppSettings />
           </CardContent>
         </Card>
       </div>
