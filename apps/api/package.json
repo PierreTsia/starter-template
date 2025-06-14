@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && pnpm run copy-templates && pnpm run copy-i18n",
+    "build": "nest build && pnpm run copy-templates",
     "copy-templates": "cp -R src/email/templates dist/src/email/templates",
     "copy-i18n": "cp -R src/i18n dist/i18n",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
