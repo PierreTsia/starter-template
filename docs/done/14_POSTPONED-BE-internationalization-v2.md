@@ -1,5 +1,10 @@
 # Backend Internationalization v2
 
+## POSTPONED - static assets handling fails
+
+- nest-cli (and not nestcli) should manage copy static asets like mail templates or i18n trad files
+- it does not work and forces the hand made build command including cp folders but is a pain to maintain in a monorepo
+
 ## Overview
 
 Refactor the current custom internationalization implementation to use the official `nestjs-i18n` package. This refactoring will be done incrementally to ensure no breaking changes and maintain existing functionality while improving the translation system.
