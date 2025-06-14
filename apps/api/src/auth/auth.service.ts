@@ -357,38 +357,38 @@ export class AuthService {
     name: string;
     avatarUrl?: string;
   }): Promise<SafeUser> {
-    // Try to find by provider/providerId
-    let user = await this.usersService.findByProviderId(provider, providerId);
-    if (user) {
-      // Return user without password
-      return user;
-    }
-
-    // Try to find by email
-    user = await this.usersService.findByEmail(email);
-    if (user) {
-      // Update user with provider info if not already set
-      if (!user.provider || !user.providerId) {
-        user = await this.usersService.update(user.id, {
-          provider,
-          providerId,
-          avatarUrl,
-        });
+    try {
+      let user = await this.usersService.findByProviderId(provider, providerId);
+      if (user) {
+        return user;
       }
 
+      user = await this.usersService.findByEmail(email);
+      if (user) {
+        if (!user.provider || !user.providerId) {
+          user = await this.usersService.update(user.id, {
+            provider,
+            providerId,
+            avatarUrl,
+          });
+        }
+
+        return user;
+      }
+
+      user = await this.usersService.create({
+        email,
+        name,
+        provider,
+        providerId,
+        avatarUrl,
+        isEmailConfirmed: true, // Social auth emails are pre-verified
+      });
+
       return user;
+    } catch (error) {
+      this.logger.errorWithMetadata(`Failed to find or create user for ${email}`, error);
+      throw error;
     }
-
-    // Create new user
-    user = await this.usersService.create({
-      email,
-      name,
-      provider,
-      providerId,
-      avatarUrl,
-      isEmailConfirmed: true, // Social auth emails are pre-verified
-    });
-
-    return user;
   }
 }
