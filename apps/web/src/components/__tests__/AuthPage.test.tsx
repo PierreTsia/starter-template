@@ -302,4 +302,57 @@ describe('AuthPage', () => {
       expect(localStorageMock.setItem).toHaveBeenCalledWith('locale', 'fr');
     });
   });
+
+  describe('Google Sign-in', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({
+        login: vi.fn(),
+        register: vi.fn(),
+        logout: vi.fn(),
+        isLoading: false,
+        error: null,
+        resetError: vi.fn(),
+      });
+    });
+
+    it('redirects to Google OAuth URL when clicking sign-in button in Login page', () => {
+      // Mock window.location
+      const mockLocation = {
+        href: '',
+      };
+      Object.defineProperty(window, 'location', {
+        value: mockLocation,
+        writable: true,
+      });
+
+      render(<TestApp initialEntries={['/login']} />);
+
+      const googleButton = screen.getByText('Sign in with Google');
+      expect(googleButton).toBeInTheDocument();
+      fireEvent.click(googleButton);
+
+      // Check that we're redirected to the Google OAuth URL
+      expect(window.location.href).toContain('/api/v1/auth/google');
+    });
+
+    it('redirects to Google OAuth URL when clicking sign-in button in Register page', () => {
+      // Mock window.location
+      const mockLocation = {
+        href: '',
+      };
+      Object.defineProperty(window, 'location', {
+        value: mockLocation,
+        writable: true,
+      });
+
+      render(<TestApp initialEntries={['/register']} />);
+
+      const googleButton = screen.getByText('Sign in with Google');
+      expect(googleButton).toBeInTheDocument();
+      fireEvent.click(googleButton);
+
+      // Check that we're redirected to the Google OAuth URL
+      expect(window.location.href).toContain('/api/v1/auth/google');
+    });
+  });
 });
