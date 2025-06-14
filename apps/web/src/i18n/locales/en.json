@@ -115,7 +115,7 @@
       "authenticating": "Authenticating with Google...",
       "redirecting": "Please wait, you will be redirected shortly.",
       "success": "Authenticated with Google",
-      "error": "Google authentication failed: {{error}}",
+      "error": "Google authentication failed: {error}",
       "signIn": "Sign in with Google"
     }
   },
