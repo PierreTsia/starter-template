@@ -165,27 +165,3 @@ export class AuthService {
   }
 }
 ```
-
-#### Google Strategy
-
-```
-
-```
-
-## Remaining Tasks
-
-### Backend Tests
-
-- [x] Auth Service
-  - [x] Complete coverage for `findOrCreateUser` method
-  - [x] Add tests for token generation edge cases
-- [x] Google Strategy
-  - [x] Add tests for strategy implementation
-  - [x] Test error cases and edge scenarios
-  - [x] Test token validation and refresh flows
-
-### Frontend Tests
-
-- [x] Auth Components
-  - [x] `AuthCallbackPage.tsx` (currently 6.66% coverage)
-  - [x] `GoogleSignIn.tsx`
