@@ -33,7 +33,7 @@
     "prisma:validate": "prisma validate",
     "db:reset": "prisma migrate reset --force && prisma generate && prisma db seed",
     "db:push": "prisma db push --accept-data-loss",
-    "postinstall": "prisma generate && pnpm run copy-i18n"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
