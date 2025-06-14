@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { QueryObserverResult } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useMe } from '@/api/resources/auth/hooks';
 import { useUser } from '@/api/resources/users/hooks';
 import { UploadAvatarDialog } from '@/components/UploadAvatarDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/i18n/hooks/useTranslation';
+import { User } from '@/types/auth';
 
 const profileSchema = z.object({
   displayName: z
@@ -30,9 +31,10 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-export const UserProfile = () => {
+type Props = { me: User; refetchMe: () => Promise<QueryObserverResult<User, Error>> };
+
+export const UserProfile = ({ me, refetchMe }: Props) => {
   const { t, formatDate } = useTranslation();
-  const { data: me, refetch: refetchMe } = useMe();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const { updateName, isUpdatingName } = useUser();
 

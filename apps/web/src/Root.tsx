@@ -4,6 +4,7 @@ import App from './App';
 import { AboutPage } from './components/AboutPage';
 import { NotFoundPage } from './components/NotFoundPage';
 import { SettingsPage } from './components/SettingsPage';
+import { AuthCallbackPage } from './components/auth/AuthCallbackPage';
 import { AuthPage } from './components/auth/AuthPage';
 import { ConfirmEmailPage } from './components/auth/ConfirmEmailPage';
 import { EmailConfirmationPage } from './components/auth/EmailConfirmationPage';
@@ -32,6 +33,7 @@ export const Root = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/register" element={<AuthPage />} />
           <Route path="/email-confirmation" element={<EmailConfirmationPage />} />

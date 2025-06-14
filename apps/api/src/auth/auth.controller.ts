@@ -9,10 +9,14 @@ import {
   Get,
   Query,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { User } from '@prisma/client';
+import { Response, Request } from 'express';
 
 import {
   AUTH_ERROR_RESPONSES,
@@ -161,5 +165,44 @@ export class AuthController {
     @Headers('accept-language') acceptLanguage?: string
   ): Promise<{ message: string }> {
     return this.authService.updatePassword(user.email, updatePasswordDto, acceptLanguage);
+  }
+
+  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  @ApiResponse({ status: HttpStatus.FOUND, description: 'Redirects to Google OAuth login page' })
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleAuth() {
+    // Passport handles the redirect, this method can be empty.
+    try {
+      // Passport handles the redirect
+    } catch (err) {
+      console.error('Google OAuth error:', err);
+    }
+  }
+
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  @ApiResponse({ status: 302, description: 'Redirects to frontend with tokens in query params' })
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as { email?: string; id?: string } | undefined;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    if (!user) {
+      return res.redirect(`${frontendUrl}/auth/error?message=Google%20login%20failed`);
+    }
+
+    const tokens = await this.authService.generateTokens({
+      email: user.email!,
+      id: user.id!,
+    });
+
+    if (!tokens || !tokens.accessToken || !tokens.refreshToken) {
+      return res.redirect(`${frontendUrl}/auth/error?message=Token%20generation%20failed`);
+    }
+
+    return res.redirect(
+      `${frontendUrl}/auth/callback?access_token=${tokens.accessToken}&refresh_token=${tokens.refreshToken}&provider=google`
+    );
   }
 }

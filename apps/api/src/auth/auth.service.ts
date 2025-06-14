@@ -72,7 +72,7 @@ export class AuthService {
           return null;
         }
 
-        const isValid = await this.verifyPassword(password, user.password);
+        const isValid = user.password ? await this.verifyPassword(password, user.password) : false;
         if (!isValid) {
           this.logger.warnWithMetadata('Invalid password during validation', { email });
           return null;
@@ -187,12 +187,20 @@ export class AuthService {
     });
   }
 
-  async generateJwt(user: SafeUser) {
+  async generateJwt(user: { email: string; id: string }) {
     return this.logger.logOperation(
       'JWT generation',
       () => this.jwtService.signAsync({ sub: user.id, email: user.email }),
       { userId: user.id }
     );
+  }
+
+  async generateTokens(user: { email: string; id: string }) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync({ sub: user.id, email: user.email }),
+      this.refreshTokenService.generateRefreshToken(user.id),
+    ]);
+    return { accessToken, refreshToken };
   }
 
   async confirmEmail(token: string) {
@@ -307,10 +315,9 @@ export class AuthService {
         throw AuthException.userNotFound(acceptLanguage);
       }
 
-      const isPasswordValid = await bcrypt.compare(
-        updatePasswordDto.currentPassword,
-        user.password
-      );
+      const isPasswordValid = user.password
+        ? await bcrypt.compare(updatePasswordDto.currentPassword, user.password)
+        : false;
 
       if (!isPasswordValid) {
         throw AuthException.invalidCredentials(acceptLanguage);
@@ -333,6 +340,54 @@ export class AuthService {
           `Failed to update password for user ${userEmail}: Unknown error`
         );
       }
+      throw error;
+    }
+  }
+
+  async findOrCreateUser({
+    provider,
+    providerId,
+    email,
+    name,
+    avatarUrl,
+  }: {
+    provider: 'google';
+    providerId: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+  }): Promise<SafeUser> {
+    try {
+      let user = await this.usersService.findByProviderId(provider, providerId);
+      if (user) {
+        return user;
+      }
+
+      user = await this.usersService.findByEmail(email);
+      if (user) {
+        if (!user.provider || !user.providerId) {
+          user = await this.usersService.update(user.id, {
+            provider,
+            providerId,
+            avatarUrl,
+          });
+        }
+
+        return user;
+      }
+
+      user = await this.usersService.create({
+        email,
+        name,
+        provider,
+        providerId,
+        avatarUrl,
+        isEmailConfirmed: true, // Social auth emails are pre-verified
+      });
+
+      return user;
+    } catch (error) {
+      this.logger.errorWithMetadata(`Failed to find or create user for ${email}`, error);
       throw error;
     }
   }

@@ -22,6 +22,7 @@ const config: Config = {
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
   testPathIgnorePatterns: ['/node_modules/', '/apps/web/'],
+  detectOpenHandles: true,
 };
 
 export default config;

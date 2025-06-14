@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import { GoogleSignIn } from './GoogleSignIn';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 
@@ -41,9 +42,13 @@ export const AuthPage = () => {
           </div>
         )}
         {isLogin ? (
-          <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
+          <LoginForm onSubmit={handleLogin} isLoading={isLoading}>
+            <GoogleSignIn />
+          </LoginForm>
         ) : (
-          <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
+          <RegisterForm onSubmit={handleRegister} isLoading={isLoading}>
+            <GoogleSignIn />
+          </RegisterForm>
         )}
         <p className="text-center text-sm text-gray-500">
           {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}{' '}

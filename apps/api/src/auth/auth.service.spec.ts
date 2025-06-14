@@ -40,6 +40,8 @@ const mockUser = {
   passwordResetToken: null,
   passwordResetExpires: null,
   avatarUrl: 'https://api.dicebear.com/7.x/identicon/svg?seed=default',
+  provider: null,
+  providerId: null,
 };
 
 const confirmedMockUser = {
@@ -55,6 +57,7 @@ const mockUsersService = {
   findOne: jest.fn(),
   update: jest.fn(),
   findByEmailConfirmationToken: jest.fn(),
+  findByProviderId: jest.fn(),
 };
 
 const mockJwtService = {
@@ -530,6 +533,132 @@ describe('AuthService', () => {
       expect(mockUsersService.update).toHaveBeenCalledWith(mockUser.id, {
         password: 'hashedNewPassword',
       });
+    });
+  });
+
+  describe('findOrCreateUser', () => {
+    const googleUserData = {
+      provider: 'google' as const,
+      providerId: 'google123',
+      email: 'google@example.com',
+      name: 'Google User',
+      avatarUrl: 'https://google.com/avatar.jpg',
+    };
+
+    it('should find existing user by provider ID', async () => {
+      const existingUser = {
+        ...mockUser,
+        provider: 'google',
+        providerId: 'google123',
+      };
+      mockUsersService.findByProviderId.mockResolvedValueOnce(existingUser);
+
+      const result = await service.findOrCreateUser(googleUserData);
+
+      expect(result).toEqual(existingUser);
+      expect(mockUsersService.findByProviderId).toHaveBeenCalledWith('google', 'google123');
+      expect(mockUsersService.create).not.toHaveBeenCalled();
+    });
+
+    it('should find user by email and update provider info if exists', async () => {
+      const existingUser = {
+        ...mockUser,
+        provider: null,
+        providerId: null,
+      };
+      const updatedUser = {
+        ...existingUser,
+        provider: 'google',
+        providerId: 'google123',
+        avatarUrl: 'https://google.com/avatar.jpg',
+      };
+
+      mockUsersService.findByProviderId.mockResolvedValueOnce(null);
+      mockUsersService.findByEmail.mockResolvedValueOnce(existingUser);
+      mockUsersService.update.mockResolvedValueOnce(updatedUser);
+
+      const result = await service.findOrCreateUser(googleUserData);
+
+      expect(result).toEqual(updatedUser);
+      expect(mockUsersService.update).toHaveBeenCalledWith(existingUser.id, {
+        provider: 'google',
+        providerId: 'google123',
+        avatarUrl: 'https://google.com/avatar.jpg',
+      });
+    });
+
+    it('should create new user if not found by provider ID or email', async () => {
+      const newUser = {
+        ...mockUser,
+        ...googleUserData,
+        isEmailConfirmed: true,
+      };
+
+      mockUsersService.findByProviderId.mockResolvedValueOnce(null);
+      mockUsersService.findByEmail.mockResolvedValueOnce(null);
+      mockUsersService.create.mockResolvedValueOnce(newUser);
+
+      const result = await service.findOrCreateUser(googleUserData);
+
+      expect(result).toEqual(newUser);
+      expect(mockUsersService.create).toHaveBeenCalledWith({
+        email: googleUserData.email,
+        name: googleUserData.name,
+        provider: 'google',
+        providerId: 'google123',
+        avatarUrl: 'https://google.com/avatar.jpg',
+        isEmailConfirmed: true,
+      });
+    });
+
+    it('should handle errors gracefully', async () => {
+      mockUsersService.findByProviderId.mockRejectedValueOnce(new Error('Database error'));
+
+      await expect(service.findOrCreateUser(googleUserData)).rejects.toThrow('Database error');
+      expect(mockLoggerService.errorWithMetadata).toHaveBeenCalledWith(
+        `Failed to find or create user for ${googleUserData.email}`,
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe('generateTokens', () => {
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+    };
+
+    it('should generate both access and refresh tokens', async () => {
+      mockJwtService.signAsync.mockResolvedValueOnce('mocked-access-token');
+      mockRefreshTokenService.generateRefreshToken.mockResolvedValueOnce('mocked-refresh-token');
+
+      const result = await service.generateTokens(mockUser);
+
+      expect(result).toEqual({
+        accessToken: 'mocked-access-token',
+        refreshToken: 'mocked-refresh-token',
+      });
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
+        sub: mockUser.id,
+        email: mockUser.email,
+      });
+    });
+
+    it('should handle JWT signing errors', async () => {
+      mockJwtService.signAsync.mockRejectedValueOnce(new Error('JWT signing failed'));
+
+      await expect(service.generateTokens(mockUser)).rejects.toThrow('JWT signing failed');
+    });
+
+    it('should handle refresh token generation errors', async () => {
+      mockJwtService.signAsync.mockResolvedValueOnce('mocked-access-token');
+      mockRefreshTokenService.generateRefreshToken.mockRejectedValueOnce(
+        new Error('Refresh token generation failed')
+      );
+
+      await expect(service.generateTokens(mockUser)).rejects.toThrow(
+        'Refresh token generation failed'
+      );
     });
   });
 });

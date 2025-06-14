@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
+import { Separator } from '../ui/separator';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,9 +28,10 @@ import type { RegisterFormData } from '@/types/auth';
 interface RegisterFormProps {
   onSubmit: (data: RegisterFormData) => void;
   isLoading?: boolean;
+  children: React.ReactNode;
 }
 
-export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps) => {
+export const RegisterForm = ({ onSubmit, isLoading = false, children }: RegisterFormProps) => {
   const { t } = useTranslation();
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -106,7 +109,7 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
               )}
             />
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-y-4">
             <Button
               type="submit"
               className="w-full"
@@ -114,6 +117,12 @@ export const RegisterForm = ({ onSubmit, isLoading = false }: RegisterFormProps)
             >
               {form.formState.isSubmitting || isLoading ? t('common.loading') : t('auth.register')}
             </Button>
+            <div className="flex items-center justify-center gap-x-2">
+              <Separator />
+              <p className="text-center text-sm text-gray-500">{t('auth.or')}</p>
+              <Separator />
+            </div>
+            {children}
           </CardFooter>
         </form>
       </Form>
