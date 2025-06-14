@@ -6,8 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && pnpm run copy-templates",
+    "build": "nest build && pnpm run copy-templates && pnpm run copy-i18n",
     "copy-templates": "cp -R src/email/templates dist/src/email/templates",
+    "copy-i18n": "cp -R src/i18n dist/i18n",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -32,7 +33,7 @@
     "prisma:validate": "prisma validate",
     "db:reset": "prisma migrate reset --force && prisma generate && prisma db seed",
     "db:push": "prisma db push --accept-data-loss",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && pnpm run copy-i18n"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
@@ -56,6 +57,7 @@
     "express": "^5.1.0",
     "joi": "^17.13.3",
     "multer": "^2.0.1",
+    "nestjs-i18n": "^10.5.1",
     "nestjs-pino": "^4.4.0",
     "nodemailer": "^7.0.3",
     "passport": "^0.7.0",

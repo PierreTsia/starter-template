@@ -13,6 +13,11 @@
     {
       "include": "errors/messages/**/*.json",
       "outDir": "dist/src/errors/messages"
+    },
+    {
+      "include": "i18n/**/*",
+      "outDir": "dist/i18n",
+      "watchAssets": true
     }
   ]
 }

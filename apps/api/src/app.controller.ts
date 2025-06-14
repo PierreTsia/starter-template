@@ -1,6 +1,7 @@
 import { Controller, Get, Head, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 import { AppService } from './app.service';
 import { SYSTEM_ERROR_RESPONSES, createApiResponse } from './common/swagger/schemas';
@@ -13,6 +14,11 @@ export class AppController {
     private readonly appService: AppService,
     private readonly logger: LoggerService
   ) {}
+
+  @Get('/test')
+  getHello(@I18n() i18n: I18nContext) {
+    return i18n.t('test.HELLO');
+  }
 
   @ApiOperation({ summary: 'Root endpoint - redirects to health check' })
   @ApiResponse({
