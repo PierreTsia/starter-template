@@ -621,4 +621,44 @@ describe('AuthService', () => {
       );
     });
   });
+
+  describe('generateTokens', () => {
+    const mockUser = {
+      id: '1',
+      email: 'test@example.com',
+    };
+
+    it('should generate both access and refresh tokens', async () => {
+      mockJwtService.signAsync.mockResolvedValueOnce('mocked-access-token');
+      mockRefreshTokenService.generateRefreshToken.mockResolvedValueOnce('mocked-refresh-token');
+
+      const result = await service.generateTokens(mockUser);
+
+      expect(result).toEqual({
+        accessToken: 'mocked-access-token',
+        refreshToken: 'mocked-refresh-token',
+      });
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
+        sub: mockUser.id,
+        email: mockUser.email,
+      });
+    });
+
+    it('should handle JWT signing errors', async () => {
+      mockJwtService.signAsync.mockRejectedValueOnce(new Error('JWT signing failed'));
+
+      await expect(service.generateTokens(mockUser)).rejects.toThrow('JWT signing failed');
+    });
+
+    it('should handle refresh token generation errors', async () => {
+      mockJwtService.signAsync.mockResolvedValueOnce('mocked-access-token');
+      mockRefreshTokenService.generateRefreshToken.mockRejectedValueOnce(
+        new Error('Refresh token generation failed')
+      );
+
+      await expect(service.generateTokens(mockUser)).rejects.toThrow(
+        'Refresh token generation failed'
+      );
+    });
+  });
 });
